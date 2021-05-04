@@ -7,3 +7,4 @@ Mask R-CNN for metal casting defects detection and instance segmentation using K
 - sagemaker: <https://github.com/roccopietrini/TFSagemakerDetection>
 - <https://supervise.ly/>
 - dataset: <https://www.kaggle.com/ravirajsinh45/real-life-industrial-dataset-of-casting-product>
+- per configurare le api di kaggle: <https://adityashrm21.github.io/Setting-Up-Kaggle/>
