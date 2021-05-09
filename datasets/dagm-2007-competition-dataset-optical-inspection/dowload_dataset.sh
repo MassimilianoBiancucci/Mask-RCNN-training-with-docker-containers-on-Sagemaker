@@ -3,9 +3,9 @@ set -e
 
 kaggle datasets download -d mhskjelvareid/dagm-2007-competition-dataset-optical-inspection
 
-mv dagm-2007-competition-dataset-optical-inspection dataset
+mkdir dataset
 
-unzip *.zip 
+unzip -d dataset/ *.zip 
 
 rm *.zip
 
