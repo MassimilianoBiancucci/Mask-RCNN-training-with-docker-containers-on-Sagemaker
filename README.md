@@ -4,7 +4,6 @@ Mask R-CNN for metal casting defects detection and instance segmentation using K
 
 ## useful links
 
-
 ### AWS guides
 
 - AWS cli configuration: <https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html>
@@ -12,7 +11,6 @@ Mask R-CNN for metal casting defects detection and instance segmentation using K
 - Docker ECR credentials configuration: <https://docs.aws.amazon.com/AmazonECR/latest/userguide/common-errors-docker.html>
   
 - Pushing Docker image to ECR: <https://docs.aws.amazon.com/AmazonECR/latest/userguide/docker-push-ecr-image.html>
- 
 
 ### Dataset
 
