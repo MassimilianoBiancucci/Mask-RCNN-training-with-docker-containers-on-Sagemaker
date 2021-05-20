@@ -5,7 +5,7 @@
 # 	--image isic2018/ISIC2018_Task1-2_Training_Input/ISIC_0000000.jpg
 
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1' 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' 
 
 '''
 TF DEBUG LEVELS:
