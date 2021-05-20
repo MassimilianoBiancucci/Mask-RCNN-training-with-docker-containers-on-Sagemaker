@@ -46,8 +46,6 @@ Mask R-CNN for metal casting defects detection and instance segmentation using K
 
 - [guide to using Spot instances with Amazon SageMaker](https://towardsdatascience.com/a-quick-guide-to-using-spot-instances-with-amazon-sagemaker-b9cfb3a44a68)
 
-- 
-
 ### Related papers
 
 - [maskrcnn paper](https://arxiv.org/pdf/1703.06870.pdf)
