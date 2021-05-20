@@ -24,6 +24,9 @@ RUN mkdir Mask_RCNN
 WORKDIR /root/Mask_RCNN/
 
 # copio la cartella principale di lavoro
+COPY mask_rcnn_coco.h5 .
+
+# copio la cartella principale di lavoro
 COPY Mask_RCNN .
 
 # crea la cartella di destinazione del dataset 
