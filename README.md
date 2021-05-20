@@ -7,6 +7,8 @@ Mask R-CNN for metal casting defects detection and instance segmentation using K
 Github principal
 
 AWS guides:
+  - AWS cli configuration: <https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html>
+  - Docker ECR credentials configuration: <https://docs.aws.amazon.com/AmazonECR/latest/userguide/common-errors-docker.html>
   - Pushing Docker image to ECR: <https://docs.aws.amazon.com/AmazonECR/latest/userguide/docker-push-ecr-image.html>
   - 
 
@@ -21,10 +23,9 @@ git reference:
   - svpino/tensorflow-object-detection-sagemaker: <https://github.com/svpino/tensorflow-object-detection-sagemaker>
   - roccopietrini/TFSagemakerDetection: <https://github.com/roccopietrini/TFSagemakerDetection>
 	
-
 Related papers:
   - maskrcnn paper <https://arxiv.org/pdf/1703.06870.pdf> 
   - feature pyramid network paper <https://arxiv.org/pdf/1612.03144.pdf>
   - resnet50 paper <https://arxiv.org/pdf/1512.03385.pdf>
-	
+
 
