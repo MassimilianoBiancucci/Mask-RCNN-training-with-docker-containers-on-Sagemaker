@@ -2,10 +2,9 @@
 
 Mask R-CNN for metal casting defects detection and instance segmentation using Keras and TensorFlow
 
-## useful links
+## Useful links
 
-
-### AWS guides
+### AWS docs
 
 - AWS cli configuration: <https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html>
   
@@ -13,6 +12,11 @@ Mask R-CNN for metal casting defects detection and instance segmentation using K
   
 - Pushing Docker image to ECR: <https://docs.aws.amazon.com/AmazonECR/latest/userguide/docker-push-ecr-image.html>
  
+### Sagemaker docs
+
+- Use Checkpoints in Amazon SageMaker: <https://docs.aws.amazon.com/sagemaker/latest/dg/model-checkpoints.html>
+
+- Adapting Your Own Training Container: <https://docs.aws.amazon.com/sagemaker/latest/dg/adapt-training-container.html>
 
 ### Dataset
 
@@ -31,6 +35,14 @@ Mask R-CNN for metal casting defects detection and instance segmentation using K
 - svpino/tensorflow-object-detection-sagemaker: <https://github.com/svpino/tensorflow-object-detection-sagemaker>
 
 - roccopietrini/TFSagemakerDetection: <https://github.com/roccopietrini/TFSagemakerDetection>
+
+- shashankprasanna/sagemaker-spot-training: <https://github.com/shashankprasanna/sagemaker-spot-training>
+
+### Useful articles
+
+- guide to using Spot instances with Amazon SageMaker: <https://towardsdatascience.com/a-quick-guide-to-using-spot-instances-with-amazon-sagemaker-b9cfb3a44a68>
+
+- 
 
 ### Related papers
 

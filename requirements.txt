@@ -4,10 +4,9 @@ Pillow
 cython
 matplotlib
 scikit-image==0.16.2
-tensorflow-gpu==1.14.0
 keras==2.2.5
-opencv-contrib-python
 h5py==2.10.0
+opencv-contrib-python
 imgaug
 imutils
 beautifulsoup4
