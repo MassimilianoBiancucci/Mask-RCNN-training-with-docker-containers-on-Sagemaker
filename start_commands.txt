@@ -1,0 +1,1 @@
+docker run -v  /tmp/.X11-unix:/tmp/.X11-unix -v ~/.Xauthority:/root/.Xauthority -v /media/massi/Massi_4TB/#MASSI/università/Corsi/Calcolatori\ e\ reti/Progetto/Dataset/isic2018:/root/Mask_RCNN/isic2018 --net=host --ipc=host -e DISPLAY=$DISPLAY --gpus all -it maskrcnn_test

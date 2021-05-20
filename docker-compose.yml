@@ -1,0 +1,17 @@
+
+services:
+  maskrcnn:
+    image: maskrcnn_test
+    build: .
+    ports:
+      - "8888:8888"  # effettua il binding della porta 8888 tra quella dell'host e quella del container
+    volumes:
+      - '/media/massi/Massi_4TB/#MASSI/università/Corsi/Calcolatori e reti/Progetto/Dataset/isic2018:/root/Mask_RCNN/isic2018'
+      - /tmp/.X11-unix:/tmp/.X11-unix    # necessario per l'X11 forwarding
+      - ~/.Xauthority:/root/.Xauthority  # necessario per l'X11 forwarding
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    runtime: nvidia  # abilita l'utilizzo delle gpu del sistema
+    environment:
+      DISPLAY: $DISPLAY  # necessario per l'X11 forwarding
+        

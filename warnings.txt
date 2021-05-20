@@ -1,0 +1,10 @@
+errore 1:
+
+FutureWarning: Input image dtype is bool. Interpolation is not defined with bool data type. 
+Please set order to 0 or explicitely cast input image to another data type. 
+Starting from version 0.19 a ValueError will be raised instead of this warning.
+
+correzione: 
+
+la versione corrente era la 0.17.2 -> e presenta il problema di interpolazione con il codice dato
+pip install -U scikit-image==0.16.2 -> sostituire con questa versione di scikit-image
