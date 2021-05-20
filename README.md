@@ -11,8 +11,12 @@ Mask R-CNN for metal casting defects detection and instance segmentation using K
 - Docker ECR credentials configuration: <https://docs.aws.amazon.com/AmazonECR/latest/userguide/common-errors-docker.html>
   
 - Pushing Docker image to ECR: <https://docs.aws.amazon.com/AmazonECR/latest/userguide/docker-push-ecr-image.html>
- 
+
 ### Sagemaker docs
+
+- git of sagemaker training toolkit: <https://github.com/aws/sagemaker-training-toolkit>
+
+- sagemaker practical reference: <https://sagemaker.readthedocs.io/en/stable/overview.html>
 
 - Use Checkpoints in Amazon SageMaker: <https://docs.aws.amazon.com/sagemaker/latest/dg/model-checkpoints.html>
 
