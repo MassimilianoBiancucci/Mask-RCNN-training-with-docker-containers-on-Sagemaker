@@ -12,3 +12,9 @@ Dataset:
 - DTL (data trasformation lenguage) docs: <https://docs.supervise.ly/data-manipulation/index>
 - dataset: <https://www.kaggle.com/ravirajsinh45/real-life-industrial-dataset-of-casting-product>
 - configure kaggle apis: <https://adityashrm21.github.io/Setting-Up-Kaggle/>
+
+
+grew
+gwerwe
+regweg
+regwgwe
