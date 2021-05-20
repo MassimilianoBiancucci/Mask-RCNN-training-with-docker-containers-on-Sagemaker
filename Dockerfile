@@ -29,5 +29,5 @@ COPY Mask_RCNN .
 # crea la cartella di destinazione del dataset 
 RUN mkdir isic2018
 
-# start command 
+# start command
 CMD [ "bash" ]
