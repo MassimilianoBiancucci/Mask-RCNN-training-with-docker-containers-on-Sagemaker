@@ -84,6 +84,8 @@ the dataset it's available on kaggle at this [link](https://www.kaggle.com/ravir
 
 - [Adapting Your Own Training Container](https://docs.aws.amazon.com/sagemaker/latest/dg/adapt-training-container.html)
 
+- [Sagemaker environment variables](https://github.com/aws/sagemaker-training-toolkit/blob/master/ENVIRONMENT_VARIABLES.md)
+
 ### Dataset
 
 - [dataset annotation tool](https://supervise.ly/)
