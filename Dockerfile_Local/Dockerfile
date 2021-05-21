@@ -21,6 +21,9 @@ COPY requirements.txt .
 # intstalla i requisiti del repo eccetto tensorflow
 RUN pip install -r requirements.txt
 
+# le modifiche da qui in giu!
+#--------------------------------------------------------------------
+
 #installaione del modulo per l'interfacciamento del container
 RUN pip3 install sagemaker-training
 
