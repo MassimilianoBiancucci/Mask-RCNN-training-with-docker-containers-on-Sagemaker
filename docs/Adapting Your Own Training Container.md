@@ -1,4 +1,4 @@
-# [Adapting Your Own Training Container](https://docs.aws.amazon.com/sagemaker/latest/dg/adapt-training-container.html)
+# [Adapting Your Own Training Container]()
 
 Create Dockerfile and Python training scripts
 
