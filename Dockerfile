@@ -17,6 +17,9 @@ COPY requirements.txt .
 # intstalla i requisiti del repo eccetto tensorflow
 RUN pip install -r requirements.txt
 
+#installaione del modulo per l'interfacciamento del container
+RUN pip3 install sagemaker-training
+
 # creazione della cartella del progetto
 RUN mkdir Mask_RCNN
 
