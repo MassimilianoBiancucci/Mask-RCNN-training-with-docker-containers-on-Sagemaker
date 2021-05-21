@@ -18,6 +18,8 @@ Mask R-CNN for metal casting defects detection and instance segmentation using K
 
 - [Sagemaker practical reference](https://sagemaker.readthedocs.io/en/stable/overview.html)
 
+- [Using Docker containers with SageMaker](https://docs.aws.amazon.com/sagemaker/latest/dg/docker-containers.html)
+
 - [Use Checkpoints in Amazon SageMaker](https://docs.aws.amazon.com/sagemaker/latest/dg/model-checkpoints.html)
 
     ```text
