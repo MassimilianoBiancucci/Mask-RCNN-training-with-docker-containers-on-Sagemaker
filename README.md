@@ -1,6 +1,49 @@
 # Segmentation-of-defects-in-metal-casting-products
 
-Mask R-CNN for metal casting defects detection and instance segmentation using Keras and TensorFlow
+Mask R-CNN for metal casting defects detection and instance segmentation using Keras and TensorFlow. 
+
+This project was possible thanks to the repository [matterport/Mask_RCNN](https://github.com/matterport/Mask_RCNN), in this repository we have adapted the code for work into a docker container and fine-tuned the pre-trained model on COCO on our dataset, using the sagemaker service.
+
+- - -
+## Index
+
+1. [Overview](#overview)
+1. [Dataset](#dataset)
+    - Original dataset
+    - Our dataset structure
+1. [Docker containers](#docker-containers)
+    - Dockerfile AWS
+    - Dokcerfile Local
+1. [ECR repository](#ecr-repository)
+    - Credential configuration
+    - Repository creation
+1. [Sagemaker](#sagemaker)
+    - Introduction
+    - Notebook code
+    - Container code
+1. [Useful links](#useful-links)
+
+- - -
+
+## Overview
+
+- - -
+
+## Dataset
+
+- - -
+
+## Docker containers
+
+- - -
+
+## ECR repository
+
+- - -
+
+## Sagemaker
+
+- - -
 
 ## Useful links
 
