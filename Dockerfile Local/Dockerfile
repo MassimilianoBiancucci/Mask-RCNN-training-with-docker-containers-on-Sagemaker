@@ -6,7 +6,11 @@ ADD cudnn-10.0-linux-x64-v7.6.3.30/cuda/lib64 /usr/local/cuda-10.0/lib64/
 
 # effettuo l'installazione delle librerie tkinter necessarie per la visualizzazione delle finestre
 # SOLO PER IL DEBUG NON VA AGGIUNTO AL CONTAINER DEFIINITIVO
-RUN apt-get update && apt-get install -y git tree libgtk2.0-dev pkg-config
+RUN apt-get update && apt-get install -y git \
+                                        tree \
+                                        libgtk2.0-dev \
+                                        pkg-config \
+                    && rm -rf /var/lib/apt/lists/*
 
 # cambia la cartella 
 WORKDIR /root/
@@ -31,8 +35,6 @@ COPY Mask_RCNN .
 
 # crea la cartella di destinazione del dataset 
 RUN mkdir isic2018
-
-# 
 
 # start command  
 CMD [ "bash" ]
