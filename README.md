@@ -10,7 +10,7 @@ This project was possible thanks to the repository [matterport/Mask_RCNN](https:
 1. [Overview](#overview)
 1. [Dataset](#dataset)
     - Original dataset
-    - Our dataset structure
+    - Our dataset
 1. [Docker containers](#docker-containers)
     - Dockerfile AWS
     - Dokcerfile Local
@@ -32,6 +32,15 @@ The core of the project was the matterport implementation of [Mask R-CNN](https:
 - - -
 
 ## Dataset
+
+### Original dataset
+The original dataset is an image collection of one type of casted metal product done with similar angle of view and with the objects every in front view.
+The dataset was divided only by defected and not defected object, in fact it is a dataset for only image classification.
+It's composed by 781 image with defected objects and 519 object without defects, the same images are available in two resolution 512x512 and 300x300.
+the dataset it's available on kaggle at this [link](https://www.kaggle.com/ravirajsinh45/real-life-industrial-dataset-of-casting-product)
+
+### Our dataset
+
 
 - - -
 
