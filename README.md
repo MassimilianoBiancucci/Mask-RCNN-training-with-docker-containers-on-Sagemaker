@@ -1,8 +1,8 @@
-# Segmentation-of-defects-in-metal-casting-products
+# Segmentation of defects in metal casting products
 
 Mask R-CNN for metal casting defects detection and instance segmentation using Keras and TensorFlow. 
 
-This project was possible thanks to the repository [matterport/Mask_RCNN](https://github.com/matterport/Mask_RCNN), in this repository we have adapted the code for work into a docker container and fine-tuned the pre-trained model on COCO on our dataset, using the sagemaker service.
+This project was possible thanks to the repository [matterport/Mask_RCNN](https://github.com/matterport/Mask_RCNN), in this repository we have adapted the code for instance segmentation written by matterport for work into a docker container and fine-tuned the pre-trained model on COCO with our dataset, using the AWS sagemaker service.
 
 - - -
 ## Index
@@ -21,11 +21,13 @@ This project was possible thanks to the repository [matterport/Mask_RCNN](https:
     - Introduction
     - Notebook code
     - Container code
+1. [Results](#results)
 1. [Useful links](#useful-links)
 
 - - -
 
 ## Overview
+The core of the project was the matterport implementation of [Mask R-CNN](https://arxiv.org/pdf/1703.06870.pdf) an architecture proposed by Ross Girshick, revisited using [Feature pyramid network](https://arxiv.org/pdf/1612.03144.pdf) as final stage and using [Resnet101](https://arxiv.org/pdf/1512.03385.pdf) as backbone.
 
 - - -
 
@@ -42,6 +44,10 @@ This project was possible thanks to the repository [matterport/Mask_RCNN](https:
 - - -
 
 ## Sagemaker
+
+- - -
+
+## Results
 
 - - -
 
@@ -99,8 +105,8 @@ This project was possible thanks to the repository [matterport/Mask_RCNN](https:
 
 ### Related papers
 
-- [maskrcnn paper](https://arxiv.org/pdf/1703.06870.pdf)
+- [Mask R-CNN paper](https://arxiv.org/pdf/1703.06870.pdf)
 
-- [feature pyramid network paper](https://arxiv.org/pdf/1612.03144.pdf)
+- [Feature pyramid network paper](https://arxiv.org/pdf/1612.03144.pdf)
 
 - [resnet50 paper](https://arxiv.org/pdf/1512.03385.pdf)
