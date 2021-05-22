@@ -1,4 +1,4 @@
-# [Adapting Your Own Training Container]()
+# Adapting Your Own Training Container
 
 Create Dockerfile and Python training scripts
 
