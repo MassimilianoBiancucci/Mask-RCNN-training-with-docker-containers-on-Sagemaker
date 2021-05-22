@@ -70,6 +70,10 @@ the dataset it's available on kaggle at this [link](https://www.kaggle.com/ravir
   
 - [Pushing Docker image to ECR](https://docs.aws.amazon.com/AmazonECR/latest/userguide/docker-push-ecr-image.html)
 
+- [EC2 instance types](https://aws.amazon.com/it/ec2/instance-types/)
+
+- [Sagemaker pricing](https://aws.amazon.com/sagemaker/pricing/)
+
 ### Sagemaker docs
 
 - [Estimator reference](https://sagemaker.readthedocs.io/en/stable/api/training/estimators.html)
@@ -104,7 +108,7 @@ the dataset it's available on kaggle at this [link](https://www.kaggle.com/ravir
 
 - [matterport/Mask_RCNN](https://github.com/matterport/Mask_RCNN)
 
-- [aws/amazon-sagemaker-examples](https://github.com/aws/amazon-sagemaker-examples/tree/master/advanced_functionality/custom-training-containers/script-mode-container)
+- [aws/amazon-sagemaker-examples/advanced-functionality/custom-training-container](https://github.com/aws/amazon-sagemaker-examples/tree/master/advanced_functionality/custom-training-containers/script-mode-container)
 
 - [svpino/tensorflow-object-detection-sagemaker](https://github.com/svpino/tensorflow-object-detection-sagemaker)
 
