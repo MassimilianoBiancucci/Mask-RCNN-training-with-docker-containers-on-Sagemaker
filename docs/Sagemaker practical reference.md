@@ -1,4 +1,4 @@
-# [Sagemaker practical reference]()
+# Sagemaker practical reference
 
 Per passare i parametri allo script `train.py` li si deve passare all'estimator e poi riprenderli come argomenti all'interno dello script.
 

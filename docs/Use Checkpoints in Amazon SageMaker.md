@@ -1,4 +1,4 @@
-# [Use Checkpoints in Amazon SageMaker]()
+# Use Checkpoints in Amazon SageMaker
 
 For custom training containers and other frameworks
 
