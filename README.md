@@ -72,6 +72,10 @@ the dataset it's available on kaggle at this [link](https://www.kaggle.com/ravir
 
 ### Sagemaker docs
 
+- [Estimator reference](https://sagemaker.readthedocs.io/en/stable/api/training/estimators.html)
+
+- [Sagemaker API reference](https://sagemaker.readthedocs.io/en/stable/api/training/estimators.html)
+
 - [Esempo ufficiale aws](https://github.com/aws/amazon-sagemaker-examples/tree/master/advanced_functionality/custom-training-containers/script-mode-container)
 
 - [Git of sagemaker training toolkit](https://github.com/aws/sagemaker-training-toolkit)
