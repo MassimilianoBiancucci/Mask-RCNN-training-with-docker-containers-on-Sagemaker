@@ -27,7 +27,7 @@ This project was possible thanks to the repository [matterport/Mask_RCNN](https:
 - - -
 
 ## Overview
-The core of the project was the matterport implementation of [Mask R-CNN](https://arxiv.org/pdf/1703.06870.pdf) an architecture proposed by Ross Girshick, revisited using [Feature pyramid network](https://arxiv.org/pdf/1612.03144.pdf) as final stage and using [Resnet101](https://arxiv.org/pdf/1512.03385.pdf) as backbone.
+The core of the project was the matterport implementation of [Mask R-CNN](https://arxiv.org/pdf/1703.06870.pdf) an architecture proposed by Ross Girshick et al., revisited using [Feature pyramid network](https://arxiv.org/pdf/1612.03144.pdf) as final stage and using [Resnet101](https://arxiv.org/pdf/1512.03385.pdf) as backbone.
 
 - - -
 
@@ -78,8 +78,6 @@ the dataset it's available on kaggle at this [link](https://www.kaggle.com/ravir
 
 - [Sagemaker toolkits containers structure](https://docs.aws.amazon.com/sagemaker/latest/dg/amazon-sagemaker-toolkits.html)
 
-- [Esempo ufficiale aws](https://github.com/aws/amazon-sagemaker-examples/tree/master/advanced_functionality/custom-training-containers/script-mode-container)
-
 - [Git of sagemaker training toolkit](https://github.com/aws/sagemaker-training-toolkit)
 
 - [Sagemaker practical reference](https://sagemaker.readthedocs.io/en/stable/overview.html)
@@ -105,6 +103,8 @@ the dataset it's available on kaggle at this [link](https://www.kaggle.com/ravir
 ### git reference
 
 - [matterport/Mask_RCNN](https://github.com/matterport/Mask_RCNN)
+
+- [aws/amazon-sagemaker-examples](https://github.com/aws/amazon-sagemaker-examples/tree/master/advanced_functionality/custom-training-containers/script-mode-container)
 
 - [svpino/tensorflow-object-detection-sagemaker](https://github.com/svpino/tensorflow-object-detection-sagemaker)
 
