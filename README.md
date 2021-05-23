@@ -43,7 +43,9 @@ the dataset it's available on kaggle at this [link](https://www.kaggle.com/ravir
 ![Original dataset preview](https://github.com/MassimilianoBiancucci/Segmentation-of-defects-in-metal-casting-products/blob/main/assets/Original_dataset_preview.png?raw=true)
 
 ### Our dataset
-
+Our datset start from the precedent mentioned image classification dataset, in which we have added masks for the segmentation task. The dataset was done using [Supervisely](https://app.supervise.ly/) a powerfull tool for create your own 3D 2D datasets, for object detection, semantic and instance segmentation.
+The original dataset was made by 1300 photos, due to time constraints we have only annotated 238 images. In our dataset structure are present 4 classes [disk, hole, chipping, deburring], 
+![Original dataset preview](https://github.com/MassimilianoBiancucci/Segmentation-of-defects-in-metal-casting-products/blob/main/assets/Segmented_dataset_preview.png?raw=true)
 
 - - -
 
