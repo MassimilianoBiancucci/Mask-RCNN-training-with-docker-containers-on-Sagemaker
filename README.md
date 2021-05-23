@@ -10,7 +10,7 @@ This project was possible thanks to the repository [matterport/Mask_RCNN](https:
 1. [Overview](#overview)
 1. [Dataset](#dataset)
     - [Original dataset](#original-dataset)
-    - [Our dataset](our-dataset)
+    - [Our dataset](#our-dataset)
 1. [Docker containers](#docker-containers)
     - [Dockerfile AWS](#dockerfile-aws)
     - [Dokcerfile Local](#dockerfile-local)
