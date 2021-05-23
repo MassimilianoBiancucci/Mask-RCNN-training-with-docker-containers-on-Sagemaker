@@ -2,7 +2,7 @@
 
 Mask R-CNN for metal casting defects detection and instance segmentation using Keras and TensorFlow. 
 
-This project was possible thanks to the repository [matterport/Mask_RCNN](https://github.com/matterport/Mask_RCNN), in this repository we have adapted the code for instance segmentation written by matterport for work into a docker container and fine-tuned the pre-trained model on COCO with our dataset, using the AWS sagemaker service.
+This project was possible thanks to the repository [matterport/Mask_RCNN](https://github.com/matterport/Mask_RCNN), in this repository we have adapted the code for instance segmentation written by matterport for work into a docker container and fine-tuned the pre-trained model on COCO with our dataset, using Sagemaker.
 
 - - -
 ## Index
@@ -28,6 +28,7 @@ This project was possible thanks to the repository [matterport/Mask_RCNN](https:
 
 ## Overview
 The core of the project was the matterport implementation of [Mask R-CNN](https://arxiv.org/pdf/1703.06870.pdf) an architecture proposed by Ross Girshick et al., revisited using [Feature pyramid network](https://arxiv.org/pdf/1612.03144.pdf) as final stage and using [Resnet101](https://arxiv.org/pdf/1512.03385.pdf) as backbone.
+
 
 - - -
 
