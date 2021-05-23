@@ -38,7 +38,8 @@ The original dataset is an image collection of one type of casted metal product 
 The dataset was divided only by defected and not defected object, in fact it is a dataset for only image classification.
 It's composed by 781 image with defected objects and 519 object without defects, the same images are available in two resolution 512x512 and 300x300.
 the dataset it's available on kaggle at this [link](https://www.kaggle.com/ravirajsinh45/real-life-industrial-dataset-of-casting-product)
-![Alt text](assets/Original_dataset_preview.jpeg?raw=true "Title")
+
+![Original dataset preview](https://github.com/[username]/[reponame]/blob/[branch]/Original_dataset_preview.png?raw=true)
 
 ### Our dataset
 
