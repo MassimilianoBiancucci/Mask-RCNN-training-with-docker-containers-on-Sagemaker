@@ -47,7 +47,7 @@ Our datset start from the precedent mentioned image classification dataset, in w
 The original dataset was made by 1300 images, due to time constraints we have only annotated 238 images. In our dataset structure are present 4 classes [disk, hole, chipping, deburring], the first is present in every image of the dataset, the other three classes are preset only in images with defected disks.
 
 ![Original dataset preview](https://github.com/MassimilianoBiancucci/Segmentation-of-defects-in-metal-casting-products/blob/main/assets/Segmented_dataset_preview.png?raw=true)
-(this image is only rappresentative then how this classes are applied)
+(this image is only rappresentative then how classes are applied)
 
 The dataset is released in **supervisely format**, where there is two way to extract objects bitmaps:
 - **Mask images**: The first way is to use the images into masks_machine/ folder where each image have the same name of the original, but their color are mapped in different ways, in this format each pixel represent a class, the associations between colors and classes can be found into the obj_class_to_machine_color.json file, presented below in json format.
