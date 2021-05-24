@@ -24,23 +24,11 @@ RUN pip install -r requirements.txt
 # le modifiche da qui in giu!
 #--------------------------------------------------------------------
 
-#installaione del modulo per l'interfacciamento del container
-RUN pip3 install sagemaker-training
-
-# creazione della cartella del progetto
-RUN mkdir Mask_RCNN
-
 # cambia la cartella 
-WORKDIR /root/Mask_RCNN/
+WORKDIR /root/
 
 # copio la cartella principale di lavoro
 COPY mask_rcnn_coco.h5 .
-
-# copio la cartella principale di lavoro
-COPY Mask_RCNN .
-
-# crea la cartella di destinazione del dataset 
-RUN mkdir isic2018
 
 # start command  
 CMD [ "bash" ]
