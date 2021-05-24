@@ -50,7 +50,7 @@ The original dataset was made by 1300 images, due to time constraints we have on
 (this image is only rappresentative then how classes are applied)
 
 The dataset is released in **supervisely format**, where there is two way to extract objects bitmaps:
-- **Mask images**: The first way is to use the images into masks_machine/ folder where each image have the same name of the original, but their color are mapped in different ways, in this format each pixel represent a class, the associations between colors and classes can be found into the obj_class_to_machine_color.json file, presented below in json format.
+- **Mask images**: The first way is to use the images into datasets/defect_segmentation_../masks_machine/ folder where each image have the same name of the original, but their color are mapped in different ways, in this format each pixel represent a class, the associations between colors and classes can be found into the obj_class_to_machine_color.json file, presented below in json format.
 
 ```
 {
@@ -60,6 +60,8 @@ The dataset is released in **supervisely format**, where there is two way to ext
   "disk":       [4, 4, 4]
 }
 ```
+
+
 
 - **json annotations**:
 
