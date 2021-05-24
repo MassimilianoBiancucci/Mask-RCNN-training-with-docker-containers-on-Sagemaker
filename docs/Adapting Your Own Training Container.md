@@ -19,7 +19,7 @@ ENV SAGEMAKER_PROGRAM train.py
 
 - `COPY train.py /opt/ml/code/train.py` – Copies the script to the location inside the container that is expected by SageMaker. The script must be located in this folder.
 
-- `ENV SAGEMAKER_PROGRAM train.py` – Takes your training script train.py as the entrypoint script copied in the `/opt/ml/code` folder of the container. This is the only environmental variable that you must specify when you build your own container.
+- `ENV SAGEMAKER_PROGRAM train.py` – Takes your training script `train.py` as the entrypoint script copied in the `/opt/ml/code` folder of the container. This is the only environmental variable that you must specify when you build your own container.
 
 Per lanciare il docker:
 
@@ -35,5 +35,7 @@ estimator = Estimator(image_uri=image_uri --> da ECR,
                     instance_type='ml.p2.xlarge')
 
 # start training
-estimator.fit()
+estimator.fit({
+        'dataset': dataset_bucket
+    })
 ```

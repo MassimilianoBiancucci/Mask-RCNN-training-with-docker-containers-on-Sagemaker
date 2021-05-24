@@ -32,7 +32,7 @@ i parametri sono:
 
 - instance_count (int) – Number of Amazon EC2 instances to use for training.
 
-- instance_type (str) – Type of EC2 instance to use for training, for example, ‘ml.c4.xlarge’.
+- instance_type (str) – Type of EC2 instance to use for training, for example, `ml.c4.xlarge`.
 
 - volume_size (int) – Size in GB of the EBS volume to use for storing input data during training (default: 30). Must be large enough to store training data if File Mode is used (which is the default).
 
