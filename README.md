@@ -65,10 +65,7 @@ The dataset is released in **supervisely format**, where there is two way to ext
 }
 ```
 
-
-
 - **json annotations**:
-
 
 - - -
 

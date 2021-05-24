@@ -46,7 +46,6 @@ random.seed(42)
 random.shuffle(idxs)
 i = int(len(idxs) * TRAINING_SPLIT)
 
-
 print("training samples:" + str(i))
 print("validations samples:" + str(len(idxs) - i))
 
@@ -130,7 +129,7 @@ class LesionBoundaryDataset(utils.Dataset):
 
 		# return the image
 		return image
-
+	
 	def load_mask(self, imageID):
 		# grab the image info and derive the full annotation path
 		# file path
