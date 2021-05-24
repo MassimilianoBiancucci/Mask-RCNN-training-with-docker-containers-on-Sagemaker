@@ -19,3 +19,5 @@ supervisely
 json
 Jupyter
 pretrained
+entrypoint
+SDK

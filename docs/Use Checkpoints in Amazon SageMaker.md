@@ -11,5 +11,3 @@ estimator = Estimator(
         checkpoint_local_path=checkpoint_local_path -> "/opt/ml/checkpoints"
 )
 ```
-
-<span style="color:red">il checkpoint_local_path puo' essere cambiato con il path che gia' usa la rete in questo momento?</span>
