@@ -22,7 +22,7 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 # Install sagemaker-training toolkit that contains the common functionality necessary to create a container compatible with SageMaker and the Python SDK.
-RUN pip3 install sagemaker-training
+RUN pip install sagemaker-training
 
 # le modifiche da qui in giu!
 #--------------------------------------------------------------------
