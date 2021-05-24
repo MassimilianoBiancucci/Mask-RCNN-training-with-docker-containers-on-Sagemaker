@@ -9,14 +9,13 @@ sul notebook:
 def json_encode_hyperparameters(hyperparameters):
     return {str(k): json.dumps(v) for (k, v) in hyperparameters.items()}
 
-
 hyperparameters = json_encode_hyperparameters({"hp1": "value1", "hp2": 300, "hp3": 0.001})
 
 est = sagemaker.estimator.Estimator(
     container_image_uri,
     role,
-    train_instance_count=1,
-    train_instance_type='ml.m5.xlarge',
+    instance_count=1,
+    instance_type='ml.m5.xlarge',
     base_job_name=prefix,
     hyperparameters=hyperparameters,
 )

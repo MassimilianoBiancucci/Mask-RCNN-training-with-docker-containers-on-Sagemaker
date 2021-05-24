@@ -47,7 +47,7 @@ if __name__ == "__main__":
 
         print(f"new tensorboard record saved {i+1}/10")
 
-        #simulating the checkpoints
+        # simulating the checkpoints
         f = open(f"/opt/ml/checkpoints/checkpoint_test_{i}.txt", "w")
         f.write("test " * 100)
         f.close()
@@ -56,10 +56,10 @@ if __name__ == "__main__":
 
         time.sleep(20)
 
-    #reading the folder structure 
+    # reading the folder structure 
     tree = display_tree('/opt/ml', string_rep = True)
 
-    #this time the result is only visible on the standard output
+    # this time the result is only visible on the standard output
     print(tree)
 
 
