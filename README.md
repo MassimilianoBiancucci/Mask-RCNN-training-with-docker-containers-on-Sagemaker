@@ -53,7 +53,8 @@ The original dataset was made by 1300 images, due to time constraints we have on
 (this image is only rappresentative then how classes are applied)
 
 The dataset is released in [**supervisely format**](https://docs.supervise.ly/data-organization/00_ann_format_navi/04_supervisely_format_objects), where there is two way to extract objects bitmaps shown below.
-The goal for the dataset preparation for training Mask R-CNN is to extract from the dataset for each image several masks, one for each istances of object that is present into this immage and that is labled. Each mask is a simple numpy array of bool or uint8 with shape (height, width), where the backgroung is indicated with zero and the mask of our istance is marked with pixel of value 1.
+The goal for the dataset preparation for training Mask R-CNN is to extract from the dataset for each image several masks, one for each istance of object that is present into this immage and that is labled. Each mask is a simple numpy array of bool or uint8 with shape (height, width), where the backgroung is indicated with zero and the mask of our istance is marked with pixel of value 1.
+At the end of the process we need to obtain for each image a numpy array with shape (height, width, n_inst) where n_inst is the number of instace of every class in the image and an array with shape (n_inst) that contains the class of each instance into the 3D array of masks.
 
 ### **Mask images preparation**
 
@@ -69,15 +70,23 @@ The first way is to use the images into datasets/defect_segmentation_../masks_ma
 ```
 
 The image in this format isn't visible to human eye as can be seen below, but it is easy to manipulate with a simple script.
-In this images it's shown as the mask appear completely black but if the small differences in the pixels are highlighted they beacame visible.
+In this images it's shown as the istances appear completely black but if the small differences in the pixels are highlighted they beacame visibles.
 
 ![Mask preview](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/assets/instance_estraction_from_mask/original_mask.png?raw=true)
 
-All we need for start the process of 
+All we need for start the process of instance separation is to extract from the mask, each pixel with the same value and place it in another blank image by changing the values of the class pixel to 255, The result will be n matrix for n class.
+In this case in the original mask were only instances belonging to 2 classes so the generated mask for deburring and hole class are empty.
+The next step is to separete all instances of each class, in the case of disk we have only one instance so the work is already done but in the chipping mask there are 11 instances so we need to calculate the position of each of that.
 
 ![Mask preview](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/assets/instance_estraction_from_mask/extracted_classes_from_mask.png?raw=true)
 
+This step isn't too hard, if you use opencv there is an helpfull function that given one matrix 2D with 0 and 255 values, automaticaly separetes each contiguous regions,
+giving helpfull information about each region ([connectedComponentsWithStats](https://docs.opencv.org/3.4/d3/dc0/group__imgproc__shape.html#ga107a78bf7cd25dec05fb4dfc5c9e765f)).
+In the example below we can se as each detected region is marked with a cross, but it's important to note as in the disk mask was detected one more instace that shouldn't be here, maybe beacuse there is same disconnected pixel that was rilevated as another region so it's a good practice setting an area limit under which the region it's rejected. In the output of this function in addition to the center points of the regions, the areas of the regions there are one matrix with the same dimensions of the input matrix but this time the values of each region is marked with different values, similarly how the initial mask separete different classes.
+
 ![Mask preview](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/assets/instance_estraction_from_mask/instaces_separation_from_class_mask.jpeg?raw=true)
+
+The last step is similar to the first, where each class was sepatrated into multiple masks but at this point the only difference is that we're separating istances of the same class. So at the last thing to do is to packing all this masks into one tensor with shape (h, w, n), and creating one vector of n elements where the class of each mask are stored. 
 
 ![Mask preview](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/assets/instance_estraction_from_mask/separated_instances_of_class_1.png?raw=true)
 
