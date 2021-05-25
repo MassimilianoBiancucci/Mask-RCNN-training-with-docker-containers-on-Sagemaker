@@ -7,6 +7,8 @@ services:
       dockerfile: Dockerfile_Local/Dockerfile
     ports:
       - "8888:8888"  # effettua il binding della porta 8888 tra quella dell'host e quella del container
+      - "12000:12000" # per codeStream
+      - "12002:12002" # per codeStream
     volumes:
       # passo la cartella del codice come volume
       - ./../Mask_RCNN:/root/Mask_RCNN/

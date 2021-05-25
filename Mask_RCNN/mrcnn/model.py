@@ -2077,6 +2077,9 @@ class MaskRCNN():
         Returns:
             The path of the last checkpoint file
         """
+
+        # TODO fargli prendere i chechpoint da un'altra directory
+
         # Get directory names. Each directory corresponds to a model
         dir_names = next(os.walk(self.model_dir))[1]
         key = self.config.NAME.lower()
@@ -2086,7 +2089,7 @@ class MaskRCNN():
             import errno
             raise FileNotFoundError(
                 errno.ENOENT,
-                "Could not find model directory under {}".format(self.model_dir))
+                f"Could not find model directory under {self.model_dir}")
         # Pick last directory
         dir_name = os.path.join(self.model_dir, dir_names[-1])
         # Find the last checkpoint
@@ -2096,7 +2099,7 @@ class MaskRCNN():
         if not checkpoints:
             import errno
             raise FileNotFoundError(
-                errno.ENOENT, "Could not find weight files in {}".format(dir_name))
+                errno.ENOENT, f"Could not find weight files in {dir_name}")
         checkpoint = os.path.join(dir_name, checkpoints[-1])
         return checkpoint
 
@@ -2270,7 +2273,8 @@ class MaskRCNN():
                 # So, adjust for that then increment by one to start from the next epoch
                 self.epoch = int(m.group(6)) - 1 + 1
                 print('Re-starting from epoch %d' % self.epoch)
-
+        
+        # TODO log dir
         # Directory for training logs
         self.log_dir = os.path.join(self.model_dir, "{}{:%Y%m%dT%H%M}".format(
             self.config.NAME.lower(), now))

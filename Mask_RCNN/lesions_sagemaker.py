@@ -3,7 +3,7 @@ Script for Mask_R-CNN training
 '''
 
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '4' 
 
 '''
 TF DEBUG LEVELS:
@@ -26,6 +26,7 @@ import imutils
 import random
 import cv2
 
+
 # initialize the dataset path, images path, and annotations file path
 #ATTENZONE MODIFICARE CON LA POSIZIONE CORRETTA SE NECESSARIO
 DATASET_PATH = os.path.abspath("/root/isic2018")
@@ -41,6 +42,9 @@ TRAINING_SPLIT = 0.8
 # grab all image paths, then randomly select indexes for both training
 # and validation
 IMAGE_PATHS = sorted(list(paths.list_images(IMAGES_PATH)))
+
+IMAGE_PATHS = IMAGE_PATHS[:100]
+
 idxs = list(range(0, len(IMAGE_PATHS)))
 random.seed(42)
 random.shuffle(idxs)
@@ -61,7 +65,6 @@ COCO_PATH = "mask_rcnn_coco.h5"
 # initialize the name of the directory where logs and output model
 # snapshots will be stored
 LOGS_AND_MODEL_DIR = "lesions_logs"
-
 
 class LesionBoundaryConfig(Config):
 	"""
@@ -195,6 +198,8 @@ if __name__ == "__main__":
 	
 	args = vars(ap.parse_args())
 
+	quit()
+
 	# load the training dataset
 	trainDataset = LesionBoundaryDataset(IMAGE_PATHS, CLASS_NAMES)
 	trainDataset.load_lesions(trainIdxs)
@@ -210,6 +215,7 @@ if __name__ == "__main__":
 	config.display()
 
 	# initialize the image augmentation process
+	# fa l'argomentazione con al massimo 2 tipi di argomentazione
 	aug = iaa.SomeOf((0, 2), [
 		iaa.Fliplr(0.5),
 		iaa.Flipud(0.5),
@@ -219,7 +225,8 @@ if __name__ == "__main__":
 	# initialize the model and load the COCO weights so we can
 	# perform fine-tuning
 	model = modellib.MaskRCNN(mode="training", config=config,
-		model_dir=LOGS_AND_MODEL_DIR)
+		model_dir=LOGS_AND_MODEL_DIR) # separare log e model
+
 	model.load_weights(COCO_PATH, by_name=True,
 		exclude=["mrcnn_class_logits", "mrcnn_bbox_fc",
 			"mrcnn_bbox", "mrcnn_mask"])
