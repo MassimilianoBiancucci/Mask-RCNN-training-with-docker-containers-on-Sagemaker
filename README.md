@@ -86,7 +86,7 @@ In the example below we can se as each detected region is marked with a cross, b
 
 ![Mask preview](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/assets/instance_estraction_from_mask/instaces_separation_from_class_mask.jpeg?raw=true)
 
-The last step is similar to the first, where each class was sepatrated into multiple masks but at this point the only difference is that we're separating istances of the same class. So at the last thing to do is to packing all this masks into one tensor with shape (h, w, n), and creating one vector of n elements where the class of each mask are stored. 
+The last step is similar to the first, where each class was sepatrated into multiple masks but at this point the only difference is that we're separating istances of the same class. So the last thing to do is to packing all this masks into one tensor with shape (h, w, n), and creating one vector of n elements where the class of each mask are stored. 
 
 ![Mask preview](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/assets/instance_estraction_from_mask/separated_instances_of_class_1.png?raw=true)
 
