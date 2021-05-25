@@ -62,11 +62,11 @@ COCO_PATH = "mask_rcnn_coco.h5"
 # snapshots will be stored
 LOGS_AND_MODEL_DIR = "lesions_logs"
 
-	
+
 class LesionBoundaryConfig(Config):
 	"""
-	estendo la classe Config di maskrcnn (mrcnn/config.py) che contiene le configurazini 
-	di default e ovverrido quelle che voglio modificare.
+	estendo la classe Config di maskrcnn (mrcnn/config.py) che contiene le 
+	configurazini di default e ovverrido quelle che voglio modificare.
 	"""	
 
 	# give the configuration a recognizable name
@@ -109,6 +109,13 @@ class LesionBoundaryDataset(utils.Dataset):
 		self.width = width
 
 	def load_lesions(self, idxs):
+		"""load the dataset from the disk into the dataset class
+
+		Args:
+			idxs (list of int): gli indici che determinano l'ordine 
+						delle immagini nel dataset
+		"""		
+
 		# loop over all class names and add each to the 'lesion'
 		# dataset
 		for (classID, label) in self.classNames.items():
@@ -122,9 +129,9 @@ class LesionBoundaryDataset(utils.Dataset):
 			filename = imagePath.split(os.path.sep)[-1]
 
 			# add the image to the dataset
-			self.add_image("lesion", image_id=filename,
-				path=imagePath)
+			self.add_image("lesion", image_id=filename, path=imagePath)
 
+	#override
 	def load_image(self, imageID):
 		# grab the image path, load it, and convert it from BGR to
 		# RGB color channel ordering
@@ -138,6 +145,7 @@ class LesionBoundaryDataset(utils.Dataset):
 		# return the image
 		return image
 
+	#override
 	def load_mask(self, imageID):
 		# grab the image info and derive the full annotation path
 		# file path
@@ -185,10 +193,6 @@ if __name__ == "__main__":
 	# construct the argument parser and parse the arguments
 	ap = argparse.ArgumentParser()
 	
-	ap.add_argument("-w", "--weights",
-		help="optional path to pretrained weights")
-	ap.add_argument("-i", "--image",
-		help="optional path to input image to segment")
 	args = vars(ap.parse_args())
 
 	# load the training dataset
@@ -229,3 +233,10 @@ if __name__ == "__main__":
 	model.train(trainDataset, valDataset, epochs=40,
 		layers="all", learning_rate=config.LEARNING_RATE / 10,
 		augmentation=aug)
+
+'''
+sample output:
+
+1/2075 [..............................] - ETA: 21:39:54 - loss: 3.1190 - rpn_class_loss: 0.0191 - rpn_bbox_loss: 0.1407 - mrcnn_class_loss: 0.6572 - mrcnn_bbox_loss: 0.9571 -    
+2/2075 [..............................] - ETA: 11:12:53 - loss: 2.8820 - rpn_class_loss: 0.0191 - rpn_bbox_loss: 0.1359 - mrcnn_class_loss: 0.5046 - mrcnn_bbox_loss: 0.9102 -    
+'''

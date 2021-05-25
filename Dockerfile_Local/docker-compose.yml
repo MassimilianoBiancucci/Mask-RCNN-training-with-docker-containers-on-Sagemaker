@@ -13,6 +13,8 @@ services:
       - ./../datasets/ISIC2018/dataset:/root/isic2018
       - /tmp/.X11-unix:/tmp/.X11-unix    # necessario per l'X11 forwarding
       - ~/.Xauthority:/root/.Xauthority  # necessario per l'X11 forwarding
+      - ./../.git:/root/.git # to have git lens and codeStream, never commit from inside the container
+      - ./../.gitignore:/root/.gitignore
     stdin_open: true # docker run -i
     tty: true        # docker run -t
     runtime: nvidia  # abilita l'utilizzo delle gpu del sistema

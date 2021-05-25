@@ -10,15 +10,79 @@ Written by Waleed Abdulla
 import numpy as np
 
 
-# Base Configuration Class
-# Don't use this class directly. Instead, sub-class it and override
-# the configurations you need to change.
-
 class Config(object):
-    """Base configuration class. For custom configurations, create a
+    """
+    Base configuration class. For custom configurations, create a
     sub-class that inherits from this one and override properties
     that need to be changed.
+
+    Attributes:
+        Name            -> the configurations name
+        GPU_COUNT       -> NUMBER OF GPUs to use. When using only a CPU, this needs 
+                           to be set to 1.
+        IMAGES_PER_GPU  -> Number of images to train with on each GPU. 
+                           A 12GB GPU can typically handle 2 images of 1024x1024px.
+        STEPS_PER_EPOCH -> Number of training steps per epoch
+        VALIDATION_STEPS -> Number of validation steps to run at the end of 
+                        every training epoch.
+        BACKBONE        -> Backbone network architecture
+        COMPUTE_BACKBONE_SHAPE -> Only useful if you supply a callable to BACKBONE.
+        BACKBONE_STRIDES -> The strides of each layer of the FPN Pyramid.
+        FPN_CLASSIF_FC_LAYERS_SIZE -> Size of the fully-connected layers in the 
+                                      classification graph
+        TOP_DOWN_PYRAMID_SIZE -> Size of the top-down layers used to build the 
+                                 feature pyramid
+        NUM_CLASSES     -> Number of classification classes (including background)
+        RPN_ANCHOR_SCALES -> Length of square anchor side in pixels
+        RPN_ANCHOR_RATIOS -> Ratios of anchors at each cell (width/height)
+        RPN_ANCHOR_STRIDE -> Anchor stride
+        RPN_NMS_THRESHOLD -> Non-max suppression threshold to filter RPN proposals.
+        RPN_TRAIN_ANCHORS_PER_IMAGE -> How many anchors per image to use for 
+                                       RPN training
+        PRE_NMS_LIMIT   -> ROIs kept after tf.nn.top_k and before non-maximum 
+                           suppression
+        POST_NMS_ROIS_TRAINING -> ROIs kept after non-maximum suppression 
+                                  training
+        POST_NMS_ROIS_INFERENCE -> ROIs kept after non-maximum suppression 
+                                   inference
+        USE_MINI_MASK   -> If enabled, resizes instance masks to a smaller 
+                           size to reduce memory load. Recommended when using 
+                           high-resolution images.
+        MINI_MASK_SHAPE -> (height, width) of the mini-mask
+        IMAGE_RESIZE_MODE -> Input image resizing
+        IMAGE_MIN_DIM   -> see comments on the code
+        IMAGE_MAX_DIM   -> see comments on the code
+        IMAGE_MIN_SCALE -> Minimum scaling ratio.
+        IMAGE_CHANNEL_COUNT -> Number of color channels per image.
+        MEAN_PIXEL      -> Image mean (RGB)
+        TRAIN_ROIS_PER_IMAGE -> Number of ROIs per image to feed to 
+                                classifier/mask heads
+        ROI_POSITIVE_RATIO -> Percent of positive ROIs used to train 
+                              classifier/mask heads
+        POOL_SIZE       -> Pooled ROIs
+        MASK_POOL_SIZE  -> Pooled ROIs
+        MASK_SHAPE      -> Shape of output mask
+        MAX_GT_INSTANCES -> Maximum number of ground truth instances 
+                            to use in one image
+        RPN_BBOX_STD_DEV -> Bounding box refinement standard deviation 
+                            for RPN and final detections. 
+        BBOX_STD_DEV    -> Bounding box refinement standard deviation 
+                           for RPN and final detections.
+        DETECTION_MAX_INSTANCES -> Max number of final detections
+        DETECTION_MIN_CONFIDENCE -> Minimum probability value to accept 
+                                    a detected instance
+        DETECTION_NMS_THRESHOLD -> Non-maximum suppression threshold for 
+                                   detection
+        LEARNING_RATE   -> 
+        LEARNING_MOMENTUM -> 
+        WEIGHT_DECAY    -> Weight decay regularization
+        LOSS_WEIGHTS    -> Loss weights for more precise optimization
+        USE_RPN_ROIS    -> Use RPN ROIs or externally generated ROIs for 
+                           training
+        TRAIN_BN        -> Train or freeze batch normalization layers
+        GRADIENT_CLIP_NORM -> Gradient norm clipping
     """
+
     # Name the configurations. For example, 'COCO', 'Experiment 3', ...etc.
     # Useful if your code needs to do things differently depending on which
     # experiment is running.

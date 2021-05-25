@@ -308,6 +308,8 @@ class Dataset(object):
         self.num_images = len(self.image_info)
         self._image_ids = np.arange(self.num_images)
 
+        #TODO convertire con le fstring
+        
         # Mapping from source class and image IDs to internal IDs
         self.class_from_source_map = {"{}.{}".format(info['source'], info['id']): id
                                       for info, id in zip(self.class_info, self.class_ids)}
