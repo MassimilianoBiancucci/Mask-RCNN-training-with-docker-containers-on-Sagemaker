@@ -122,7 +122,7 @@ Supervisely whene the dataset is exported give you the masks shown above but the
 }
 ```
 
-List of the structure used for the mask recostruction:
+List of the values used for the mask recostruction:
 
 - **size**:         list of the mask dimensions
   - **height**:     height of the image
@@ -132,9 +132,9 @@ List of the structure used for the mask recostruction:
   - **classTitle**: the name of the class, es. disk or hole in our case
   - **bitmap**:     bitmap object ! present only if the object is "geometryType":"bitmap"
     - **data**:     compressed bitmap encoded in base 64 characters
-    - **origi**:    [x, y] coordinates of the top left corner of the bitmap into the mask
+    - **origi**:    array containing [x, y] coordinates of the top left corner of the bitmap into the mask
 
-Here we can see the complete json with all the values, but not all the data are usefull for our scope, only the data shown above will be used from our algorithm for the mask recostruction.
+Here we can see the complete json with all the values, but not all the data are usefull for our scope, only the data shown above will be used from our algorithm for the mask recostruction, so the most important part it's the field "data" under "bitmap" that contain effectively the bitmap.
 
 ```json
 {
@@ -180,6 +180,8 @@ Here we can see the complete json with all the values, but not all the data are 
   ]
 }
 ```
+
+![Mask preview](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/assets/instance_estraction_from_mask/extracted_bitmaps_from_json_annotation.png?raw=true)
 
 - - -
 
