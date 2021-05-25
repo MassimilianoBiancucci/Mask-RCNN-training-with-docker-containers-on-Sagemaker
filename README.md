@@ -100,24 +100,21 @@ Notebook with code example: [supervisely_mask_dataset_preparetion.ipynb](https:/
 
 Supervisely whene the dataset is exported give you the masks shown above but the real dataset more meaningfull is that in json format. let’s take a look at the most meaningfull part of this format:
 
-```
+```json
 {
-  //heading
-  "tags": [ <object> ], // tags list useful for image marking 
   "size": {
-    "height": <int>, // height of the image
-    "width": <int> // width of the image
+    "height": , 
+    "width":  
   },
-
-  "objects": [ // lost of labels in the image
+  "objects": [
     {
       ...
-      "geometryType": <string>, // type of label es. bitmap or rectangle
+      "geometryType": , 
       ...
-      "classTitle": <string>, // the name of the class, es. disk or hole in our case
-      "bitmap": { // bitmap object ! present only if the object is "geometryType":"bitmap"
-        "data": <string>, // compressed bitmap encoded in base 64 characters
-        "origin": [<int>, <int>] // [x, y] coordinates of the top left corner of the bitmap into the mask
+      "classTitle": , 
+      "bitmap": {
+        "data": ,
+        "origin": []
       }
     },
     ... 
@@ -125,7 +122,19 @@ Supervisely whene the dataset is exported give you the masks shown above but the
 }
 ```
 
-Here we can see 
+List of the structure used for the mask recostruction:
+
+- **size**:         list of the mask dimensions
+  - **height**:     height of the image
+  - **width**:      width of the image
+- **objects**:      list of all the image labels
+  - **geometryType**:   type of label es. bitmap or rectangle
+  - **classTitle**: the name of the class, es. disk or hole in our case
+  - **bitmap**:     bitmap object ! present only if the object is "geometryType":"bitmap"
+    - **data**:     compressed bitmap encoded in base 64 characters
+    - **origi**:    [x, y] coordinates of the top left corner of the bitmap into the mask
+
+Here we can see the complete json with all the values, but not all the data are usefull for our scope, only the data shown above will be used from our algorithm for the mask recostruction.
 
 ```json
 {
@@ -161,42 +170,6 @@ Here we can see
         "origin": [
           60,
           54
-        ]
-      }
-    },
-    {
-      "id": 731743711,
-      "classId": 2926798,
-      "description": "",
-      "geometryType": "bitmap",
-      "labelerLogin": "max_svm",
-      "createdAt": "2021-05-12T08:54:13.164Z",
-      "updatedAt": "2021-05-15T17:03:22.089Z",
-      "tags": [],
-      "classTitle": "chipping",
-      "bitmap": {
-        "data": "eJzrDPBz5+WS4mJgYOD19HAJAtL8IMzIDCQZJdg5gRRbgE+IK5D+////0pvz74IkSoL8ghkcnt1IA3LUPV0cQyrmJD/IT3hgf0Dhf+NCuY46gyv/k3/0t7z5b3DiP+NJI3sGJYbt+4U/3KgwtAFqYfB09XNZ55TQBAAoUCiy",
-        "origin": [
-          197,
-          369
-        ]
-      }
-    },
-    {
-      "id": 731743710,
-      "classId": 2926798,
-      "description": "",
-      "geometryType": "bitmap",
-      "labelerLogin": "max_svm",
-      "createdAt": "2021-05-12T08:54:33.510Z",
-      "updatedAt": "2021-05-15T17:03:22.089Z",
-      "tags": [],
-      "classTitle": "chipping",
-      "bitmap": {
-        "data": "eJzrDPBz5+WS4mJgYOD19HAJAtICQMzHyAwkZR7ynQRSbAE+Ia5A+v///0tvzr8LZDGWBPkFMzg8u5EG5Kh7ujiGVMxJTqg5cOBfc+N/9uY/8my///N8/S/5T3nhL3ueT/YOHf8ZGZryhf2nJczrAWph8HT1c1nnlNAEAMcDKhI=",
-        "origin": [
-          230,
-          379
         ]
       }
     },
