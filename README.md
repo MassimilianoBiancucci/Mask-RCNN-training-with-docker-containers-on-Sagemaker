@@ -53,6 +53,7 @@ The original dataset was made by 1300 images, due to time constraints we have on
 (this image is only rappresentative then how classes are applied)
 
 The dataset is released in [**supervisely format**](https://docs.supervise.ly/data-organization/00_ann_format_navi/04_supervisely_format_objects), where there is two way to extract objects bitmaps shown below.
+The goal for the dataset preparation for training Mask R-CNN is to extract from the dataset for each image several masks, one for each istances of object that is present into this immage and that is labled. Each mask is a simple numpy array of bool or uint8 with shape (height, width), where the backgroung is indicated with zero and the mask of our istance is marked with pixel of value 1.
 
 ### **Mask images preparation**
 
@@ -66,7 +67,13 @@ The first way is to use the images into datasets/defect_segmentation_../masks_ma
   "disk":       [4, 4, 4]
 }
 ```
+
+The image in this format isn't visible to human eye as can be seen below, but it is easy to manipulate with a simple script.
+In this images it's shown as the mask appear completely black but if the small differences in the pixels are highlighted they beacame visible.
+
 ![Mask preview](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/assets/instance_estraction_from_mask/original_mask.png?raw=true)
+
+All we need for start the process of 
 
 ![Mask preview](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/assets/instance_estraction_from_mask/extracted_classes_from_mask.png?raw=true)
 
