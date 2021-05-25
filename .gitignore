@@ -142,4 +142,14 @@ dmypy.json
 
 .ssh/
 
-.gnupg
+.gnupg/
+
+.local/
+
+.config/
+
+.codestream/
+
+.keras/
+
+.pylint.d/
