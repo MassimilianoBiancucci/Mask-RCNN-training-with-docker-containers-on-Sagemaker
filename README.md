@@ -100,7 +100,7 @@ Notebook with code example: [supervisely_mask_dataset_preparetion.ipynb](https:/
 
 Supervisely whene the dataset is exported give you the masks shown above but the real dataset more meaningfull is that in json format. let’s take a look at the most meaningfull part of this format:
 
-```json
+```
 {
   //heading
   "tags": [ <object> ], // tags list useful for image marking 
@@ -120,7 +120,7 @@ Supervisely whene the dataset is exported give you the masks shown above but the
         "origin": [<int>, <int>] // [x, y] coordinates of the top left corner of the bitmap into the mask
       }
     },
-    ... // other label objects ...
+    ... 
   ]
 }
 ```
