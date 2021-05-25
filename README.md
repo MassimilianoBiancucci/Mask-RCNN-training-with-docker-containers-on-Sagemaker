@@ -1,12 +1,12 @@
-# Segmentation of defects in metal casting products
+# **Mask R-CNN training with docker containers on Sagemaker**
 
 Mask R-CNN for metal casting defects detection and instance segmentation using Keras and TensorFlow.
 
-This project was possible thanks to the repository [matterport/Mask_RCNN](https://github.com/matterport/Mask_RCNN), in this repository we have adapted the code for instance segmentation written by matterport for work into a docker container and fine-tuned the pretrained model on COCO with our dataset, using Sagemaker.
+This project was possible thanks to the repository [matterport/Mask_RCNN](https://github.com/matterport/Mask_RCNN), where we have adapted the code for instance segmentation written by matterport for work into a docker container and fine-tuned the pretrained model on COCO with our dataset, using Sagemaker.
 
 - - -
 
-## Index
+# **Index**
 
 1. [Overview](#overview)
 1. [Dataset](#dataset)
@@ -27,34 +27,36 @@ This project was possible thanks to the repository [matterport/Mask_RCNN](https:
 
 - - -
 
-## Overview
+# **Overview**
 
 The core of the project was the matterport implementation of [Mask R-CNN](https://arxiv.org/pdf/1703.06870.pdf) an architecture proposed by Ross Girshick et al., revisited using [Feature pyramid network](https://arxiv.org/pdf/1612.03144.pdf) as final stage and using [Resnet101](https://arxiv.org/pdf/1512.03385.pdf) as backbone.
 
 - - -
 
-## Dataset
+# **Dataset**
 
-### Original dataset (for image classification task)
+## **Original dataset** (for image classification task)
 
 The original dataset is an image collection of one type of casted metal product done with similar angle of view and with the objects every in front view.
 The dataset was divided only by defected and not defected object, in fact it is a dataset for only image classification.
 It's composed by 781 objects with defects and 519 object without defects, the same images are available in two resolution 512x512 and 300x300.
 the dataset it's available on kaggle at this [link](https://www.kaggle.com/ravirajsinh45/real-life-industrial-dataset-of-casting-product)
 
-![Original dataset preview](https://github.com/MassimilianoBiancucci/Segmentation-of-defects-in-metal-casting-products/blob/main/assets/Original_dataset_preview.png?raw=true)
+![Original dataset preview](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/assets/Original_dataset_preview.png?raw=true)
 
-### Our dataset (for segmentation task)
+## **Our dataset** (for segmentation task)
 
 Our dataset start from the precedent mentioned image classification dataset, in which we have added masks for the segmentation task. The dataset was done using [Supervisely](https://app.supervise.ly/) a powerfull tool for create your own 3D 2D datasets, for object detection, semantic and instance segmentation.
 The original dataset was made by 1300 images, due to time constraints we have only annotated 238 images. In our dataset structure are present 4 classes [disk, hole, chipping, deburring], the first is present in every image of the dataset, the other three classes are preset only in images with defected disks.
 
-![Original dataset preview](https://github.com/MassimilianoBiancucci/Segmentation-of-defects-in-metal-casting-products/blob/main/assets/Segmented_dataset_preview.png?raw=true)
+![Our dataset preview](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/assets/Segmented_dataset_preview.png?raw=true)
 (this image is only rappresentative then how classes are applied)
 
-The dataset is released in **supervisely format**, where there is two way to extract objects bitmaps:
+The dataset is released in [**supervisely format**](https://docs.supervise.ly/data-organization/00_ann_format_navi/04_supervisely_format_objects), where there is two way to extract objects bitmaps shown below.
 
-- **Mask images**: The first way is to use the images into datasets/defect_segmentation_../masks_machine/ folder where each image have the same name of the original, but their color are mapped in different ways, in this format each pixel represent a class, the associations between colors and classes can be found into the obj_class_to_machine_color.json file, presented below in json format.
+### **Mask images preparation**
+
+The first way is to use the images into datasets/defect_segmentation_../masks_machine/ folder where each image have the same name of the original, but their color are mapped in different way, in this format each pixel represent a class, the associations between colors and classes can be found into the obj_class_to_machine_color.json file, presented below in json format.
 
 ```json
 {
@@ -64,8 +66,15 @@ The dataset is released in **supervisely format**, where there is two way to ext
   "disk":       [4, 4, 4]
 }
 ```
+![Mask preview](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/assets/instance_estraction_from_mask/original_mask.png?raw=true)
 
-- **json annotations**:
+![Mask preview](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/assets/instance_estraction_from_mask/extracted_classes_from_mask.png?raw=true)
+
+![Mask preview](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/assets/instance_estraction_from_mask/instaces_separation_from_class_mask.jpeg?raw=true)
+
+![Mask preview](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/assets/instance_estraction_from_mask/separated_instances_of_class_1.png?raw=true)
+
+### **Json annotations preparation**
 
 - - -
 

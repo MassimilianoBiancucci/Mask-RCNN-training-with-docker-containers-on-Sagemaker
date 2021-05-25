@@ -1,3 +1,6 @@
+# backup folder
+backup/
+
 # Data files and directories common in repo root
 logs/
 *.h5
