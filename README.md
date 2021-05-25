@@ -92,9 +92,121 @@ The last step is similar to the first, where each class was sepatrated into mult
 
 ![Mask preview](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/assets/instance_estraction_from_mask/separated_instances_of_class_1.png?raw=true)
 
+One last comment should be done about using this form of the dataset for the instace segmentation task, if the instaces of various objects are overlapped like in this case, this foramt shouldn't be used, due to the fact that mask like disk result dameged after the process of separation, how you can see there is some holes. It's better if the mask could be extracted and remains intact, so if you can use one dataset in another form it's even better. How is shown in the next section Supervisely present one form of dataset that is perfect to satisfy this need.
+
 Notebook with code example: [supervisely_mask_dataset_preparetion.ipynb](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/dataset_preparation_notebooks/supervisely_mask_dataset_preparetion.ipynb)
 
 ### **Json annotations preparation**
+
+Supervisely whene the dataset is exported give you the masks shown above but the real dataset more meaningfull is that in json format. let’s take a look at the most meaningfull part of this format:
+
+```json
+{
+  //heading
+  "tags": [ <object> ], // tags list useful for image marking 
+  "size": {
+    "height": <int>, // height of the image
+    "width": <int> // width of the image
+  },
+
+  "objects": [ // lost of labels in the image
+    {
+      ...
+      "geometryType": <string>, // type of label es. bitmap or rectangle
+      ...
+      "classTitle": <string>, // the name of the class, es. disk or hole in our case
+      "bitmap": { // bitmap object ! present only if the object is "geometryType":"bitmap"
+        "data": <string>, // compressed bitmap encoded in base 64 characters
+        "origin": [<int>, <int>] // [x, y] coordinates of the top left corner of the bitmap into the mask
+      }
+    },
+    ... // other label objects ...
+  ]
+}
+```
+
+Here we can see 
+
+```json
+{
+  "description": "",
+  "tags": [
+    {
+      "id": 105626860,
+      "tagId": 29138031,
+      "name": "bad",
+      "value": null,
+      "labelerLogin": "username",
+      "createdAt": "2021-05-12T08:50:31.083Z",
+      "updatedAt": "2021-05-12T08:50:31.083Z"
+    }
+  ],
+  "size": {
+    "height": 512,
+    "width": 512
+  },
+  "objects": [
+    {
+      "id": 731743712,
+      "classId": 2926797,
+      "description": "",
+      "geometryType": "bitmap",
+      "labelerLogin": "max_svm",
+      "createdAt": "2021-05-12T08:53:14.856Z",
+      "updatedAt": "2021-05-15T17:03:22.089Z",
+      "tags": [],
+      "classTitle": "disk",
+      "bitmap": {
+        "data": "eJwBsgRN+4lQTkcNChoKAAAADUlIRFIAAAGIAAABkQEDAAAARVS2NgAAAAZQTFRFAAAA////pdmf3QAAAAF0Uk5TAEDm2GYAAARaSURBVHic7dxNjpwwEAXgjrKYpZUT+Cg+mjkaR+EILFmgdpJJM+Cfcr1XI1Ar3WxHn3D5lYnSYN9uzetXSmv7L8IV0p/rzoKUFhj8SI9rYkFKoPC7AKtPhwsalz8K6CYpuwYdfOQCuElI5E1+FkCvvbyF3iuxFNqwqkGpw/K1UPqxHpRSyI8apDT2hGuJmRyUMqwW6M5vY27/XhNZRrcbfVt0CgltIRfSTOPvNdNCLEQovFOIVIb83BKB1FpiGWLHy4MSSv8ZZSEU0hPNQoQ2/HfNtGgW0hXNQj66YmgI3xVTQ4SuaGXYF63Su6DVvp2u+rzq0vuT20q9P7mt1L0i6skKiqhL50VURD1ZGqgmS4uj7iwtjlpocdSBOFWUgXhVlN2rizKQqIpyqQOiiFAHRYR6gKXQAywj1AMshQNEHqEHRB5hAEQeYQREHiECMoHEkYeOiWOESIB5IEiA+Sp0kDhG6GkRILHS4hh6hET6lsDAIUIs8mOEvMCa5Bg61iQWsYfuQLF+Q3hQ7G0SaBFBsa90XqDgS6BNsrciL9C22gXaJHvz4mJrRXei2JrXw2I1iwCLZBbxTDGQrWsXeOturYi37taKVwi82bfmdaeKhWzdrXl5EZ5M3NlmNwsCPBYhLZjl8W9JnS1GcnlYxGQSzBK0iJlcghaxXCT8yWIlF+014k4u8/S5CK8QHDCIwSC4B4NFjAbBPRieVUzkw8ciZoNwbwFeC/lIfGWxGkQ4Xdzf4kSR2H8GX1qw4C3e4i3e4v8V9xcW8UXFahDhCcXysmI2CP8Wp4mJ/n/tFWI0CPa3jOcUg0Gwvy1dI9hf7tgXDZeIO/1L6lUiUmJ9WhGeTlzx/mM2CUeJ6SJx9nu10STOfgc5mMTzva/l3yJf8G6bf39+xVv91SjCqYL/koMXs1E4QkxGwTwaRloMn4JZ6FbBLMIbK7ZPGs8U29dtkRYBFotZeFjMD+FgMZkF3orjQ/BfZuJtMtDitl3nCf5r3P0b4UALD4rlG8KBYqbF9CXQxhq/BNpYu0DbZPgSaOg7AEM/7gUItPCQOO5QcJBYaDEfBL+bAwtkosV4EFiEmYiIOAIswkx4AOS7hBwg8p1IyApZvimQQOZMIIFMuYi6GHMRdDHQIgeGnXpOFeVuQH1NlTsO9QhnWhRxAKEXcQChD6WImiiBYSerV0S9tdgpopxcPcJycnVRTa4aYTW5aoQVMOypViLkd3rXU6UFUk+VZY97d7LaZyH0RPvQgdgR7YMNQkfMTeE6YmqKXme1pqo/WU3QK106msKLQjr1RC69PVW90ttTdeukPkoiSGKQhFi6BMRCOseRCKJz5Elsi1kWQiFi4eLKlYHQjN1zhJqie5ZOIAsXSp96oln62BOt0pWTiiJZRnNYQ1/Uw1KPT6rmVz1piz/UqYpdKeNWhQgc/1XMlj6oYljQoWTZTQZEHCMBDws71D5h4sbeYh/XjILbI3l0SNvIpBv8BgLHGhsJeoLmAAAAAElFTkSuQmCCYdYkJA==",
+        "origin": [
+          60,
+          54
+        ]
+      }
+    },
+    {
+      "id": 731743711,
+      "classId": 2926798,
+      "description": "",
+      "geometryType": "bitmap",
+      "labelerLogin": "max_svm",
+      "createdAt": "2021-05-12T08:54:13.164Z",
+      "updatedAt": "2021-05-15T17:03:22.089Z",
+      "tags": [],
+      "classTitle": "chipping",
+      "bitmap": {
+        "data": "eJzrDPBz5+WS4mJgYOD19HAJAtL8IMzIDCQZJdg5gRRbgE+IK5D+////0pvz74IkSoL8ghkcnt1IA3LUPV0cQyrmJD/IT3hgf0Dhf+NCuY46gyv/k3/0t7z5b3DiP+NJI3sGJYbt+4U/3KgwtAFqYfB09XNZ55TQBAAoUCiy",
+        "origin": [
+          197,
+          369
+        ]
+      }
+    },
+    {
+      "id": 731743710,
+      "classId": 2926798,
+      "description": "",
+      "geometryType": "bitmap",
+      "labelerLogin": "max_svm",
+      "createdAt": "2021-05-12T08:54:33.510Z",
+      "updatedAt": "2021-05-15T17:03:22.089Z",
+      "tags": [],
+      "classTitle": "chipping",
+      "bitmap": {
+        "data": "eJzrDPBz5+WS4mJgYOD19HAJAtICQMzHyAwkZR7ynQRSbAE+Ia5A+v///0tvzr8LZDGWBPkFMzg8u5EG5Kh7ujiGVMxJTqg5cOBfc+N/9uY/8my///N8/S/5T3nhL3ueT/YOHf8ZGZryhf2nJczrAWph8HT1c1nnlNAEAMcDKhI=",
+        "origin": [
+          230,
+          379
+        ]
+      }
+    },
+    {
+        ...
+    },
+    ...
+  ]
+}
+```
 
 - - -
 
