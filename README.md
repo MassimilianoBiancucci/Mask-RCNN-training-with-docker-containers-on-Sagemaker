@@ -68,6 +68,10 @@ The first way is to use the images into datasets/defect_segmentation_../masks_ma
 ```
 ![Mask preview](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/assets/instance_estraction_from_mask/original_mask.png?raw=true)
 
+![Mask preview](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/assets/instance_estraction_from_mask/extracted_classes_from_mask.png?raw=true)
+
+![Mask preview](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/assets/instance_estraction_from_mask/instaces_separation_from_class_mask.jpeg?raw=true)
+
 
 ### **Json annotations preparation**
 
