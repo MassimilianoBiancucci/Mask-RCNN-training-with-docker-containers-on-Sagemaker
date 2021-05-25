@@ -43,7 +43,7 @@ TRAINING_SPLIT = 0.8
 # and validation
 IMAGE_PATHS = sorted(list(paths.list_images(IMAGES_PATH)))
 
-IMAGE_PATHS = IMAGE_PATHS[:100]
+IMAGE_PATHS = IMAGE_PATHS[:10]
 
 idxs = list(range(0, len(IMAGE_PATHS)))
 random.seed(42)
@@ -195,10 +195,12 @@ class LesionBoundaryDataset(utils.Dataset):
 if __name__ == "__main__":
 	# construct the argument parser and parse the arguments
 	ap = argparse.ArgumentParser()
+
+	# il dataset non puo' essere passato con gli arg poiche' le classi config
+	# devono sapere come e' fatto il dataset all'avvio del programma
+	# parser.add_argument("--dataset", type=str, default=os.environ["SM_CHANNEL_DATASET"])
 	
 	args = vars(ap.parse_args())
-
-	quit()
 
 	# load the training dataset
 	trainDataset = LesionBoundaryDataset(IMAGE_PATHS, CLASS_NAMES)
@@ -232,12 +234,12 @@ if __name__ == "__main__":
 			"mrcnn_bbox", "mrcnn_mask"])
 
 	# train *just* the layer heads
-	model.train(trainDataset, valDataset, epochs=20,
+	model.train(trainDataset, valDataset, epochs=2,
 		layers="heads", learning_rate=config.LEARNING_RATE,
 		augmentation=aug)
 
 	# unfreeze the body of the network and train *all* layers
-	model.train(trainDataset, valDataset, epochs=40,
+	model.train(trainDataset, valDataset, epochs=2,
 		layers="all", learning_rate=config.LEARNING_RATE / 10,
 		augmentation=aug)
 

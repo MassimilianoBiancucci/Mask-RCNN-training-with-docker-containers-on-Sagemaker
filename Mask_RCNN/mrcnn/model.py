@@ -17,6 +17,7 @@ from collections import OrderedDict
 import multiprocessing
 import numpy as np
 import tensorflow as tf
+tf.get_logger().setLevel('INFO') # TODO test
 import keras
 import keras.backend as K
 import keras.layers as KL
