@@ -16,7 +16,6 @@ from imgaug import augmenters as iaa
 import os
 import json
 
-# non funziona affatto!
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '4'
 
 '''
