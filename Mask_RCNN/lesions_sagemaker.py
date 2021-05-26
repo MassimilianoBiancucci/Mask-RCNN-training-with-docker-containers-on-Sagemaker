@@ -21,7 +21,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '4'
 TF DEBUG LEVELS:
     0 = all messages are logged (default behavior)
     1 = INFO messages are not printed
-    2 = INFO and WARNING messages are not printed
+    2 = INFO and W  ARNING messages are not printed
     3 = INFO, WARNING, and ERROR messages are not printed
 '''
 
@@ -30,30 +30,9 @@ class LesionBoundaryConfig(Config):
     estendo la classe Config di maskrcnn (mrcnn/config.py) che contiene le 
     configurazini di default e ovverrido quelle che voglio modificare.
     """
-
-    # give the configuration a recognizable name
-    NAME = "lesion"
-
-    # set the number of GPUs to use tr  aining along with the number of
-    # images per GPU (which may have to be tuned depending on how
-    # much memory your GPU has)
-    GPU_COUNT = 1
-    IMAGES_PER_GPU = 1
-
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
         super().__init__()
-
-
-class LesionBoundaryInferenceConfig(LesionBoundaryConfig):
-    # set the number of GPUs and images per GPU (which may be
-    # different values than the ones used for training)
-    GPU_COUNT = 1
-    IMAGES_PER_GPU = 1
-
-    # set the minimum detection confidence (used to prune out false
-    # positive detections)
-    DETECTION_MIN_CONFIDENCE = 0.9
 
 
 class LesionBoundaryDataset(utils.Dataset):
@@ -155,9 +134,20 @@ class LesionBoundaryDataset(utils.Dataset):
 if __name__ == "__main__":
     os.environ['SM_CHANNEL_DATASET'] = '/root/isic2018'
     os.environ['SM_CHANNEL_MODEL'] = '/root/mask_rcnn_coco.h5'
-    os.environ['SM_CHANNEL_LOGS'] = '/root/lesions_logs'
-    os.environ['SM_HPS'] = '{"GPU_COUNT": 1, \
-                            "IMAGES_PER_GPU": 1}'
+
+    # da modificare con il nome effettivo!
+    os.environ['SM_CHECKPOINTS'] = '/opt/ml/checkpoints/'
+
+    # da modificare con il nome effettivo
+    os.environ['SM_TENSORBOARD'] = '/opt/ml/output/tensorboard/'
+
+
+    os.environ['SM_HPS'] = '{"NAME": "lesion", \
+                            "GPU_COUNT": 1, \
+                            "IMAGES_PER_GPU": 1,\
+                            "CLASS_NAMES": {"1": "lesion"},\
+                            "TRAINING_SPLIT": 0.8    }'
+
 
     # construct the argument parser and parse the arguments
     ap = argparse.ArgumentParser()
@@ -177,6 +167,7 @@ if __name__ == "__main__":
     COCO_PATH = args.model
     LOGS_AND_MODEL_DIR = args.logs
 
+    #TODO se cambi dataset sta cosa non funziona piu'!
     images_path = os.path.sep.join([dataset_path,
                                     "ISIC2018_Task1-2_Training_Input"])
     masks_path = os.path.sep.join([dataset_path,
@@ -185,7 +176,7 @@ if __name__ == "__main__":
     hyperparameters = json.loads(os.environ['SM_HPS'])
 
     # initialize the amount of data to use for training
-    TRAINING_SPLIT = 0.8
+    TRAINING_SPLIT = hyperparameters['TRAINING_SPLIT']
 
     # grab all image paths, then randomly select indexes for both training
     # and validation
@@ -205,8 +196,7 @@ if __name__ == "__main__":
     trainIdxs = idxs[:i]
     valIdxs = idxs[i:]
 
-    # initialize the class names dictionary
-    CLASS_NAMES = {1: "lesion"}
+    CLASS_NAMES = {int(k): v for k, v in hyperparameters['CLASS_NAMES'].items()}
 
     # load the training dataset
     trainDataset = LesionBoundaryDataset(image_paths, masks_path, CLASS_NAMES)
@@ -219,8 +209,8 @@ if __name__ == "__main__":
     valDataset.prepare()
 
     # da mettere negli iperparametri
-    GPU_COUNT = 1
-    IMAGES_PER_GPU = 1
+    GPU_COUNT = hyperparameters['GPU_COUNT']
+    IMAGES_PER_GPU = hyperparameters['IMAGES_PER_GPU']
 
     # initialize the training configuration
     # set the number of steps per training epoch and validation cycle
@@ -231,10 +221,10 @@ if __name__ == "__main__":
     NUM_CLASSES = len(CLASS_NAMES) + 1
 
     config = LesionBoundaryConfig(
-        **hyperparameters,
         STEPS_PER_EPOCH=STEPS_PER_EPOCH,
         VALIDATION_STEPS=VALIDATION_STEPS,
         NUM_CLASSES=NUM_CLASSES,
+        **hyperparameters,
     )
 
     config.display()
