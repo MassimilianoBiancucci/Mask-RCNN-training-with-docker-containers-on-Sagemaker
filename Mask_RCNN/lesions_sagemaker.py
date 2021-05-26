@@ -15,6 +15,8 @@ from mrcnn.config import Config
 from imgaug import augmenters as iaa
 import os
 import json
+
+# non funziona affatto!
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '4'
 
 '''
@@ -132,8 +134,8 @@ class LesionBoundaryDataset(utils.Dataset):
 
 
 if __name__ == "__main__":
-    os.environ['SM_CHANNEL_DATASET'] = '/root/isic2018'
-    os.environ['SM_CHANNEL_MODEL'] = '/root/mask_rcnn_coco.h5'
+    os.environ['SM_CHANNEL_DATASET'] = '/opt/ml/input/data/dataset'
+    os.environ['SM_CHANNEL_MODEL'] = '/opt/ml/input/data/model/mask_rcnn_coco.h5'
 
     # da modificare con il nome effettivo!
     os.environ['SM_CHECKPOINTS'] = '/opt/ml/checkpoints/'
@@ -141,6 +143,8 @@ if __name__ == "__main__":
     # da modificare con il nome effettivo
     os.environ['SM_TENSORBOARD'] = '/opt/ml/output/tensorboard/'
 
+    # test
+    os.environ['SM_CHANNEL_LOGS'] = '/opt/ml/output/tensorboard/'
 
     os.environ['SM_HPS'] = '{"NAME": "lesion", \
                             "GPU_COUNT": 1, \
@@ -183,7 +187,7 @@ if __name__ == "__main__":
     image_paths = sorted(list(paths.list_images(images_path)))
 
     # TODO solo per test!!
-    image_paths = image_paths[:10]
+    image_paths = image_paths[:5]
 
     idxs = list(range(0, len(image_paths)))
     random.seed(42)
@@ -247,7 +251,7 @@ if __name__ == "__main__":
                                 "mrcnn_bbox", "mrcnn_mask"])
 
     # train *just* the layer heads
-    model.train(trainDataset, valDataset, epochs=2,
+    model.train(trainDataset, valDataset, epochs=1,
                 layers="heads", learning_rate=config.LEARNING_RATE,
                 augmentation=aug)
 

@@ -8,6 +8,7 @@ Written by Waleed Abdulla
 """
 
 import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 import random
 import datetime
 import re
@@ -17,7 +18,6 @@ from collections import OrderedDict
 import multiprocessing
 import numpy as np
 import tensorflow as tf
-tf.get_logger().setLevel('INFO') # TODO test
 import keras
 import keras.backend as K
 import keras.layers as KL
@@ -1830,12 +1830,16 @@ class MaskRCNN():
         config: A Sub-class of the Config class
         model_dir: Directory to save training logs and trained weights
         """
+        tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
+
         assert mode in ['training', 'inference']
 
         from keras.backend.tensorflow_backend import set_session
         tf_config = tf.ConfigProto()
-        tf_config.gpu_options.allow_growth = True  # dynamically grow the memory used on the GPU
-        #config.log_device_placement = True  # to log device placement (on which device the operation ran)
+        # dynamically grow the memory used on the GPU
+        tf_config.gpu_options.allow_growth = True  
+        # to log device placement (on which device the operation ran)
+        #config.log_device_placement = True  
         sess = tf.Session(config=tf_config)
         set_session(sess)  # set this TensorFlow session as the default session for Keras
 

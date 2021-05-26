@@ -24,11 +24,10 @@ RUN pip install -r requirements.txt
 # le modifiche da qui in giu!
 #--------------------------------------------------------------------
 
-# cambia la cartella 
-WORKDIR /root/
-
 # copio la cartella principale di lavoro
-COPY mask_rcnn_coco.h5 .
+COPY mask_rcnn_coco.h5 /opt/ml/input/data/model/
+
+WORKDIR /opt/ml/
 
 # start command  
 CMD [ "bash" ]
