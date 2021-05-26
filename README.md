@@ -187,8 +187,10 @@ The result of that function are masks with sizes determinated from the bitmaps s
 
 ![Mask preview](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/assets/instance_estraction_from_json/extracted_bitmaps_from_json_annotation.png?raw=true)
 
-The last process that we need to do for obtaining our tensor is to create one blank mask, filled with only zeros, with size specified in the size field in the json, for each bitmap and copy the bitmap on it using the origin field specified in each label object.
-The origin field contains two values, the x y cordintes of the top left angle of the bitmap in the image using as origin (0, 0) the top left angle of the mask, so using this values as offset for the copy operation the results are our masks so we have only to pack all masks into one tensor and to generate one vector that store the classes of each mask, and with this function applied on each image we have the dataset ready to be used on the Mask R-CNN tranining.
+The last proces that we need to do for obtain our tensor is to create one blank tensor of masks, filled with only zeros, with size specified in the size field in the json and with the number of lables in the image, so we need to copy each bitmap on one mask using the origin field specified in each label object.
+The origin field contains two values, the x y cordintes of the top left angle of the bitmap in the image using as origin (0, 0) the top left angle of the mask, so using this values as offset for the copy operations the results are our masks. Now we have only to generate one vector that store the classes of each mask in uint8 format, and with this function applied on each image we have the dataset ready to be used on the Mask R-CNN tranining.
+
+Teh described function override the load_mask() function present in the Mask R-CNN framework.
 
 ![Mask preview](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/assets/instance_estraction_from_json/extracted_masks_from_json_annotation.png?raw=true)
 
