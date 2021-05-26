@@ -100,41 +100,17 @@ Notebook with code example: [**supervisely_mask_dataset_preparetion.ipynb**](htt
 
 ### **Json annotations preparation**
 
-Notebook with code example: [**supervisely_json_dataset_preparetion.ipynb**](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/dataset_preparation_notebooks/supervisely_json_dataset_preparetion.ipynb)
+Notebook with code example: [**supervisely_json_dataset_preparetion.ipynb**](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/dataset_preparation_notebooks/supervisely_json_dataset_preparation.ipynb)
 
-Supervisely whene the dataset is exported give you the masks shown above and another one in json format, which is more meaningfull. For each image is present into the ann/ folder the corresponding file with same name but with .json extension, so for the image cast_def_0_102.jpg there will be the file cast_def_0_102.json containing all the info related to this image, for example all its lables, let’s take a look at the most meaningfull part of this format and at the cast_def_0_102.json file:
-
-```json
-{
-  "size": {
-    "height": , 
-    "width":  
-  },
-  "objects": [
-    {
-      ...
-      "geometryType": , 
-      ...
-      "classTitle": , 
-      "bitmap": {
-        "data": ,
-        "origin": []
-      }
-    },
-    ... 
-  ]
-}
-```
-
-List of the values used for the mask recostruction:
+Supervisely whene the dataset is exported give you the mask dataset shown above and another one in json format, which is more meaningfull. For each image is present into the ann/ folder the corresponding file with same name but with .json extension, so for the image cast_def_0_102.jpeg there will be the file cast_def_0_102.jpeg.json containing all the info related to this image, for example all its lables, who labled the image, the image tags and many other information. Let’s take a look at the most meaningfull part of this format and at the cast_def_0_102.jpeg.json file:
 
 - **size**:         list of the mask dimensions
   - **height**:     height of the image
   - **width**:      width of the image
-- **objects**:      list of all the image labels
+- **objects**:      list of all the image label objects
   - **geometryType**:   type of label es. bitmap or rectangle
   - **classTitle**: the name of the class, es. disk or hole in our case
-  - **bitmap**:     bitmap object ! present only if the object is "geometryType":"bitmap"
+  - **bitmap**:     bitmap object ! present only if the object is "geometryType":   "bitmap"
     - **data**:     compressed bitmap encoded in base 64 characters
     - **origi**:    array containing [x, y] coordinates of the top left corner of the bitmap into the mask
 
@@ -185,11 +161,38 @@ Here we can see the complete json with all the values, but not all the data are 
 }
 ```
 
+For achieve our goal, to obtain a tensor of masks for each object instace in the image, we have to decode each bitmap present into the json file. Each bitmap is a rectangular bool mask of arbitrary size that is obtained using the decode function shown below.
+
+```python
+
+#decode function 
+def base64_2_mask(s):
+    z = zlib.decompress(base64.b64decode(s))
+    n = np.frombuffer(z, np.uint8)
+    #n = np.fromstring(z, np.uint8) #depecated
+    mask = cv2.imdecode(n, cv2.IMREAD_UNCHANGED)[:, :, 3].astype(bool)
+    return mask
+
+#encode function
+def mask_2_base64(mask):
+    img_pil = Image.fromarray(np.array(mask, dtype=np.uint8))
+    img_pil.putpalette([0,0,0,255,255,255])
+    bytes_io = io.BytesIO()
+    img_pil.save(bytes_io, format='PNG', transparency=0, optimize=0)
+    bytes = bytes_io.getvalue()
+    return base64.b64encode(zlib.compress(bytes)).decode('utf-8')
+```
+
+The result of that function are masks with sizes determinated from the bitmaps size, this time you can see that all bitmap is intact, unlike the previous case is visible how the instance 1 wasn't degraded from the mask extraction, why in this format there isn't information loss differently from the dataset in one mask format where all this instaces were stacked in the same mask.
+
 ![Mask preview](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/assets/instance_estraction_from_json/extracted_bitmaps_from_json_annotation.png?raw=true)
+
+The last process that we need to do for obtaining our tensor is to create one blank mask, filled with only zeros, with size specified in the size field in the json, for each bitmap and copy the bitmap on it using the origin field specified in each label object.
+The origin field contains two values, the x y cordintes of the top left angle of the bitmap in the image using as origin (0, 0) the top left angle of the mask, so using this values as offset for the copy operation the results are our masks so we have only to pack all masks into one tensor and to generate one vector that store the classes of each mask, and with this function applied on each image we have the dataset ready to be used on the Mask R-CNN tranining.
 
 ![Mask preview](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/assets/instance_estraction_from_json/extracted_masks_from_json_annotation.png?raw=true)
 
-Notebook with code example: [**supervisely_json_dataset_preparetion.ipynb**](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/dataset_preparation_notebooks/supervisely_json_dataset_preparetion.ipynb)
+Notebook with code example: [**supervisely_json_dataset_preparetion.ipynb**](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/dataset_preparation_notebooks/supervisely_json_dataset_preparation.ipynb)
 
 - - -
 
