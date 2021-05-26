@@ -143,9 +143,6 @@ if __name__ == "__main__":
     # da modificare con il nome effettivo
     os.environ['SM_TENSORBOARD'] = '/opt/ml/output/tensorboard/'
 
-    # test
-    os.environ['SM_CHANNEL_LOGS'] = '/opt/ml/output/tensorboard/'
-
     os.environ['SM_HPS'] = '{"NAME": "lesion", \
                             "GPU_COUNT": 1, \
                             "IMAGES_PER_GPU": 1,\
@@ -162,14 +159,18 @@ if __name__ == "__main__":
     ap.add_argument("--dataset", type=str,
                     default=os.environ["SM_CHANNEL_DATASET"])
 
-    ap.add_argument("--logs", type=str,
-                    default=os.environ["SM_CHANNEL_LOGS"])
+    ap.add_argument("--checkpoints", type=str,
+                    default=os.environ["SM_CHECKPOINTS"])
+
+    ap.add_argument("--tensorboard", type=str,
+                    default=os.environ["SM_TENSORBOARD"])
 
     args = ap.parse_args()
 
     dataset_path = args.dataset
     COCO_PATH = args.model
-    LOGS_AND_MODEL_DIR = args.logs
+    CHECKPOINTS_DIR = args.checkpoints
+    TENSORBOARD_DIR = args.tensorboard
 
     #TODO se cambi dataset sta cosa non funziona piu'!
     images_path = os.path.sep.join([dataset_path,
@@ -244,7 +245,8 @@ if __name__ == "__main__":
     # initialize the model and load the COCO weights so we can
     # perform fine-tuning
     model = modellib.MaskRCNN(mode="training", config=config,
-                              model_dir=LOGS_AND_MODEL_DIR)  # separare log e model
+                              checkpoints_dir=CHECKPOINTS_DIR, 
+                              tensorboard_dir=TENSORBOARD_DIR)
 
     model.load_weights(COCO_PATH, by_name=True,
                        exclude=["mrcnn_class_logits", "mrcnn_bbox_fc",

@@ -29,5 +29,7 @@ COPY mask_rcnn_coco.h5 /opt/ml/input/data/model/
 
 WORKDIR /opt/ml/
 
+ENV TF_CPP_MIN_LOG_LEVEL 3
+
 # start command  
 CMD [ "bash" ]
