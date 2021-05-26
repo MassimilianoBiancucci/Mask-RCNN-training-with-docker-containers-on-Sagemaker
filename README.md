@@ -12,6 +12,8 @@ This project was possible thanks to the repository [matterport/Mask_RCNN](https:
 1. [Dataset](#dataset)
     - [Original dataset](#original-dataset)
     - [Our dataset](#our-dataset)
+        - [Mask images preparation](#mask-images-preparation)
+        - [Json annotations preparation](#json-annotations-preparation)
 1. [Docker containers](#docker-containers)
     - [Dockerfile AWS](#dockerfile-aws)
     - [Dokcerfile Local](#dockerfile-local)
@@ -35,7 +37,7 @@ The core of the project was the matterport implementation of [Mask R-CNN](https:
 
 # **Dataset**
 
-## **Original dataset** (for image classification task)
+## **Original dataset**
 
 The original dataset is an image collection of one type of casted metal product done with similar angle of view and with the objects every in front view.
 The dataset was divided only by defected and not defected object, in fact it is a dataset for only image classification.
@@ -44,7 +46,7 @@ the dataset it's available on kaggle at this [link](https://www.kaggle.com/ravir
 
 ![Original dataset preview](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/assets/Original_dataset_preview.png?raw=true)
 
-## **Our dataset** (for segmentation task)
+## **Our dataset**
 
 Our dataset start from the precedent mentioned image classification dataset, in which we have added masks for the segmentation task. The dataset was done using [Supervisely](https://app.supervise.ly/) a powerfull tool for create your own 3D 2D datasets, for object detection, semantic and instance segmentation.
 The original dataset was made by 1300 images, due to time constraints we have only annotated 238 images. In our dataset structure are present 4 classes [disk, hole, chipping, deburring], the first is present in every image of the dataset, the other three classes are preset only in images with defected disks.
@@ -58,7 +60,7 @@ At the end of the process we need to obtain for each image a numpy array with sh
 
 ### **Mask images preparation**
 
-Notebook with code example: [supervisely_mask_dataset_preparetion.ipynb](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/dataset_preparation_notebooks/supervisely_mask_dataset_preparetion.ipynb)
+Notebook with code example: [**supervisely_mask_dataset_preparetion.ipynb**](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/dataset_preparation_notebooks/supervisely_mask_dataset_preparetion.ipynb)
 
 The first way is to use the images into datasets/defect_segmentation_../masks_machine/ folder where each image have the same name of the original, but their color are mapped in different way, in this format each pixel represent a class, the associations between colors and classes can be found into the obj_class_to_machine_color.json file, presented below in json format.
 
@@ -94,11 +96,13 @@ The last step is similar to the first, where each class was sepatrated into mult
 
 One last comment should be done about using this form of the dataset for the instace segmentation task, if the instaces of various objects are overlapped like in this case, this foramt shouldn't be used, due to the fact that mask like disk result dameged after the process of separation, how you can see there is some holes. It's better if the mask could be extracted and remains intact, so if you can use one dataset in another form it's even better. How is shown in the next section Supervisely present one form of dataset that is perfect to satisfy this need.
 
-Notebook with code example: [supervisely_mask_dataset_preparetion.ipynb](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/dataset_preparation_notebooks/supervisely_mask_dataset_preparetion.ipynb)
+Notebook with code example: [**supervisely_mask_dataset_preparetion.ipynb**](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/dataset_preparation_notebooks/supervisely_mask_dataset_preparetion.ipynb)
 
 ### **Json annotations preparation**
 
-Supervisely whene the dataset is exported give you the masks shown above but the real dataset more meaningfull is that in json format. let’s take a look at the most meaningfull part of this format:
+Notebook with code example: [**supervisely_json_dataset_preparetion.ipynb**](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/dataset_preparation_notebooks/supervisely_json_dataset_preparetion.ipynb)
+
+Supervisely whene the dataset is exported give you the masks shown above and another one in json format, which is more meaningfull. For each image is present into the ann/ folder the corresponding file with same name but with .json extension, so for the image cast_def_0_102.jpg there will be the file cast_def_0_102.json containing all the info related to this image, for example all its lables, let’s take a look at the most meaningfull part of this format and at the cast_def_0_102.json file:
 
 ```json
 {
@@ -134,7 +138,7 @@ List of the values used for the mask recostruction:
     - **data**:     compressed bitmap encoded in base 64 characters
     - **origi**:    array containing [x, y] coordinates of the top left corner of the bitmap into the mask
 
-Here we can see the complete json with all the values, but not all the data are usefull for our scope, only the data shown above will be used from our algorithm for the mask recostruction, so the most important part it's the field "data" under "bitmap" that contain effectively the bitmap.
+Here we can see the complete json with all the values, but not all the data are usefull for our scope, only the data shown above will be used from our algorithm for the mask recostruction, so the most important part it's the field "data" under "bitmap" that contain effectively the lable.
 
 ```json
 {
@@ -180,9 +184,12 @@ Here we can see the complete json with all the values, but not all the data are 
   ]
 }
 ```
+
 ![Mask preview](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/assets/instance_estraction_from_json/extracted_bitmaps_from_json_annotation.png?raw=true)
 
 ![Mask preview](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/assets/instance_estraction_from_json/extracted_masks_from_json_annotation.png?raw=true)
+
+Notebook with code example: [**supervisely_json_dataset_preparetion.ipynb**](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/dataset_preparation_notebooks/supervisely_json_dataset_preparetion.ipynb)
 
 - - -
 
