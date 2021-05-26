@@ -14,6 +14,7 @@ from mrcnn import model as modellib
 from mrcnn.config import Config
 from imgaug import augmenters as iaa
 import os
+import json
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '4'
 
 '''
@@ -23,14 +24,6 @@ TF DEBUG LEVELS:
     2 = INFO and WARNING messages are not printed
     3 = INFO, WARNING, and ERROR messages are not printed
 '''
-
-# initialize the path to the Mask R-CNN pre-trained on COCO
-COCO_PATH = "mask_rcnn_coco.h5"
-
-# initialize the name of the directory where logs and output model
-# snapshots will be stored
-LOGS_AND_MODEL_DIR = "lesions_logs"
-
 
 class LesionBoundaryConfig(Config):
     """
@@ -161,21 +154,35 @@ class LesionBoundaryDataset(utils.Dataset):
 
 if __name__ == "__main__":
     os.environ['SM_CHANNEL_DATASET'] = '/root/isic2018'
+    os.environ['SM_CHANNEL_MODEL'] = '/root/mask_rcnn_coco.h5'
+    os.environ['SM_CHANNEL_LOGS'] = '/root/lesions_logs'
+    os.environ['SM_HPS'] = '{"GPU_COUNT": 1, \
+                            "IMAGES_PER_GPU": 1}'
 
     # construct the argument parser and parse the arguments
     ap = argparse.ArgumentParser()
 
+    ap.add_argument('--model', type=str,
+                    default=os.environ['SM_CHANNEL_MODEL'])
+
     ap.add_argument("--dataset", type=str,
                     default=os.environ["SM_CHANNEL_DATASET"])
+
+    ap.add_argument("--logs", type=str,
+                    default=os.environ["SM_CHANNEL_LOGS"])
 
     args = ap.parse_args()
 
     dataset_path = args.dataset
+    COCO_PATH = args.model
+    LOGS_AND_MODEL_DIR = args.logs
 
     images_path = os.path.sep.join([dataset_path,
                                     "ISIC2018_Task1-2_Training_Input"])
-    MASKS_PATH = os.path.sep.join([dataset_path,
+    masks_path = os.path.sep.join([dataset_path,
                                    "ISIC2018_Task1_Training_GroundTruth"])
+
+    hyperparameters = json.loads(os.environ['SM_HPS'])
 
     # initialize the amount of data to use for training
     TRAINING_SPLIT = 0.8
@@ -202,12 +209,12 @@ if __name__ == "__main__":
     CLASS_NAMES = {1: "lesion"}
 
     # load the training dataset
-    trainDataset = LesionBoundaryDataset(image_paths, MASKS_PATH, CLASS_NAMES)
+    trainDataset = LesionBoundaryDataset(image_paths, masks_path, CLASS_NAMES)
     trainDataset.load_lesions(trainIdxs)
     trainDataset.prepare()
 
     # load the validation dataset
-    valDataset = LesionBoundaryDataset(image_paths, MASKS_PATH, CLASS_NAMES)
+    valDataset = LesionBoundaryDataset(image_paths, masks_path, CLASS_NAMES)
     valDataset.load_lesions(valIdxs)
     valDataset.prepare()
 
@@ -224,11 +231,10 @@ if __name__ == "__main__":
     NUM_CLASSES = len(CLASS_NAMES) + 1
 
     config = LesionBoundaryConfig(
+        **hyperparameters,
         STEPS_PER_EPOCH=STEPS_PER_EPOCH,
         VALIDATION_STEPS=VALIDATION_STEPS,
         NUM_CLASSES=NUM_CLASSES,
-        GPU_COUNT = GPU_COUNT, 
-        IMAGES_PER_GPU = IMAGES_PER_GPU
     )
 
     config.display()
