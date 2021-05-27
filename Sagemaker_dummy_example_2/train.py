@@ -3,19 +3,22 @@ import argparse
 import time
 from directory_tree import display_tree
 
-def write_envs_to_file(var_name):
-    path = '/opt/ml/output/data/out.txt'
+path = '/opt/ml/output/data/'
 
-    if not os.path.exists(path):
-        with open(path, "w") as myfile:
+def write_envs_to_file(var_name):
+    
+    file_path = path + "out.txt"
+
+    if not os.path.exists(file_path):
+        with open(file_path, "w") as myfile:
             myfile.write("FILE CREATION\n")
 
-    with open(path, "a+") as myfile:
+    with open(file_path, "a+") as myfile:
         myfile.write('-'*40 + '\n')
         try:
             var_content = os.environ[var_name]
-
             myfile.write(f"var_name={var_name}:\n{var_content}\n")
+
         except:
             myfile.write(f"var_name={var_name}: NOT_FOUND\n")
 
@@ -26,6 +29,18 @@ def write_envs_to_file(var_name):
 if __name__ == "__main__":
     print('-'*40)
     print('hello!')
+
+    host = os.environ["SM_CURRENT_HOST"]
+    path += host + "_"
+
+    print(f"current host: {host}")
+
+    print("reading environment")
+
+    test = os.environ["test"]
+
+    print(f"the environment variable test has value of: {test}")    
+
     print('writing to file...')
 
     write_envs_to_file("SM_MODEL_DIR")
@@ -59,7 +74,7 @@ if __name__ == "__main__":
     write_envs_to_file("SM_TRAINING_ENV")
 
     tree = display_tree('/opt/ml', string_rep = True)
-    with open("/opt/ml/output/data/tree_result.txt", "w") as f:
+    with open(f"/opt/ml/output/data/{host}_tree_result.txt", "w") as f:
         f.write(tree)
 
     print('work done!')

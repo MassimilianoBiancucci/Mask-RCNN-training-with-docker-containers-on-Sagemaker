@@ -138,7 +138,6 @@ if __name__ == "__main__":
                             "CLASS_NAMES": {"1": "lesion"},\
                             "TRAINING_SPLIT": 0.8    }'
 
-
     # construct the argument parser and parse the arguments
     ap = argparse.ArgumentParser()
 
