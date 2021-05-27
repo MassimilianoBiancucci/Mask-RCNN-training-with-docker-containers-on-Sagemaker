@@ -6,8 +6,7 @@ from directory_tree import display_tree
 path = '/opt/ml/output/data/'
 
 def write_envs_to_file(var_name):
-    
-    file_path = path + "out.txt"
+    file_path = os.path.join(path, "out.txt")
 
     if not os.path.exists(file_path):
         with open(file_path, "w") as myfile:
@@ -30,16 +29,25 @@ if __name__ == "__main__":
     print('-'*40)
     print('hello!')
 
-    host = os.environ["SM_CURRENT_HOST"]
-    path += host + "_"
+    host = ""
+    try:
+        host = os.environ["SM_CURRENT_HOST"]
+        path = os.path.join(path, host)
+    except:
+        print("host not found")
+
+    if not os.path.exists(path):
+        os.mkdir(path)
 
     print(f"current host: {host}")
 
     print("reading environment")
 
-    test = os.environ["test"]
-
-    print(f"the environment variable test has value of: {test}")    
+    try:
+        test = os.environ["test"]
+        print(f"the environment variable test has value of: {test}")
+    except:
+        print("os.environ[\"test\"] -> not found")
 
     print('writing to file...')
 
@@ -74,7 +82,8 @@ if __name__ == "__main__":
     write_envs_to_file("SM_TRAINING_ENV")
 
     tree = display_tree('/opt/ml', string_rep = True)
-    with open(f"/opt/ml/output/data/{host}_tree_result.txt", "w") as f:
+    tree_path = path = os.path.join(path, "tree_result.txt")
+    with open(tree_path, "w") as f:
         f.write(tree)
 
     print('work done!')
