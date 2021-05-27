@@ -81,6 +81,25 @@ if __name__ == "__main__":
 
     write_envs_to_file("SM_TRAINING_ENV")
 
+    print("writing fake tensorboard and checkpoint data")
+
+    # simulating training
+    for i in range(10):
+        # simulating tensorboard data accumulation (this data should be visible in real-time) 
+        with open(f"/opt/ml/output/tensorboard/{host}/record_test_{i}.txt", "w") as f:
+            f.write(f"test {host}" * 100)
+
+        print(f"new tensorboard record saved {i+1}/10")
+
+        # simulating the checkpoints
+        with open(f"/opt/ml/checkpoints/{host}/checkpoint_test_{i}.txt", "w") as f:
+            f.write("test {host}" * 100)
+
+        print(f"new checkpoint saved {i+1}/10")
+
+        time.sleep(10)
+
+
     tree = display_tree('/opt/ml', string_rep = True)
     tree_path = path = os.path.join(path, "tree_result.txt")
     with open(tree_path, "w") as f:
