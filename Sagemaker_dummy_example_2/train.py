@@ -85,14 +85,18 @@ if __name__ == "__main__":
 
     # simulating training
     for i in range(10):
-        # simulating tensorboard data accumulation (this data should be visible in real-time) 
-        with open(f"/opt/ml/output/tensorboard/{host}/record_test_{i}.txt", "w") as f:
+        tensorboard_path = f"/opt/ml/output/tensorboard/{host}/"
+        if not os.path.exists(tensorboard_path):
+            os.mkdir(tensorboard_path)
+        with open(f"{tensorboard_path}/record_test_{i}.txt", "w") as f:
             f.write(f"test {host}" * 100)
 
         print(f"new tensorboard record saved {i+1}/10")
 
-        # simulating the checkpoints
-        with open(f"/opt/ml/checkpoints/{host}/checkpoint_test_{i}.txt", "w") as f:
+        checkpoints_path = f"/opt/ml/checkpoints/{host}/"
+        if not os.path.exists(checkpoints_path):
+            os.mkdir(checkpoints_path)
+        with open(f"{checkpoints_path}/checkpoint_test_{i}.txt", "w") as f:
             f.write("test {host}" * 100)
 
         print(f"new checkpoint saved {i+1}/10")
