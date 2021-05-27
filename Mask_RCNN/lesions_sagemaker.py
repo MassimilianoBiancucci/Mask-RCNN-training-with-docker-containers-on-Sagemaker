@@ -2,19 +2,6 @@
 Script for Mask_R-CNN training 
 '''
 
-# deve stare prima dell'import!
-# e ce da trovare anche il sistema su come disabilitare 
-# i log di keras...
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-
-'''
-TF DEBUG LEVELS:
-    0 = all messages are logged (default behavior)
-    1 = INFO messages are not printed
-    2 = INFO and W  ARNING messages are not printed
-    3 = INFO, WARNING, and ERROR messages are not printed
-'''
-
 import cv2
 import random
 import imutils

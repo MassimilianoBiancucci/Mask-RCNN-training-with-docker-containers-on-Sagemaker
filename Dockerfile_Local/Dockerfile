@@ -29,7 +29,14 @@ COPY mask_rcnn_coco.h5 /opt/ml/input/data/model/
 
 WORKDIR /opt/ml/
 
+
+# TF DEBUG LEVELS:
+#     0 = all messages are logged (default behavior)
+#     1 = INFO messages are not printed
+#     2 = INFO and W  ARNING messages are not printed
+#     3 = INFO, WARNING, and ERROR messages are not printed
 ENV TF_CPP_MIN_LOG_LEVEL 3
 
-# start command  
+
+# start command
 CMD [ "bash" ]
