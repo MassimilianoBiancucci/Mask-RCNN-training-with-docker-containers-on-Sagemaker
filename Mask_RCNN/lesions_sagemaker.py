@@ -16,11 +16,13 @@ from imgaug import augmenters as iaa
 import os
 import json
 
+
 class LesionBoundaryConfig(Config):
     """
     estendo la classe Config di maskrcnn (mrcnn/config.py) che contiene le 
     configurazini di default e ovverrido quelle che voglio modificare.
     """
+
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
         super().__init__()
@@ -122,51 +124,51 @@ class LesionBoundaryDataset(utils.Dataset):
         return (masks.astype("bool"), classIDs.astype("int32"))
 
 
+def read_env_var(name, default_value=None):
+    try:
+        return os.environ[name]
+    except:
+        return default_value
+
+
+def read_channels(channel_var='SM_CHANNELS'):
+    var = read_env_var(channel_var, '[]')
+    channels = json.loads(var)
+    d = {}
+    for c in channels:
+        d[c] = read_env_var(f'SM_CHANNEL_{c.upper()}')
+    return d
+
+
 if __name__ == "__main__":
-    os.environ['SM_CHANNEL_DATASET'] = '/opt/ml/input/data/dataset'
-    os.environ['SM_CHANNEL_MODEL'] = '/opt/ml/input/data/model/mask_rcnn_coco.h5'
+    # os.environ['SM_CHANNELS'] = '["dataset","model"]'
 
-    # da modificare con il nome effettivo!
-    os.environ['SM_CHECKPOINTS'] = '/opt/ml/checkpoints/'
+    # os.environ['SM_CHANNEL_DATASET'] = '/opt/ml/input/data/dataset'
+    # os.environ['SM_CHANNEL_MODEL'] = '/opt/ml/input/data/model/'
 
-    # da modificare con il nome effettivo
-    os.environ['SM_TENSORBOARD'] = '/opt/ml/output/tensorboard/'
+    # os.environ['SM_HPS'] = '{"NAME": "lesion", \
+    #                         "GPU_COUNT": 1, \
+    #                         "IMAGES_PER_GPU": 1,\
+    #                         "CLASS_NAMES": {"1": "lesion"},\
+    #                         "TRAINING_SPLIT": 0.8    }'
 
-    os.environ['SM_HPS'] = '{"NAME": "lesion", \
-                            "GPU_COUNT": 1, \
-                            "IMAGES_PER_GPU": 1,\
-                            "CLASS_NAMES": {"1": "lesion"},\
-                            "TRAINING_SPLIT": 0.8    }'
 
-    # construct the argument parser and parse the arguments
-    ap = argparse.ArgumentParser()
+    user_defined_env_vars = {"checkpoints": "/opt/ml/checkpoints",
+                             "tensorboard": "/opt/ml/output/tensorboard"}
 
-    ap.add_argument('--model', type=str,
-                    default=os.environ['SM_CHANNEL_MODEL'])
+    channels = read_channels()
 
-    ap.add_argument("--dataset", type=str,
-                    default=os.environ["SM_CHANNEL_DATASET"])
+    dataset_path = channels['dataset']
+    COCO_PATH = os.path.sep.join([channels['model'], "mask_rcnn_coco.h5"])
+    CHECKPOINTS_DIR = user_defined_env_vars["checkpoints"]
+    TENSORBOARD_DIR = user_defined_env_vars["tensorboard"]
+    hyperparameters = json.loads(read_env_var('SM_HPS', {}))
 
-    ap.add_argument("--checkpoints", type=str,
-                    default=os.environ["SM_CHECKPOINTS"])
-
-    ap.add_argument("--tensorboard", type=str,
-                    default=os.environ["SM_TENSORBOARD"])
-
-    args = ap.parse_args()
-
-    dataset_path = args.dataset
-    COCO_PATH = args.model
-    CHECKPOINTS_DIR = args.checkpoints
-    TENSORBOARD_DIR = args.tensorboard
-
-    #TODO se cambi dataset sta cosa non funziona piu'!
+    # TODO se cambi dataset sta cosa non funziona piu'!
     images_path = os.path.sep.join([dataset_path,
                                     "ISIC2018_Task1-2_Training_Input"])
     masks_path = os.path.sep.join([dataset_path,
                                    "ISIC2018_Task1_Training_GroundTruth"])
-
-    hyperparameters = json.loads(os.environ['SM_HPS'])
 
     # initialize the amount of data to use for training
     TRAINING_SPLIT = hyperparameters['TRAINING_SPLIT']
@@ -176,7 +178,7 @@ if __name__ == "__main__":
     image_paths = sorted(list(paths.list_images(images_path)))
 
     # TODO solo per test!!
-    image_paths = image_paths[:5]
+    image_paths = image_paths[:300]
 
     idxs = list(range(0, len(image_paths)))
     random.seed(42)
@@ -189,7 +191,8 @@ if __name__ == "__main__":
     trainIdxs = idxs[:i]
     valIdxs = idxs[i:]
 
-    CLASS_NAMES = {int(k): v for k, v in hyperparameters['CLASS_NAMES'].items()}
+    CLASS_NAMES = {
+        int(k): v for k, v in hyperparameters['CLASS_NAMES'].items()}
 
     # load the training dataset
     trainDataset = LesionBoundaryDataset(image_paths, masks_path, CLASS_NAMES)
@@ -233,7 +236,7 @@ if __name__ == "__main__":
     # initialize the model and load the COCO weights so we can
     # perform fine-tuning
     model = modellib.MaskRCNN(mode="training", config=config,
-                              checkpoints_dir=CHECKPOINTS_DIR, 
+                              checkpoints_dir=CHECKPOINTS_DIR,
                               tensorboard_dir=TENSORBOARD_DIR)
 
     model.load_weights(COCO_PATH, by_name=True,
@@ -241,12 +244,12 @@ if __name__ == "__main__":
                                 "mrcnn_bbox", "mrcnn_mask"])
 
     # train *just* the layer heads
-    model.train(trainDataset, valDataset, epochs=1,
+    model.train(trainDataset, valDataset, epochs=5,
                 layers="heads", learning_rate=config.LEARNING_RATE,
                 augmentation=aug)
 
     # unfreeze the body of the network and train *all* layers
-    model.train(trainDataset, valDataset, epochs=1,
+    model.train(trainDataset, valDataset, epochs=5,
                 layers="all", learning_rate=config.LEARNING_RATE / 10,
                 augmentation=aug)
 
