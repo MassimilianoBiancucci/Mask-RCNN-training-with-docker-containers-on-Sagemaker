@@ -261,3 +261,29 @@ sample output:
 1/2075 [..............................] - ETA: 21:39:54 - loss: 3.1190 - rpn_class_loss: 0.0191 - rpn_bbox_loss: 0.1407 - mrcnn_class_loss: 0.6572 - mrcnn_bbox_loss: 0.9571 -    
 2/2075 [..............................] - ETA: 11:12:53 - loss: 2.8820 - rpn_class_loss: 0.0191 - rpn_bbox_loss: 0.1359 - mrcnn_class_loss: 0.5046 - mrcnn_bbox_loss: 0.9102 -    
 '''
+
+r'''
+metric_definitions=[
+                        {
+                            "Name": "loss",
+                            "Regex": "\sloss:\s(\d+.?\d*)\s-",
+                        },
+                        {
+                            "Name": "rpn_class_loss",
+                            "Regex": "\srpn_class_loss:\s(\d+.?\d*)\s-",
+                        },
+                        {
+                            "Name": "rpn_bbox_loss",
+                            "Regex": "\srpn_bbox_loss:\s(\d+.?\d*)\s-",
+                        },
+                        {
+                            "Name": "mrcnn_class_loss",
+                            "Regex": "\smrcnn_class_loss:\s(\d+.?\d*)\s-",
+                        },
+                        {
+                            "Name": "mrcnn_bbox_loss",
+                            "Regex": "\smrcnn_bbox_loss:\s(\d+.?\d*)\s-",
+                        },
+                    ]
+
+'''
