@@ -226,9 +226,9 @@ Notebook with code example: [**supervisely_json_dataset_preparetion.ipynb**](htt
 
 - [EC2 instance types](https://aws.amazon.com/it/ec2/instance-types/)
 
-- [Sagemaker pricing](https://aws.amazon.com/sagemaker/pricing/)
-
 ### Sagemaker docs
+
+- [Sagemaker pricing](https://aws.amazon.com/sagemaker/pricing/)
 
 - [Estimator reference](https://sagemaker.readthedocs.io/en/stable/api/training/estimators.html)
 
