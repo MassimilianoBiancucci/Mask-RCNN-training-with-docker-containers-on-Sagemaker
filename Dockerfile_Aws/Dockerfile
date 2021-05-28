@@ -27,25 +27,26 @@ RUN pip install sagemaker-training
 # le modifiche da qui in giu!
 #--------------------------------------------------------------------
 
+# TF DEBUG LEVELS:
+#     0 = all messages are logged (default behavior)
+#     1 = INFO messages are not printed
+#     2 = INFO and W  ARNING messages are not printed
+#     3 = INFO, WARNING, and ERROR messages are not printed
+ENV TF_CPP_MIN_LOG_LEVEL 3
+
 # create project folder
 RUN mkdir -p /opt/ml/code
+RUN mkdir -p /opt/ml/checkpoints
+RUN mkdir -p /opt/ml/output/tensorboard
+RUN mkdir -p /opt/ml/input/data
 
 # cambia la cartella 
 WORKDIR /opt/ml/code
 
 # copio la cartella principale di lavoro
-COPY mask_rcnn_coco.h5 .
-
-# copio la cartella principale di lavoro
 COPY Mask_RCNN .
 
-# crea la cartella di destinazione del dataset 
-RUN mkdir isic2018
-
-# define the sagemaker target script
-ENV SCRIPT_NAME="lesions_sm.py"
-
 # Defines train.py as script entrypoint
-ENV SAGEMAKER_PROGRAM $SCRIPT_NAME
+ENV SAGEMAKER_PROGRAM 'lesions_sagemaker.py'
 
 

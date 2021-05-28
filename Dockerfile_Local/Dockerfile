@@ -29,7 +29,6 @@ COPY mask_rcnn_coco.h5 /opt/ml/input/data/model/
 
 WORKDIR /opt/ml/
 
-
 # TF DEBUG LEVELS:
 #     0 = all messages are logged (default behavior)
 #     1 = INFO messages are not printed
