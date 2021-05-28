@@ -8,6 +8,7 @@ Written by Waleed Abdulla
 """
 
 import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '4' 
 import random
 import datetime
 import re

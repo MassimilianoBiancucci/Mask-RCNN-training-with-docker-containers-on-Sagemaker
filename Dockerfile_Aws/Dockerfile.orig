@@ -46,6 +46,15 @@ WORKDIR /opt/ml/code
 # copio la cartella principale di lavoro
 COPY Mask_RCNN .
 
+<<<<<<< HEAD
+# crea la cartella di destinazione del dataset 
+RUN mkdir isic2018
+
+# define the sagemaker target script
+ENV SCRIPT_NAME="lesions_sagemaker.py"
+
+=======
+>>>>>>> d1fb301b36310af60c487c5e41d19262856f0e79
 # Defines train.py as script entrypoint
 ENV SAGEMAKER_PROGRAM 'lesions_sagemaker.py'
 
