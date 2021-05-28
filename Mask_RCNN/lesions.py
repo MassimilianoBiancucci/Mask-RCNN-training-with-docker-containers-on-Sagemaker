@@ -214,6 +214,7 @@ if __name__ == "__main__":
 		# perform fine-tuning
 		model = modellib.MaskRCNN(mode="training", config=config,
 			model_dir=LOGS_AND_MODEL_DIR)
+		
 		model.load_weights(COCO_PATH, by_name=True,
 			exclude=["mrcnn_class_logits", "mrcnn_bbox_fc",
 				"mrcnn_bbox", "mrcnn_mask"])

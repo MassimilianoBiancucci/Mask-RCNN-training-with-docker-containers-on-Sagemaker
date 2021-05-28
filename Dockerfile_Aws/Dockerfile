@@ -43,7 +43,7 @@ COPY Mask_RCNN .
 RUN mkdir isic2018
 
 # define the sagemaker target script
-ENV SCRIPT_NAME="lesions_sm.py"
+ENV SCRIPT_NAME="lesions_sagemaker.py"
 
 # Defines train.py as script entrypoint
 ENV SAGEMAKER_PROGRAM $SCRIPT_NAME

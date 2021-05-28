@@ -238,6 +238,8 @@ Notebook with code example: [**supervisely_json_dataset_preparetion.ipynb**](htt
 
 - [Git of sagemaker training toolkit](https://github.com/aws/sagemaker-training-toolkit)
 
+- [Git of sagemaker python SDK](https://github.com/aws/sagemaker-python-sdk)
+
 - [Sagemaker practical reference](https://sagemaker.readthedocs.io/en/stable/overview.html)
 
 - [Using Docker containers with SageMaker](https://docs.aws.amazon.com/sagemaker/latest/dg/docker-containers.html)
