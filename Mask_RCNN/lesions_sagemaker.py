@@ -141,6 +141,7 @@ def read_channels(channel_var='SM_CHANNELS'):
 
 
 if __name__ == "__main__":
+
     # os.environ['SM_CHANNELS'] = '["dataset","model"]'
 
     # os.environ['SM_CHANNEL_DATASET'] = '/opt/ml/input/data/dataset'
@@ -163,7 +164,7 @@ if __name__ == "__main__":
     CHECKPOINTS_DIR = user_defined_env_vars["checkpoints"]
     TENSORBOARD_DIR = user_defined_env_vars["tensorboard"]
     hyperparameters = json.loads(read_env_var('SM_HPS', {}))
-
+    
     # TODO se cambi dataset sta cosa non funziona piu'!
     images_path = os.path.sep.join([dataset_path,
                                     "ISIC2018_Task1-2_Training_Input"])

@@ -1,1 +1,5 @@
 datasets/
+assets/
+dataset_preparation_notebooks/
+docs/
+logs/
