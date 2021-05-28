@@ -160,8 +160,8 @@ if __name__ == "__main__":
 
     dataset_path = channels['dataset']
     COCO_PATH = os.path.sep.join([channels['model'], "mask_rcnn_coco.h5"])
-    CHECKPOINTS_DIR = user_defined_env_vars["checkpoints"]
-    TENSORBOARD_DIR = user_defined_env_vars["tensorboard"]
+    CHECKPOINTS_DIR = read_env_var("checkpoints", user_defined_env_vars["checkpoints"])
+    TENSORBOARD_DIR = read_env_var("tensorboard", user_defined_env_vars["tensorboard"])
     hyperparameters = json.loads(read_env_var('SM_HPS', {}))
 
     # TODO se cambi dataset sta cosa non funziona piu'!
@@ -192,7 +192,8 @@ if __name__ == "__main__":
     valIdxs = idxs[i:]
 
     CLASS_NAMES = {
-        int(k): v for k, v in hyperparameters['CLASS_NAMES'].items()}
+        int(k): v for k, v in json.loads(hyperparameters['CLASS_NAMES']).items()
+        }
 
     # load the training dataset
     trainDataset = LesionBoundaryDataset(image_paths, masks_path, CLASS_NAMES)
