@@ -190,7 +190,7 @@ The result of that function are masks with sizes determinated from the bitmaps s
 The last proces that we need to do for obtain our tensor is to create one blank tensor of masks, filled with only zeros, with size specified in the size field in the json and with the number of lables in the image, so we need to copy each bitmap on one mask using the origin field specified in each label object.
 The origin field contains two values, the x y cordintes of the top left angle of the bitmap in the image using as origin (0, 0) the top left angle of the mask, so using this values as offset for the copy operations the results are our masks. Now we have only to generate one vector that store the classes of each mask in uint8 format, and with this function applied on each image we have the dataset ready to be used on the Mask R-CNN tranining.
 
-Teh described function override the load_mask() function present in the Mask R-CNN framework.
+The function described override the load_mask() function present in the Mask R-CNN framework.
 
 ![Mask preview](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/assets/instance_estraction_from_json/extracted_masks_from_json_annotation.png?raw=true)
 
@@ -262,7 +262,11 @@ Notebook with code example: [**supervisely_json_dataset_preparetion.ipynb**](htt
 
 - [configure kaggle apis](https://adityashrm21.github.io/Setting-Up-Kaggle/)
 
-### git reference
+### Docker
+
+- [Deep-learining-containers](https://github.com/aws/deep-learning-containers/blob/master/available_images.md)
+
+### Git reference
 
 - [matterport/Mask_RCNN](https://github.com/matterport/Mask_RCNN)
 

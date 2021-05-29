@@ -193,7 +193,7 @@ if __name__ == "__main__":
     valIdxs = idxs[i:]
 
     CLASS_NAMES = {
-        int(k): v for k, v in json.loads(hyperparameters['CLASS_NAMES']).items()
+        int(k): v for k, v in hyperparameters['CLASS_NAMES'].items()
         }
 
     # load the training dataset
