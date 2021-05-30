@@ -1,5 +1,7 @@
 # backup folder
 backup/
+Model/
+checkpoints/
 
 # Data files and directories common in repo root
 logs/

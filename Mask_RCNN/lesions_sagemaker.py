@@ -18,7 +18,7 @@ from imutils import paths
 from mrcnn import utils
 from mrcnn import visualize
 from mrcnn import model as modellib
-from mrcnn import sagemaker_utils
+from mrcnn.sagemaker_utils import *
 from mrcnn.config import Config
 from imgaug import augmenters as iaa
 import json
@@ -137,15 +137,17 @@ if __name__ == "__main__":
     #'''
     os.environ['SM_CHANNELS'] = '["dataset","model"]'
     os.environ['SM_CHANNEL_DATASET'] = '/opt/ml/input/data/dataset'
-    os.environ['SM_CHANNEL_MODEL'] = '/opt/ml/input/data/model/'   
+    os.environ['SM_CHANNEL_MODEL'] = '/opt/ml/input/data/model'   
     os.environ['SM_HPS'] = '{"NAME": "lesion", \
                              "GPU_COUNT": 1, \
                              "IMAGES_PER_GPU": 1,\
                              "CLASS_NAMES": {"1": "lesion"},\
                              "TRAINING_SPLIT": 0.8,\
-                             "HEAD_TRAIN_EPOCHS": 20,\
-                             "ALL_TRAIN_EPOCHS": 40\
-                             }'
+                             "TRAIN_SEQ":[\
+                                {"epochs": 20, "layers": "heads", "lr": 0.001},\
+                                {"epochs": 40, "layers": "all", "lr": 0.0001 }\
+                             ]\
+                            }'
     #'''
 
     # default env vars
@@ -174,7 +176,7 @@ if __name__ == "__main__":
     image_paths = sorted(list(paths.list_images(images_path)))
 
     # TODO solo per test!!
-    image_paths = image_paths[:100]
+    image_paths = image_paths[:500]
 
     idxs = list(range(0, len(image_paths)))
     random.seed(42)
@@ -239,14 +241,26 @@ if __name__ == "__main__":
 
     # check if there is any checkpoint in the checkpoint folder
     # if there are, load the last checkpoint
-    if os.listdir(model.checkpoints_dir_unique):
-        MODEL_PATH = last_checkpoint_path(model.checkpoints_dir_unique, config.NAME)
-    
-    # load model
-    model.load_weights(MODEL_PATH, by_name=True,
-                       exclude=["mrcnn_class_logits", "mrcnn_bbox_fc",
-                                "mrcnn_bbox", "mrcnn_mask"])
+    try:
+        if os.listdir(model.checkpoints_dir_unique):
+            MODEL_PATH = last_checkpoint_path(model.checkpoints_dir_unique, config.NAME)
+    except:
+        print('checkpoints folder empty...')
 
+    # load model
+    model.load_weights(MODEL_PATH, by_name=True, exclude=["mrcnn_class_logits", "mrcnn_bbox_fc", "mrcnn_bbox", "mrcnn_mask"])
+
+    train_seq = hyperparameters['TRAIN_SEQ']
+
+    for i in range(len(train_seq)):
+        if model.epoch >= train_seq[i]['epochs']:
+            continue
+        
+        model.train(trainDataset, valDataset, epochs=train_seq[i]['epochs'], 
+            layers=train_seq[i]['layers'], learning_rate=train_seq[i]['lr'], augmentation=aug)
+
+    ''' 
+     OLD FASHION
     # train *just* the layer heads
     model.train(trainDataset, valDataset, epochs=hyperparameters['HEAD_TRAIN_EPOCHS'],
                 layers="heads", learning_rate=config.LEARNING_RATE,
@@ -256,9 +270,27 @@ if __name__ == "__main__":
     model.train(trainDataset, valDataset, epochs=hyperparameters['ALL_TRAIN_EPOCHS'],
                 layers="all", learning_rate=config.LEARNING_RATE / 10,
                 augmentation=aug)
-
+    '''
 
 '''
+TRAIN_SEQ hyperparameter sample
+
+    In this notation the epochs specify a number of epoch absolute, the first object specify
+    that from the epoch 0 to epoch 20 there are certain parameters, the second object specify that there is
+    
+    'TRAIN_SEQ':[
+        {
+            'epochs': 20,
+            'layers': 'heads',
+            'lr': 0.001,
+        },
+        {
+            'epochs': 40,
+            'layers': 'all',
+            'lr': 0.0001,
+        }
+    ]
+
 sample output:
 
 1/2075 [..............................] - ETA: 21:39:54 - loss: 3.1190 - rpn_class_loss: 0.0191 - rpn_bbox_loss: 0.1407 - mrcnn_class_loss: 0.6572 - mrcnn_bbox_loss: 0.9571 -    

@@ -49,4 +49,6 @@ def last_checkpoint_path(checkpoints_dir, name):
     for i in range(4-l):
         str_epoch = '0'+str_epoch
 
-    return os.path.join(checkpoints_dir, f'mask_rcnn_{name}_{str_epoch}.h5')
+    checkpoint_path = os.path.join(checkpoints_dir, f'mask_rcnn_{name}_{str_epoch}.h5')
+    print(f'loading checkpoint: {checkpoint_path}')
+    return checkpoint_path
