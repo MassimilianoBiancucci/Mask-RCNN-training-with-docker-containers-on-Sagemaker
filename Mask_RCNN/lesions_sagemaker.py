@@ -134,7 +134,7 @@ class LesionBoundaryDataset(utils.Dataset):
 
 if __name__ == "__main__":
 
-    #'''
+    '''
     os.environ['SM_CHANNELS'] = '["dataset","model"]'
     os.environ['SM_CHANNEL_DATASET'] = '/opt/ml/input/data/dataset'
     os.environ['SM_CHANNEL_MODEL'] = '/opt/ml/input/data/model'   
@@ -148,7 +148,7 @@ if __name__ == "__main__":
                                 {"epochs": 40, "layers": "all", "lr": 0.0001 }\
                              ]\
                             }'
-    #'''
+    '''
 
     # default env vars
     user_defined_env_vars = {"checkpoints": "/opt/ml/checkpoints",
@@ -176,7 +176,7 @@ if __name__ == "__main__":
     image_paths = sorted(list(paths.list_images(images_path)))
 
     # TODO solo per test!!
-    image_paths = image_paths[:500]
+    # image_paths = image_paths[:50]
 
     idxs = list(range(0, len(image_paths)))
     random.seed(42)
@@ -223,7 +223,7 @@ if __name__ == "__main__":
     )
 
     #print all config varaibles
-    #config.display()
+    config.display()
 
     # initialize the image augmentation process
     # fa l'argomentazione con al massimo 2 tipi di argomentazione
@@ -250,7 +250,11 @@ if __name__ == "__main__":
     # load model
     model.load_weights(MODEL_PATH, by_name=True, exclude=["mrcnn_class_logits", "mrcnn_bbox_fc", "mrcnn_bbox", "mrcnn_mask"])
 
+    # execute train sequence
     train_seq = hyperparameters['TRAIN_SEQ']
+
+    print(train_seq)
+    print(type(train_seq))
 
     for i in range(len(train_seq)):
         if model.epoch >= train_seq[i]['epochs']:
