@@ -2112,8 +2112,6 @@ class MaskRCNN():
         Returns:
             The path of the last checkpoint file
         """
-        # TODO fargli prendere i chechpoint da un'altra directory
-
         # Get directory names. Each directory corresponds to a model
         dir_names = next(os.walk(self.checkpoints_dir))[1]
         key = self.config.NAME.lower()

@@ -329,8 +329,40 @@ metric_definitions=[
                             "Regex": "\smrcnn_class_loss:\s(\d+.?\d*)\s-",
                         },
                         {
-                            "Name": "mrcnn_bbox_loss",
+                            "Name": "mrcnn_mask_loss",
+                            "Regex": "\smrcnn_mask_loss:\s(\d+.?\d*)\s-",
+                        },
+                        {
+                            "Name": "val_loss",
                             "Regex": "\smrcnn_bbox_loss:\s(\d+.?\d*)\s-",
+                        },
+                        {
+                            "Name": "mrcnn_bbox_loss",
+                            "Regex": "\sval_loss:\s(\d+.?\d*)\s-",
+                        },
+                        {
+                            "Name": "val_rpn_class_loss",
+                            "Regex": "\sval_rpn_class_loss:\s(\d+.?\d*)\s-",
+                        },
+                        {
+                            "Name": "val_rpn_bbox_loss",
+                            "Regex": "\sval_rpn_bbox_loss:\s(\d+.?\d*)\s-",
+                        },
+                        {
+                            "Name": "val_mrcnn_class_loss",
+                            "Regex": "\sval_mrcnn_class_loss:\s(\d+.?\d*)\s-",
+                        },
+                        {
+                            "Name": "val_mrcnn_bbox_loss",
+                            "Regex": "\sval_mrcnn_bbox_loss:\s(\d+.?\d*)\s-",
+                        },
+                        {
+                            "Name": "val_mrcnn_mask_loss",
+                            "Regex": "\sval_mrcnn_mask_loss:\s(\d+.?\d*)",
+                        },
+                        {
+                            "Name": "ms/step",
+                            "Regex": "\s(\d+)ms\/step",
                         },
                     ]
 
