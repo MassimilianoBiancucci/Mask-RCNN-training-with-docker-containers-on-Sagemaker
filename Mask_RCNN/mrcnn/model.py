@@ -2407,10 +2407,12 @@ class MaskRCNN():
 
         # Callbacks
         # docs for tensorboard settings: https://www.tensorflow.org/versions/r1.15/api_docs/python/tf/keras/callbacks/TensorBoard
+        # Nota: histogram_freq=1 genera un errore.. 
+        # 
         callbacks = [
             #keras.callbacks.TensorBoard(log_dir=self.tensorboard_dir_unique, histogram_freq=1, write_graph=True, write_images=False, update_freq='epoch'),
-            keras.callbacks.TensorBoard(log_dir=self.tensorboard_dir_unique, histogram_freq=0, write_graph=True, write_images=False),
-            keras.callbacks.ModelCheckpoint(self.checkpoint_path, verbose=1, save_weights_only=True),
+            keras.callbacks.TensorBoard(log_dir=self.tensorboard_dir_unique, histogram_freq=0, write_graph=True, write_grads=True, write_images=False),
+            keras.callbacks.ModelCheckpoint(self.checkpoint_path, verbose=0, save_weights_only=True),
         ]
 
         # Add custom callbacks to the list
