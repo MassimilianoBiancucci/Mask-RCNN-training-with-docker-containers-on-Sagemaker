@@ -295,10 +295,19 @@ TRAIN_SEQ hyperparameter sample
         }
     ]
 
+- - - - - - - - 
+
 sample output:
 
 1/2075 [..............................] - ETA: 21:39:54 - loss: 3.1190 - rpn_class_loss: 0.0191 - rpn_bbox_loss: 0.1407 - mrcnn_class_loss: 0.6572 - mrcnn_bbox_loss: 0.9571 -    
 2/2075 [..............................] - ETA: 11:12:53 - loss: 2.8820 - rpn_class_loss: 0.0191 - rpn_bbox_loss: 0.1359 - mrcnn_class_loss: 0.5046 - mrcnn_bbox_loss: 0.9102 -    
+
+- - - - - - - -
+
+sample validation output:
+
+1037/1037 [==============================] - 426s 411ms/step - loss: 0.5844 - rpn_class_loss: 0.0030 - rpn_bbox_loss: 0.1779 - mrcnn_class_loss: 0.0398 - mrcnn_bbox_loss: 0.1325 - mrcnn_mask_loss: 0.2311 - val_loss: 1.1369 - val_rpn_class_loss: 0.0047 - val_rpn_bbox_loss: 0.5298 - val_mrcnn_class_loss: 0.0449 - val_mrcnn_bbox_loss: 0.2616 - val_mrcnn_mask_loss: 0.2958
+
 '''
 
 r'''
