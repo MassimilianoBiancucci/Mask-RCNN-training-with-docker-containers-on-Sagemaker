@@ -1,6 +1,13 @@
 '''
 Script for Mask_R-CNN training 
 '''
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  
+# TF DEBUG LEVELS: should be before tf import
+#     0 = all messages are logged (default behavior)
+#     1 = INFO messages are not printed
+#     2 = INFO and W  ARNING messages are not printed
+#     3 = INFO, WARNING, and ERROR messages are not printed
 
 import cv2
 import random
@@ -11,9 +18,9 @@ from imutils import paths
 from mrcnn import utils
 from mrcnn import visualize
 from mrcnn import model as modellib
+from mrcnn import sagemaker_utils
 from mrcnn.config import Config
 from imgaug import augmenters as iaa
-import os
 import json
 
 
@@ -29,6 +36,7 @@ class LesionBoundaryConfig(Config):
 
 
 class LesionBoundaryDataset(utils.Dataset):
+
     def __init__(self, imagePaths, masks_path, classNames, width=1024):
         # call the parent constructor
         super().__init__(self)
@@ -124,43 +132,30 @@ class LesionBoundaryDataset(utils.Dataset):
         return (masks.astype("bool"), classIDs.astype("int32"))
 
 
-def read_env_var(name, default_value=None):
-    try:
-        return os.environ[name]
-    except:
-        return default_value
-
-
-def read_channels(channel_var='SM_CHANNELS'):
-    var = read_env_var(channel_var, '[]')
-    channels = json.loads(var)
-    d = {}
-    for c in channels:
-        d[c] = read_env_var(f'SM_CHANNEL_{c.upper()}')
-    return d
-
-
 if __name__ == "__main__":
 
-    # os.environ['SM_CHANNELS'] = '["dataset","model"]'
+    #'''
+    os.environ['SM_CHANNELS'] = '["dataset","model"]'
+    os.environ['SM_CHANNEL_DATASET'] = '/opt/ml/input/data/dataset'
+    os.environ['SM_CHANNEL_MODEL'] = '/opt/ml/input/data/model/'   
+    os.environ['SM_HPS'] = '{"NAME": "lesion", \
+                             "GPU_COUNT": 1, \
+                             "IMAGES_PER_GPU": 1,\
+                             "CLASS_NAMES": {"1": "lesion"},\
+                             "TRAINING_SPLIT": 0.8,\
+                             "HEAD_TRAIN_EPOCHS": 20,\
+                             "ALL_TRAIN_EPOCHS": 40\
+                             }'
+    #'''
 
-    # os.environ['SM_CHANNEL_DATASET'] = '/opt/ml/input/data/dataset'
-    # os.environ['SM_CHANNEL_MODEL'] = '/opt/ml/input/data/model/'
-
-    # os.environ['SM_HPS'] = '{"NAME": "lesion", \
-    #                         "GPU_COUNT": 1, \
-    #                         "IMAGES_PER_GPU": 1,\
-    #                         "CLASS_NAMES": {"1": "lesion"},\
-    #                         "TRAINING_SPLIT": 0.8    }'
-
-
+    # default env vars
     user_defined_env_vars = {"checkpoints": "/opt/ml/checkpoints",
                              "tensorboard": "/opt/ml/output/tensorboard"}
 
     channels = read_channels()
 
     dataset_path = channels['dataset']
-    COCO_PATH = os.path.sep.join([channels['model'], "mask_rcnn_coco.h5"])
+    MODEL_PATH = os.path.sep.join([channels['model'], "mask_rcnn_coco.h5"])
     CHECKPOINTS_DIR = read_env_var("checkpoints", user_defined_env_vars["checkpoints"])
     TENSORBOARD_DIR = read_env_var("tensorboard", user_defined_env_vars["tensorboard"])
     hyperparameters = json.loads(read_env_var('SM_HPS', {}))
@@ -179,7 +174,7 @@ if __name__ == "__main__":
     image_paths = sorted(list(paths.list_images(images_path)))
 
     # TODO solo per test!!
-    image_paths = image_paths[:300]
+    image_paths = image_paths[:100]
 
     idxs = list(range(0, len(image_paths)))
     random.seed(42)
@@ -225,7 +220,8 @@ if __name__ == "__main__":
         **hyperparameters,
     )
 
-    config.display()
+    #print all config varaibles
+    #config.display()
 
     # initialize the image augmentation process
     # fa l'argomentazione con al massimo 2 tipi di argomentazione
@@ -241,21 +237,26 @@ if __name__ == "__main__":
                               checkpoints_dir=CHECKPOINTS_DIR,
                               tensorboard_dir=TENSORBOARD_DIR)
 
-    model.load_weights(COCO_PATH, by_name=True,
+    # check if there is any checkpoint in the checkpoint folder
+    # if there are, load the last checkpoint
+    if os.listdir(model.checkpoints_dir_unique):
+        MODEL_PATH = last_checkpoint_path(model.checkpoints_dir_unique, config.NAME)
+    
+    # load model
+    model.load_weights(MODEL_PATH, by_name=True,
                        exclude=["mrcnn_class_logits", "mrcnn_bbox_fc",
                                 "mrcnn_bbox", "mrcnn_mask"])
 
     # train *just* the layer heads
-    model.train(trainDataset, valDataset, epochs=5,
+    model.train(trainDataset, valDataset, epochs=hyperparameters['HEAD_TRAIN_EPOCHS'],
                 layers="heads", learning_rate=config.LEARNING_RATE,
                 augmentation=aug)
 
     # unfreeze the body of the network and train *all* layers
-    model.train(trainDataset, valDataset, epochs=5,
+    model.train(trainDataset, valDataset, epochs=hyperparameters['ALL_TRAIN_EPOCHS'],
                 layers="all", learning_rate=config.LEARNING_RATE / 10,
                 augmentation=aug)
 
-    print("goodbye!")
 
 '''
 sample output:

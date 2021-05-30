@@ -1,6 +1,6 @@
 Note per esecuzione con rtx:
 (è necessario abilitare l'impostazione gpu allow_growth,
-il seguente è il blocco di codice che permette l'abilitazione all'internodi keras)
+il seguente è il blocco di codice che permette l'abilitazione all'interno di keras)
 
 from keras.backend.tensorflow_backend import set_session
 tf_config = tf.ConfigProto()

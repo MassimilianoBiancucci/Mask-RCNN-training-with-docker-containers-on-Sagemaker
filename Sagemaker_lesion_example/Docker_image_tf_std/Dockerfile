@@ -1,8 +1,8 @@
-FROM 763104351884.dkr.ecr.eu-west-1.amazonaws.com/tensorflow-training:1.14.0-gpu-py36-cu100-ubuntu16.04
+FROM tensorflow/tensorflow:1.14.0-gpu-py3
 
 # aggiunta all'immagine dei file necessari per l'utilizzo di cudnn
-#ADD cudnn-10.0-linux-x64-v7.6.3.30/cuda/include /usr/local/cuda-10.0/include/
-#ADD cudnn-10.0-linux-x64-v7.6.3.30/cuda/lib64 /usr/local/cuda-10.0/lib64/
+ADD cudnn-10.0-linux-x64-v7.6.3.30/cuda/include /usr/local/cuda-10.0/include/
+ADD cudnn-10.0-linux-x64-v7.6.3.30/cuda/lib64 /usr/local/cuda-10.0/lib64/
 
 # effettuo l'installazione delle librerie tkinter necessarie per la visualizzazione delle finestre
 # SOLO PER IL DEBUG NON VA AGGIUNTO AL CONTAINER DEFIINITIVO
@@ -27,13 +27,7 @@ RUN pip install sagemaker-training
 # le modifiche da qui in giu!
 #--------------------------------------------------------------------
 
-# TF DEBUG LEVELS:
-#     0 = all messages are logged (default behavior)
-#     1 = INFO messages are not printed
-#     2 = INFO and W  ARNING messages are not printed
-#     3 = INFO, WARNING, and ERROR messages are not printed
-ENV TF_CPP_MIN_LOG_LEVEL 3
-
+# TODO verify if it's needed
 # create project folder
 RUN mkdir -p /opt/ml/code
 RUN mkdir -p /opt/ml/checkpoints
@@ -49,4 +43,5 @@ COPY Mask_RCNN .
 # Defines train.py as script entrypoint
 ENV SAGEMAKER_PROGRAM 'lesions_sagemaker.py'
 
-
+#only for debug
+CMD [ "bash" ]

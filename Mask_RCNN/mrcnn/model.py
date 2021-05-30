@@ -2291,6 +2291,8 @@ class MaskRCNN():
         """
         # Set date and epoch counter as if starting a new model
         self.epoch = 0
+
+        ''' UNIQUE METHOD
         now = datetime.datetime.now()
 
         # If we have a model path with date and epochs use them
@@ -2308,19 +2310,36 @@ class MaskRCNN():
                 # So, adjust for that then increment by one to start from the next epoch
                 self.epoch = int(m.group(6)) - 1 + 1
                 print('Re-starting from epoch %d' % self.epoch)
+        '''
 
-        self.checkpoints_dir_unique = os.path.join(self.checkpoints_dir, "{}{:%Y%m%dT%H%M}".format(
-            self.config.NAME.lower(), now))
+        #add time to paths
+        #self.checkpoints_dir_unique = os.path.join(self.checkpoints_dir, "{}{:%Y%m%dT%H%M}".format(self.config.NAME.lower(), now))
+        #self.tensorboard_dir_unique = os.path.join(self.tensorboard_dir, "{}{:%Y%m%dT%H%M}".format(self.config.NAME.lower(), now))
 
-        self.tensorboard_dir_unique = os.path.join(self.tensorboard_dir, "{}{:%Y%m%dT%H%M}".format(
-            self.config.NAME.lower(), now))
+        # NON UNIQ METHOD
+        # This implementation is more easy for training in the container were the folders are clean
+        # at any new training job
+        # If we have a model path with date and epochs use them
+        if model_path:
+            # Continue from we left of. Get epoch and date from the file name
+            # A sample model path might look like:
+            # \path\to\logs\coco20171029T2315\mask_rcnn_coco_0001.h5 (Windows)
+            # /path/to/logs/coco20171029T2315/mask_rcnn_coco_0001.h5 (Linux)
+            regex = r".*[/\\][\w-]+[/\\]mask\_rcnn\_[\w-]+(\d{4})\.h5"
+            m = re.match(regex, model_path)
+            if m:
+                # Epoch number in file is 1-based, and in Keras code it's 0-based.
+                # So, adjust for that then increment by one to start from the next epoch
+                self.epoch = int(m.group(1)) - 1 + 1
+                print('Re-starting from epoch %d' % self.epoch)
+
+        # without time in path ! ATTENTION IN THIS WAY CHECKPOINT FOLDER ISN?T UNIQUE ANYMORE
+        self.checkpoints_dir_unique = os.path.join(self.checkpoints_dir, "{}".format(self.config.NAME.lower()))
+        self.tensorboard_dir_unique = os.path.join(self.tensorboard_dir, "{}".format(self.config.NAME.lower()))
 
         # Path to save after each epoch. Include placeholders that get filled by Keras.
-        self.checkpoint_path = os.path.join(self.checkpoints_dir_unique,
-                                            "mask_rcnn_{}_*epoch*.h5".format(
-                                                self.config.NAME.lower()))
-        self.checkpoint_path = self.checkpoint_path.replace(
-            "*epoch*", "{epoch:04d}")
+        self.checkpoint_path = os.path.join(self.checkpoints_dir_unique, "mask_rcnn_{}_*epoch*.h5".format(self.config.NAME.lower()))
+        self.checkpoint_path = self.checkpoint_path.replace("*epoch*", "{epoch:04d}")
 
     def train(self, train_dataset, val_dataset, learning_rate, epochs, layers,
               augmentation=None, custom_callbacks=None, no_augmentation_sources=None):
@@ -2387,9 +2406,11 @@ class MaskRCNN():
             os.makedirs(self.tensorboard_dir_unique)
 
         # Callbacks
+        # docs for tensorboard settings: https://www.tensorflow.org/versions/r1.15/api_docs/python/tf/keras/callbacks/TensorBoard
         callbacks = [
             keras.callbacks.TensorBoard(log_dir=self.tensorboard_dir_unique,
-                                        histogram_freq=0, write_graph=True, write_images=False),
+                                        histogram_freq=1, write_graph=True, write_images=False
+                                        update_freq='epoch'),
             keras.callbacks.ModelCheckpoint(self.checkpoint_path,
                                             verbose=0, save_weights_only=True),
         ]
@@ -2424,6 +2445,7 @@ class MaskRCNN():
             workers=workers,
             use_multiprocessing=True,
         )
+        
         self.epoch = max(self.epoch, epochs)
 
     def mold_inputs(self, images):
