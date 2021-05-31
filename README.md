@@ -33,6 +33,7 @@ The core of the project was the matterport implementation of [Mask R-CNN](https:
 ## **Project struscture**
 
 In this section is shown the structure of the project and how each example is organized.
+[#TODO]
 
 - - -
 
@@ -199,7 +200,27 @@ Notebook with code example: [**supervisely_json_dataset_preparetion.ipynb**](htt
 
 - - -
 
-## **Sagemaker training**
+## **Training on Sagemaker**
+
+### Sagemaker overview
+
+[#TODO spiegare cos'e' e che permette di fare, copia da aws]
+
+### Using Sagemaker notebooks
+
+[#TODO notebook structure]
+
+### Start a docker image from sagemaker notebook
+
+[#TODO dummy example 1, come si pusha su ECR etc]
+
+### Passing data to the container [#TODO da spostare piu' in basso]
+
+[#TODO <https://github.com/aws/sagemaker-training-toolkit/blob/master/ENVIRONMENT_VARIABLES.md#sm_user_args> e come sono costruite sul notebook le variabili hiperparameters e environment]
+
+[#TODO dummy example 2]
+
+
 
 - - -
 
