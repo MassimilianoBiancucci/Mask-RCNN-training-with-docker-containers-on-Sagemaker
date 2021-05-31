@@ -17,8 +17,10 @@ This project was possible thanks to the repository [matterport/Mask_RCNN](https:
         - [Json annotations preparation](#json-annotations-preparation)
 1. [Sagemaker training](#sagemaker-training)
     - [Dummy examples](#dummy-examples)
-    - []()
+    - [Training on gpus]()
 1. [Results](#results)
+    -[]()
+    -[]()
 1. [Inference on local container](#inference-on-local-container)
 1. [Useful links](#useful-links)
 

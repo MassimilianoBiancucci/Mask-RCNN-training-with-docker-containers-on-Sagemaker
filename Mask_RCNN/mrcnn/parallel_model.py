@@ -26,12 +26,13 @@ class ParallelModel(KM.Model):
     merges the outputs together and applies the loss on the combined
     outputs.
     """
-
+    
     def __init__(self, keras_model, gpu_count):
         """Class constructor.
         keras_model: The Keras model to parallelize
         gpu_count: Number of GPUs. Must be > 1
         """
+        super(ParallelModel, self).__init__()
         self.inner_model = keras_model
         self.gpu_count = gpu_count
         merged_outputs = self.make_parallel()

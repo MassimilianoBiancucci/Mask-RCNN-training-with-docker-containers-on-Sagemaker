@@ -1855,6 +1855,7 @@ class MaskRCNN():
 
         assert mode in ['training', 'inference']
 
+        '''
         from keras.backend.tensorflow_backend import set_session
         tf_config = tf.ConfigProto()
         # dynamically grow the memory used on the GPU
@@ -1864,6 +1865,7 @@ class MaskRCNN():
         sess = tf.Session(config=tf_config)
         # set this TensorFlow session as the default session for Keras
         set_session(sess)
+        '''
 
         self.mode = mode
         self.config = config
