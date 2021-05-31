@@ -1,6 +1,6 @@
 # List of useful scripts and commands
 
-### ECR repository docker setup
+## ECR repository docker setup
 
 This command is needed to give to docker needed permissions for pull and push repositories.
 
