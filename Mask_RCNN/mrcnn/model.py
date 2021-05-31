@@ -1845,7 +1845,7 @@ class MaskRCNN():
     The actual Keras model is in the keras_model property.
     """
 
-    def __init__(self, mode, config, checkpoints_dir, tensorboard_dir):
+    def __init__(self, mode, config, checkpoints_dir, tensorboard_dir = ""):
         """
         mode: Either "training" or "inference"
         config: A Sub-class of the Config class

@@ -198,8 +198,8 @@ if __name__ == "__main__":
 
     #'''
     os.environ['SM_CHANNELS'] = '["dataset","model"]'
-    os.environ['SM_CHANNEL_DATASET'] = '/opt/ml/input/data/dataset'
-    os.environ['SM_CHANNEL_MODEL'] = '/opt/ml/input/data/model'   
+    os.environ['SM_CHANNEL_DATASET'] = '/home/massi/Progetti/Sagemaker_training_maskrcnn/datasets/cast_dataset'
+    os.environ['SM_CHANNEL_MODEL'] = '/home/massi/Progetti/Sagemaker_training_maskrcnn/datasets/cast_dataset'   
     os.environ['SM_HPS'] = '{"NAME": "cast", \
                              "GPU_COUNT": 1, \
                              "IMAGES_PER_GPU": 1,\
@@ -223,34 +223,7 @@ if __name__ == "__main__":
 
     hyperparameters = json.loads(read_env_var('SM_HPS', {}))
     
-    """    
-    OLD FASHION
-    
-    # TODO se cambi dataset sta cosa non funziona piu'!
-    images_path = os.path.sep.join([dataset_path, "ISIC2018_Task1-2_Training_Input"])
-    masks_path = os.path.sep.join([dataset_path, "ISIC2018_Task1_Training_GroundTruth"])
 
-    # initialize the amount of data to use for training
-    TRAINING_SPLIT = hyperparameters['TRAINING_SPLIT']
-
-    # grab all image paths, then randomly select indexes for both training
-    # and validation
-    image_paths = sorted(list(paths.list_images(images_path)))
-
-    # TODO solo per test!!
-    # image_paths = image_paths[:50]
-
-    idxs = list(range(0, len(image_paths)))
-    random.seed(42)
-    random.shuffle(idxs)
-    i = int(len(idxs) * TRAINING_SPLIT)
-
-    print("training samples:" + str(i))
-    print("validations samples:" + str(len(idxs) - i))
-
-    trainIdxs = idxs[:i]
-    valIdxs = idxs[i:]
-    """
 
     # TRAIN DATASET DEFINITIONS -------------------------------------------------------------
     train_images_path = os.path.sep.join([dataset_path, "training", "img"])
@@ -276,173 +249,34 @@ if __name__ == "__main__":
     trainDataset = castDatasetBox(train_image_paths, train_masks_path, CLASS_NAMES)
     trainDataset.load_exampls()
     trainDataset.prepare()
+
+    # load the 0-th training image and corresponding masks and
+    # class IDs in the masks
+    image = trainDataset.load_image(0)
+    (masks, classIDs) = trainDataset.load_mask(0)
+
+    # show the image spatial dimensions which is HxWxC
+    print("[INFO] image shape: {}".format(image.shape))
+
+    # show the masks shape which should have the same width and
+    # height of the images but the third dimension should be
+    # equal to the total number of instances in the image itself
+    print("[INFO] masks shape: {}".format(masks.shape))
+
+    # show the length of the class IDs list along with the values
+    # inside the list -- the length of the list should be equal
+    # to the number of instances dimension in the 'masks' array
+    print("[INFO] class IDs length: {}".format(len(classIDs)))
+    print("[INFO] class IDs: {}".format(classIDs))
     
-    # load the validation dataset
-    valDataset = castDatasetBox(val_image_paths, val_masks_path, CLASS_NAMES)
-    valDataset.load_exampls()
-    valDataset.prepare()
+    # determine a sample of training image indexes and loop over
+    # them
+    for i in trainDataset.image_ids:
+        # load the image and masks for the sampled image
+        print("[INFO] investigating image index: {}".format(i))
+        image = trainDataset.load_image(i)
+        (masks, classIDs) = trainDataset.load_mask(i)
 
-    # da mettere negli iperparametri
-    GPU_COUNT = hyperparameters['GPU_COUNT']
-    IMAGES_PER_GPU = hyperparameters['IMAGES_PER_GPU']
-
-    # initialize the training configuration
-    # set the number of steps per training epoch and validation cycle
-    STEPS_PER_EPOCH = train_ds_len // (IMAGES_PER_GPU * GPU_COUNT)
-    VALIDATION_STEPS = val_ds_len // (IMAGES_PER_GPU * GPU_COUNT)
-
-    # number of classes (+1 for the background)
-    NUM_CLASSES = len(CLASS_NAMES) + 1
-
-    config = castConfig(
-        STEPS_PER_EPOCH=STEPS_PER_EPOCH,
-        VALIDATION_STEPS=VALIDATION_STEPS,
-        NUM_CLASSES=NUM_CLASSES,
-        **hyperparameters,
-    )
-
-    #print all config varaibles
-    config.display()
-
-    # initialize the image augmentation process
-    # fa l'argomentazione con al massimo 2 tipi di argomentazione
-    aug = iaa.SomeOf((0, 2), [
-        iaa.Fliplr(0.5),
-        iaa.Flipud(0.5),
-        iaa.Affine(rotate=(-10, 10))
-    ])
-
-    # initialize the model and load the COCO weights so we can
-    # perform fine-tuning
-    model = modellib.MaskRCNN(mode="training", config=config,
-                              checkpoints_dir=CHECKPOINTS_DIR,
-                              tensorboard_dir=TENSORBOARD_DIR)
-    
-    # check if there is any checkpoint in the checkpoint folder
-    # if there are, load the last checkpoint
-    try:
-        if os.listdir(model.checkpoints_dir_unique):
-            MODEL_PATH = last_checkpoint_path(model.checkpoints_dir_unique, config.NAME)
-    except:
-        print('checkpoints folder empty...')
-
-    # load model
-    model.load_weights(MODEL_PATH, by_name=True, exclude=["mrcnn_class_logits", "mrcnn_bbox_fc", "mrcnn_bbox", "mrcnn_mask"])
-
-    # execute train sequence
-    train_seq = hyperparameters['TRAIN_SEQ']
-
-    print(train_seq)
-    print(type(train_seq))
-
-    for i in range(len(train_seq)):
-        if model.epoch >= train_seq[i]['epochs']:
-            continue
-        
-        model.train(trainDataset, valDataset, epochs=train_seq[i]['epochs'], 
-            layers=train_seq[i]['layers'], learning_rate=train_seq[i]['lr'], augmentation=aug)
-
-    ''' 
-     OLD FASHION
-    # train *just* the layer heads
-    model.train(trainDataset, valDataset, epochs=hyperparameters['HEAD_TRAIN_EPOCHS'],
-                layers="heads", learning_rate=config.LEARNING_RATE,
-                augmentation=aug)
-
-    # unfreeze the body of the network and train *all* layers
-    model.train(trainDataset, valDataset, epochs=hyperparameters['ALL_TRAIN_EPOCHS'],
-                layers="all", learning_rate=config.LEARNING_RATE / 10,
-                augmentation=aug)
-    '''
-
-'''
-TRAIN_SEQ hyperparameter sample
-
-    In this notation the epochs specify a number of epoch absolute, the first object specify
-    that from the epoch 0 to epoch 20 there are certain parameters, the second object specify that there is
-    
-    'TRAIN_SEQ':[
-        {
-            'epochs': 20,
-            'layers': 'heads',
-            'lr': 0.001,
-        },
-        {
-            'epochs': 40,
-            'layers': 'all',
-            'lr': 0.0001,
-        }
-    ]
-
-- - - - - - - - 
-
-sample output:
-
-1/2075 [..............................] - ETA: 21:39:54 - loss: 3.1190 - rpn_class_loss: 0.0191 - rpn_bbox_loss: 0.1407 - mrcnn_class_loss: 0.6572 - mrcnn_bbox_loss: 0.9571 -    
-2/2075 [..............................] - ETA: 11:12:53 - loss: 2.8820 - rpn_class_loss: 0.0191 - rpn_bbox_loss: 0.1359 - mrcnn_class_loss: 0.5046 - mrcnn_bbox_loss: 0.9102 -    
-
-- - - - - - - -
-
-sample validation output:
-
-1037/1037 [==============================] - 426s 411ms/step - loss: 0.5844 - rpn_class_loss: 0.0030 - rpn_bbox_loss: 0.1779 - mrcnn_class_loss: 0.0398 - mrcnn_bbox_loss: 0.1325 - mrcnn_mask_loss: 0.2311 - val_loss: 1.1369 - val_rpn_class_loss: 0.0047 - val_rpn_bbox_loss: 0.5298 - val_mrcnn_class_loss: 0.0449 - val_mrcnn_bbox_loss: 0.2616 - val_mrcnn_mask_loss: 0.2958
-
-'''
-
-r'''
-metric_definitions=[
-                        {
-                            "Name": "loss",
-                            "Regex": "\sloss:\s(\d+.?\d*)\s-",
-                        },
-                        {
-                            "Name": "rpn_class_loss",
-                            "Regex": "\srpn_class_loss:\s(\d+.?\d*)\s-",
-                        },
-                        {
-                            "Name": "rpn_bbox_loss",
-                            "Regex": "\srpn_bbox_loss:\s(\d+.?\d*)\s-",
-                        },
-                        {
-                            "Name": "mrcnn_class_loss",
-                            "Regex": "\smrcnn_class_loss:\s(\d+.?\d*)\s-",
-                        },
-                        {
-                            "Name": "mrcnn_mask_loss",
-                            "Regex": "\smrcnn_mask_loss:\s(\d+.?\d*)\s-",
-                        },
-                        {
-                            "Name": "val_loss",
-                            "Regex": "\smrcnn_bbox_loss:\s(\d+.?\d*)\s-",
-                        },
-                        {
-                            "Name": "mrcnn_bbox_loss",
-                            "Regex": "\sval_loss:\s(\d+.?\d*)\s-",
-                        },
-                        {
-                            "Name": "val_rpn_class_loss",
-                            "Regex": "\sval_rpn_class_loss:\s(\d+.?\d*)\s-",
-                        },
-                        {
-                            "Name": "val_rpn_bbox_loss",
-                            "Regex": "\sval_rpn_bbox_loss:\s(\d+.?\d*)\s-",
-                        },
-                        {
-                            "Name": "val_mrcnn_class_loss",
-                            "Regex": "\sval_mrcnn_class_loss:\s(\d+.?\d*)\s-",
-                        },
-                        {
-                            "Name": "val_mrcnn_bbox_loss",
-                            "Regex": "\sval_mrcnn_bbox_loss:\s(\d+.?\d*)\s-",
-                        },
-                        {
-                            "Name": "val_mrcnn_mask_loss",
-                            "Regex": "\sval_mrcnn_mask_loss:\s(\d+.?\d*)",
-                        },
-                        {
-                            "Name": "ms/step",
-                            "Regex": "\s(\d+)ms\/step",
-                        },
-                    ]
-
-'''
+        # visualize the masks for the current image
+        visualize.display_top_masks(image, masks, classIDs,
+            trainDataset.class_names)
