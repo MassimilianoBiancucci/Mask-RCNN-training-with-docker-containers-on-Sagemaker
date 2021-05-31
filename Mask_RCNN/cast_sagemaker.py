@@ -21,23 +21,44 @@ from mrcnn import model as modellib
 from mrcnn.sagemaker_utils import *
 from mrcnn.config import Config
 from imgaug import augmenters as iaa
+from PIL import Image
+import base64
+import zlib
 import json
+import io
 
+# NOTE: used in the load_mask function
+# don't move this declaration.
+CLASS_NAMES = {
+    1 : "chipping",
+    2 : "deburring",
+    3 : "holes",
+    4 : "disk"
+}
 
-class LesionBoundaryConfig(Config):
+class castConfig(Config):
     """
-    estendo la classe Config di maskrcnn (mrcnn/config.py) che contiene le 
-    configurazini di default e ovverrido quelle che voglio modificare.
+    Extension of Config class of the framework maskrcnn (mrcnn/config.py),
     """
 
     def __init__(self, **kwargs):
+        """
+        Overriding of same config variables
+        and addition of others.
+        """
         self.__dict__.update(kwargs)
         super().__init__()
 
 
-class LesionBoundaryDataset(utils.Dataset):
+class castDatasetBox(utils.Dataset):
+    """
+    Extension of dataset utils.Dataset
+    that override the import functions for the images
+    and the preparation function for the annotation mask from json files.
+    """
 
     def __init__(self, imagePaths, masks_path, classNames, width=1024):
+
         # call the parent constructor
         super().__init__(self)
 
@@ -48,31 +69,54 @@ class LesionBoundaryDataset(utils.Dataset):
         self.classNames = classNames
         self.width = width
 
-    def load_lesions(self, idxs):
-        """load the dataset from the disk into the dataset class
-
-        Args:
-                idxs (list of int): gli indici che determinano l'ordine 
-                                        delle immagini nel dataset
+    def load_exampls(self):
         """
-
-        # loop over all class names and add each to the 'lesion'
-        # dataset
+        load the dataset from the disk into the dataset class
+        """
+        
+        # loop over all class names and add each to the dataset
         for (classID, label) in self.classNames.items():
-            self.add_class("lesion", classID, label)
+            self.add_class("cast", classID, label)
 
         # loop over the image path indexes
-        for i in idxs:
+        for imagePath in self.imagePaths:
             # extract the image filename to serve as the unique
             # image ID
-            imagePath = self.imagePaths[i]
             filename = imagePath.split(os.path.sep)[-1]
-
+            
             # add the image to the dataset
-            self.add_image("lesion", image_id=filename, path=imagePath)
+            self.add_image("cast", image_id=filename, path=imagePath)
+
+
+    # defining supervisely functions
+    def base64_2_mask(self, s):
+        """
+        Fuction that retrive a bool matrix from a string in base 64
+        
+        s - (string) that contain a serialized bool matrix
+        """
+        z = zlib.decompress(base64.b64decode(s))
+        n = np.frombuffer(z, np.uint8)
+        #n = np.fromstring(z, np.uint8) #depecated
+        mask = cv2.imdecode(n, cv2.IMREAD_UNCHANGED)[:, :, 3].astype(bool)
+        return mask
+
+    def mask_2_base64(self, mask):
+        """
+        Fuction for compression and serializzation of a bool matrix
+
+        mask - 2D ndarray with type bool)
+        """
+        img_pil = Image.fromarray(np.array(mask, dtype=np.uint8))
+        img_pil.putpalette([0,0,0,255,255,255])
+        bytes_io = io.BytesIO()
+        img_pil.save(bytes_io, format='PNG', transparency=0, optimize=0)
+        bytes = bytes_io.getvalue()
+        return base64.b64encode(zlib.compress(bytes)).decode('utf-8')
 
     # override
     def load_image(self, imageID):
+
         # grab the image path, load it, and convert it from BGR to
         # RGB color channel ordering
         p = self.image_info[imageID]["path"]
@@ -87,68 +131,84 @@ class LesionBoundaryDataset(utils.Dataset):
 
     # override
     def load_mask(self, imageID):
+        """
+        Override of the original mask import function, 
+        this implementation extract each mask from a json file.
+        """
+
         # grab the image info and derive the full annotation path
         # file path
-        info = self.image_info[imageID]
-        filename = info["id"].split(".")[0]
+        info = self.image_info[imageID] # dict
 
-        annotPath = os.path.sep.join([self.masks_path,
-                                      f"{filename}_segmentation.png"])
+        filename = info["id"] # es. cast_def_0_91.jpeg
 
-        # load the annotation mask and resize it, *making sure* to
-        # use nearest neighbor interpolation
-        annotMask = cv2.imread(annotPath)
-        annotMask = cv2.split(annotMask)[0]
-        annotMask = imutils.resize(annotMask,
-                                   width=self.width,
-                                   inter=cv2.INTER_NEAREST)
-        annotMask[annotMask > 0] = 1
+        annotPath = os.path.sep.join([self.masks_path, f"{filename}.json"]) # es. cast_def_0_91.jpeg.json
 
-        # determine the number of unique class labels in the mask
-        classIDs = np.unique(annotMask)
+        try:
+            # loading annotation files
+            with open(annotPath, "r") as annotJsonFile:
+                annotStr = annotJsonFile.read()
+        except:
+            print(f"[ERROR]: error in load_mask(). file {annotPath} not found")
 
-        # the class ID with value '0' is actually the background
-        # which we should ignore and remove from the unique set of
-        # class identifiers
-        classIDs = np.delete(classIDs, [0])
+        # load json file as dict
+        annotJson = json.loads(annotStr)
 
-        # allocate memory for our [height, width, num_instances]
-        # array where each "instance" effectively has its own
-        # "channel" -- since there is only one lesion per image we
-        # know the number of instances is equal to 1
-        masks = np.zeros((annotMask.shape[0], annotMask.shape[1], 1),
-                         dtype="uint8")
+        mask_dims = [annotJson['size']['height'], annotJson['size']['width']] # extract img dimensions
+        objects = annotJson['objects'] # extract instances
+        n_obj = len(objects) # extract number of images
 
-        # loop over the class IDs
-        for (i, classID) in enumerate(classIDs):
-            # construct a mask for *only* the current label
-            classMask = np.zeros(annotMask.shape, dtype="uint8")
-            classMask[annotMask == classID] = 1
+        bitmaps = [] # list of bool ndarray containing bitmaps of each instance
+        origins = [] # list of coordinates of the left right angle of each bitmap into the final mask
+        class_idxs = np.zeros((n_obj,), dtype="int32")  # ndarray of class idx of each bitmap
 
-            # store the class mask in the masks array
-            masks[:, :, i] = classMask
+        for i in range(n_obj):
 
-        # return the mask array and class IDs
-        return (masks.astype("bool"), classIDs.astype("int32"))
+            bitmaps.append(self.base64_2_mask(objects[i]['bitmap']['data']))
+            origins.append(objects[i]['bitmap']['origin'])
+
+            # iterate over each class and extract the idx class of the i bitmap
+            for class_idx, class_key in CLASS_NAMES.items():
+                if class_key == objects[i]['classTitle']:
+                    class_idxs[i] = class_idx
+
+        # allocate memory for our [height, width, num_instances] array
+        # where each "instance" effectively has its own "channel"
+        masks = np.zeros((self.width, self.width, n_obj), dtype="uint8")
+
+        # iterate over each instance
+        for i in range(n_obj):
+            ox = origins[i][1]
+            oy = origins[i][0]
+            w = bitmaps[i].shape[0]
+            h = bitmaps[i].shape[1]
+
+            # applay the bitmap in the right place over the empty mask of the original size of the image
+            mask_swap = np.zeros((mask_dims[0], mask_dims[0]), dtype="uint8")
+            mask_swap[ox:ox+w, oy:oy+h] = bitmaps[i]
+
+            # resize the image and put int the final tensor
+            # NOTE: it's realy important at this point the use of cv2.INTER_NEAREST interpolation,
+            masks[:, :, i] = imutils.resize(mask_swap, width=self.width, inter=cv2.INTER_NEAREST)
+            
+        return (masks.astype('bool'), class_idxs)
 
 
 if __name__ == "__main__":
 
-    '''
+    #'''
     os.environ['SM_CHANNELS'] = '["dataset","model"]'
     os.environ['SM_CHANNEL_DATASET'] = '/opt/ml/input/data/dataset'
     os.environ['SM_CHANNEL_MODEL'] = '/opt/ml/input/data/model'   
-    os.environ['SM_HPS'] = '{"NAME": "lesion", \
+    os.environ['SM_HPS'] = '{"NAME": "cast", \
                              "GPU_COUNT": 1, \
                              "IMAGES_PER_GPU": 1,\
-                             "CLASS_NAMES": {"1": "lesion"},\
-                             "TRAINING_SPLIT": 0.8,\
                              "TRAIN_SEQ":[\
                                 {"epochs": 20, "layers": "heads", "lr": 0.001},\
                                 {"epochs": 40, "layers": "all", "lr": 0.0001 }\
                              ]\
                             }'
-    '''
+    #'''
 
     # default env vars
     user_defined_env_vars = {"checkpoints": "/opt/ml/checkpoints",
@@ -160,13 +220,15 @@ if __name__ == "__main__":
     MODEL_PATH = os.path.sep.join([channels['model'], "mask_rcnn_coco.h5"])
     CHECKPOINTS_DIR = read_env_var("checkpoints", user_defined_env_vars["checkpoints"])
     TENSORBOARD_DIR = read_env_var("tensorboard", user_defined_env_vars["tensorboard"])
+
     hyperparameters = json.loads(read_env_var('SM_HPS', {}))
     
+    """    
+    OLD FASHION
+    
     # TODO se cambi dataset sta cosa non funziona piu'!
-    images_path = os.path.sep.join([dataset_path,
-                                    "ISIC2018_Task1-2_Training_Input"])
-    masks_path = os.path.sep.join([dataset_path,
-                                   "ISIC2018_Task1_Training_GroundTruth"])
+    images_path = os.path.sep.join([dataset_path, "ISIC2018_Task1-2_Training_Input"])
+    masks_path = os.path.sep.join([dataset_path, "ISIC2018_Task1_Training_GroundTruth"])
 
     # initialize the amount of data to use for training
     TRAINING_SPLIT = hyperparameters['TRAINING_SPLIT']
@@ -188,19 +250,36 @@ if __name__ == "__main__":
 
     trainIdxs = idxs[:i]
     valIdxs = idxs[i:]
+    """
 
-    CLASS_NAMES = {
-        int(k): v for k, v in hyperparameters['CLASS_NAMES'].items()
-        }
+    # TRAIN DATASET DEFINITIONS -------------------------------------------------------------
+    train_images_path = os.path.sep.join([dataset_path, "training", "img"])
+    train_masks_path = os.path.sep.join([dataset_path, "training", "ann"])
+
+    train_image_paths = sorted(list(paths.list_images(train_images_path)))
+    #train_mask_paths = sorted(list(paths.list_images(train_masks_path)))
+
+    train_ds_len = len(train_image_paths)
+    # ---------------------------------------------------------------------------------------
+
+    # VALID DATASET DEFINITIONS -------------------------------------------------------------
+    val_images_path = os.path.sep.join([dataset_path, "validation", "img"])
+    val_masks_path = os.path.sep.join([dataset_path, "validation", "ann"])
+
+    val_image_paths = sorted(list(paths.list_images(val_images_path)))
+    #val_mask_paths = sorted(list(paths.list_images(val_masks_path)))
+
+    val_ds_len = len(val_image_paths)
+    # ---------------------------------------------------------------------------------------
 
     # load the training dataset
-    trainDataset = LesionBoundaryDataset(image_paths, masks_path, CLASS_NAMES)
-    trainDataset.load_lesions(trainIdxs)
+    trainDataset = castDatasetBox(train_image_paths, train_masks_path, CLASS_NAMES)
+    trainDataset.load_exampls()
     trainDataset.prepare()
     
     # load the validation dataset
-    valDataset = LesionBoundaryDataset(image_paths, masks_path, CLASS_NAMES)
-    valDataset.load_lesions(valIdxs)
+    valDataset = castDatasetBox(val_image_paths, val_masks_path, CLASS_NAMES)
+    valDataset.load_exampls()
     valDataset.prepare()
 
     # da mettere negli iperparametri
@@ -209,13 +288,13 @@ if __name__ == "__main__":
 
     # initialize the training configuration
     # set the number of steps per training epoch and validation cycle
-    STEPS_PER_EPOCH = len(trainIdxs) // (IMAGES_PER_GPU * GPU_COUNT)
-    VALIDATION_STEPS = len(valIdxs) // (IMAGES_PER_GPU * GPU_COUNT)
+    STEPS_PER_EPOCH = train_ds_len // (IMAGES_PER_GPU * GPU_COUNT)
+    VALIDATION_STEPS = val_ds_len // (IMAGES_PER_GPU * GPU_COUNT)
 
     # number of classes (+1 for the background)
     NUM_CLASSES = len(CLASS_NAMES) + 1
 
-    config = LesionBoundaryConfig(
+    config = castConfig(
         STEPS_PER_EPOCH=STEPS_PER_EPOCH,
         VALIDATION_STEPS=VALIDATION_STEPS,
         NUM_CLASSES=NUM_CLASSES,
