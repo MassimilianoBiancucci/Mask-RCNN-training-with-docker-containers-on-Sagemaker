@@ -2,6 +2,7 @@
 backup/
 Model/
 checkpoints/
+Outputs/
 
 # Data files and directories common in repo root
 logs/
