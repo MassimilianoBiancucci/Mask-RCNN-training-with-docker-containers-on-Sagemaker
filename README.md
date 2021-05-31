@@ -199,21 +199,17 @@ Notebook with code example: [**supervisely_json_dataset_preparetion.ipynb**](htt
 
 - - -
 
-### **Local training**
+## **Sagemaker training**
 
 - - -
 
-### **Sagemaker training**
+## **Results**
 
 - - -
 
-### **Results**
+## **Useful links**
 
-- - -
-
-### **Useful links**
-
-#### AWS docs
+### AWS docs
 
 - [AWS cli configuration](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html)
   
@@ -223,7 +219,7 @@ Notebook with code example: [**supervisely_json_dataset_preparetion.ipynb**](htt
 
 - [EC2 instance types](https://aws.amazon.com/it/ec2/instance-types/)
 
-#### Sagemaker docs
+### Sagemaker docs
 
 - [Sagemaker pricing](https://aws.amazon.com/sagemaker/pricing/)
 
@@ -247,7 +243,7 @@ Notebook with code example: [**supervisely_json_dataset_preparetion.ipynb**](htt
 
 - [Sagemaker environment variables](https://github.com/aws/sagemaker-training-toolkit/blob/master/ENVIRONMENT_VARIABLES.md)
 
-#### Dataset
+### Dataset
 
 - [Supervisely format objects](https://docs.supervise.ly/data-organization/00_ann_format_navi/04_supervisely_format_objects)
 
@@ -259,11 +255,11 @@ Notebook with code example: [**supervisely_json_dataset_preparetion.ipynb**](htt
 
 - [configure kaggle apis](https://adityashrm21.github.io/Setting-Up-Kaggle/)
 
-#### Docker
+### Docker
 
 - [Deep-learining-containers](https://github.com/aws/deep-learning-containers/blob/master/available_images.md)
 
-#### Git reference
+### Git reference
 
 - [matterport/Mask_RCNN](https://github.com/matterport/Mask_RCNN)
 
@@ -275,15 +271,15 @@ Notebook with code example: [**supervisely_json_dataset_preparetion.ipynb**](htt
 
 - [shashankprasanna/sagemaker-spot-training](https://github.com/shashankprasanna/sagemaker-spot-training)
 
-#### Useful articles
+### Useful articles
 
 - [guide to using Spot instances with Amazon SageMaker](https://towardsdatascience.com/a-quick-guide-to-using-spot-instances-with-amazon-sagemaker-b9cfb3a44a68)
 
-#### Jupyter docs
+### Jupyter docs
 
 - [magic commands](https://ipython.readthedocs.io/en/stable/interactive/magics.html#)
 
-#### Related papers
+### Related papers
 
 - [Mask R-CNN paper](https://arxiv.org/pdf/1703.06870.pdf)
 
