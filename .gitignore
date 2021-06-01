@@ -156,3 +156,11 @@ dmypy.json
 .keras/
 
 .pylint.d/
+
+.gitconfig
+
+.Xauthority
+
+.vscode/
+
+.bash_history

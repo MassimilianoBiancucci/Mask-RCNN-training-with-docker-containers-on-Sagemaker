@@ -35,6 +35,7 @@ The core of the project was the matterport implementation of [Mask R-CNN](https:
 ## **Project struscture**
 
 In this section is shown the structure of the project and how each example is organized.
+[#TODO]
 
 - - -
 
@@ -201,21 +202,69 @@ Notebook with code example: [**supervisely_json_dataset_preparetion.ipynb**](htt
 
 - - -
 
-### **Local training**
+## **Training on Sagemaker**
+
+### Sagemaker overview
+
+[#TODO spiegare cos'e' e che permette di fare, [copia da aws](https://docs.aws.amazon.com/sagemaker/latest/dg/how-it-works-training.html)]
+
+The following diagram shows how you train and deploy a model with Amazon SageMaker:
+
+![sagemaker-architecture](assets/sagemaker-architecture.png)
+
+The area labeled SageMaker highlights the two components of SageMaker: model training and model deployment.
+
+To train a model in SageMaker, you create a training job. The training job includes the following information:
+
+- The URL of the Amazon Simple Storage Service (Amazon S3) bucket where you've stored the training data.
+
+- The compute resources that you want SageMaker to use for model training. Compute resources are ML compute instances that are managed by SageMaker.
+
+- The URL of the S3 bucket where you want to store the output of the job.
+
+- The Amazon Elastic Container Registry path where the training code is stored.
+
+You have the following options for a training algorithm:
+
+- **Use an algorithm provided by SageMaker** — SageMaker provides training algorithms. If one of these meets your needs, it's a great out-of-the-box solution for quick model training.
+
+- **Submit custom code to train with deep learning frameworks** — You can submit custom Python code that uses TensorFlow, PyTorch, or Apache MXNet for model training.
+
+- **Use your own custom algorithms** — Put your code together as a Docker image and specify the registry path of the image in a SageMaker `CreateTrainingJob` API call.
+
+We chose the latter approach, creating a docker image with the code and the requirements. This approch has the main advantage that with minimal modification to the code it can be runned as a standalone dockerfile. [#TODO espandere]
+
+### Using Sagemaker notebooks
+
+An Amazon SageMaker notebook instance is a machine learning (ML) compute instance running the Jupyter Notebook App. SageMaker manages creating the instance and related resources. Use Jupyter notebooks in your notebook instance to prepare and process data, write code to train models, deploy models to SageMaker hosting, and test or validate your models. More examples can be found [here](https://docs.aws.amazon.com/sagemaker/latest/dg/howitworks-nbexamples.html).
+
+The main advantage of using the notebook on Sagemaker is the preconfigured AWS cli, you can easily access resouces on S3 or download from internet at high speed.
+
+[#TODO run the notebook in local]
+
+### Start a docker image from sagemaker notebook
+
+[#TODO dummy example 1, come si pusha su ECR etc]
+
+
+
+### Passing data to the container [#TODO da spostare piu' in basso]
+
+[#TODO <https://github.com/aws/sagemaker-training-toolkit/blob/master/ENVIRONMENT_VARIABLES.md#sm_user_args> e come sono costruite sul notebook le variabili hiperparameters e environment]
+
+[#TODO dummy example 2]
+
+
 
 - - -
 
-### **Sagemaker training**
+## **Results**
 
 - - -
 
-### **Results**
+## **Useful links**
 
-- - -
-
-### **Useful links**
-
-#### AWS docs
+### AWS docs
 
 - [AWS cli configuration](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html)
   
@@ -225,7 +274,7 @@ Notebook with code example: [**supervisely_json_dataset_preparetion.ipynb**](htt
 
 - [EC2 instance types](https://aws.amazon.com/it/ec2/instance-types/)
 
-#### Sagemaker docs
+### Sagemaker docs
 
 - [Sagemaker pricing](https://aws.amazon.com/sagemaker/pricing/)
 
@@ -249,7 +298,7 @@ Notebook with code example: [**supervisely_json_dataset_preparetion.ipynb**](htt
 
 - [Sagemaker environment variables](https://github.com/aws/sagemaker-training-toolkit/blob/master/ENVIRONMENT_VARIABLES.md)
 
-#### Dataset
+### Dataset
 
 - [Supervisely format objects](https://docs.supervise.ly/data-organization/00_ann_format_navi/04_supervisely_format_objects)
 
@@ -261,11 +310,11 @@ Notebook with code example: [**supervisely_json_dataset_preparetion.ipynb**](htt
 
 - [configure kaggle apis](https://adityashrm21.github.io/Setting-Up-Kaggle/)
 
-#### Docker
+### Docker
 
 - [Deep-learining-containers](https://github.com/aws/deep-learning-containers/blob/master/available_images.md)
 
-#### Git reference
+### Git reference
 
 - [matterport/Mask_RCNN](https://github.com/matterport/Mask_RCNN)
 
@@ -277,15 +326,15 @@ Notebook with code example: [**supervisely_json_dataset_preparetion.ipynb**](htt
 
 - [shashankprasanna/sagemaker-spot-training](https://github.com/shashankprasanna/sagemaker-spot-training)
 
-#### Useful articles
+### Useful articles
 
 - [guide to using Spot instances with Amazon SageMaker](https://towardsdatascience.com/a-quick-guide-to-using-spot-instances-with-amazon-sagemaker-b9cfb3a44a68)
 
-#### Jupyter docs
+### Jupyter docs
 
 - [magic commands](https://ipython.readthedocs.io/en/stable/interactive/magics.html#)
 
-#### Related papers
+### Related papers
 
 - [Mask R-CNN paper](https://arxiv.org/pdf/1703.06870.pdf)
 
