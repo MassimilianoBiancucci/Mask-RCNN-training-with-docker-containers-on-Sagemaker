@@ -10,5 +10,6 @@
         "latex",
         "plaintext",
         "python"
-    ]
+    ],
+    "python.pythonPath": "/usr/local/bin/python"
 }
