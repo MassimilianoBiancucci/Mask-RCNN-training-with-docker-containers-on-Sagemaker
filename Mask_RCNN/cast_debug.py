@@ -21,6 +21,7 @@ from mrcnn import model as modellib
 from mrcnn.sagemaker_utils import *
 from mrcnn.config import Config
 from imgaug import augmenters as iaa
+from imgaug import parameters as iap
 from PIL import Image
 import base64
 import zlib
@@ -42,6 +43,8 @@ class castConfig(Config):
 	Extension of Config class of the framework maskrcnn (mrcnn/config.py),
 	"""
 
+	MEAN_PIXEL = np.array([143.75, 143.75, 143.75])
+
 	def __init__(self, **kwargs):
 		"""
 		Overriding of same config variables
@@ -49,6 +52,8 @@ class castConfig(Config):
 		"""
 		self.__dict__.update(kwargs)
 		super().__init__()
+
+
 
 
 class castDatasetBox(utils.Dataset):
@@ -293,43 +298,113 @@ if __name__ == "__main__":
 			**hyperparameters,
 		)
 
+		"""
 		# initialize the image augmentation process
 		# fa l'argomentazione con al massimo 2 tipi di argomentazione
 		aug = iaa.SomeOf((0, 2), [
 			iaa.Fliplr(0.5),
 			iaa.Flipud(0.5),
-			iaa.Affine(rotate=(-10, 10))
+			iaa.Affine(rotate=(-25, 25)),
 		])
+		"""
+
+		aug = iaa.Sequential([
+				iaa.SomeOf((0, 5), [
+						iaa.Fliplr(0.5), # horizontaly flip with probability
+						iaa.Flipud(0.5), # vertical flip with probability
+						iaa.Affine(	# geometric modification
+							rotate=(-25, 25), # rotation between interval (degrees)
+							mode="edge" # filler type (new pixels are generated based on edge pixels)
+						),
+						iaa.Affine(	# geometric modification
+							shear={ # simulate angled view 
+								"y": (-25, 25) # interval in degrees along y axis
+							},
+							mode="edge" # filler type (new pixels are generated based on edge pixels)
+						),
+						iaa.Affine(	# geometric modification
+							shear={ # simulate angled view of given interval in degrees
+								"x": (-25, 25) # interval in degrees along x axis
+							},
+							mode="edge" # filler type (new pixels are generated based on edge pixels)
+						),
+					],
+					random_order=True
+				),
+				iaa.SomeOf((0, 1), [
+						iaa.Affine( # geometric modification
+							scale=(1.0, 1.3) # scale immage from 100% to 130% 
+						)
+					]
+				)
+			]
+		)
 
 		train_generator = modellib.data_generator(trainDataset, config, shuffle=True,
                                          augmentation=aug,
                                          batch_size=config.BATCH_SIZE)
 		
+		cv2.namedWindow("test",cv2.WINDOW_NORMAL)
+		cv2.resizeWindow("test", 600,600)
+
+		cv2.namedWindow("mask",cv2.WINDOW_NORMAL)
+		cv2.resizeWindow("mask", 600,600)
+
+		mask_idx = 0
+
 		try:
-			for train_data in train_generator:
-
-				print(train_data[0]) # 7
-				print(train_data[1]) # 7
-				print(train_data[0][0].shape)
-				print(train_data[0][6].shape)
-
-				# Using cv2.imshow() method 
-				# Displaying the image 
-				#im_rgb = cv2.cvtColor(train_data[0][0][0, :, :, :], cv2.COLOR_BGR2RGB)
-				im_rgb = train_data[0][0][0, :, :, :]
-				cv2.imshow("test", im_rgb)
-				
-				#waits for user to press any key 
+			
+			while(True):
+			
 				#(this is necessary to avoid Python kernel form crashing)
-				cv2.waitKey(0) 
-		
+				p_key = cv2.waitKey(0)
+
+				# if "q" is pressed
+				if p_key == ord('q'):
+					# QUIT
+					raise "Quit"
+				
+				# if "w" is pressed
+				elif p_key == ord('w'):
+					# swipe image
+
+					mask_idx = 0
+
+					train_data = next(train_generator)
+			
+					#print(train_data[0]) # 7
+					#print(train_data[1]) # 7
+					#print(train_data[0][0].shape)
+					#print(train_data[0][6].shape)
+
+					# Using cv2.imshow() method 
+					# Displaying the image 
+					#im_rgb = cv2.cvtColor(train_data[0][0][0, :, :, :], cv2.COLOR_BGR2RGB)
+					im_rgb = train_data[0][0][0, :, :, :]
+					mask = train_data[0][6][0, :, :, mask_idx]
+
+					#DEBUG reconversion to original image
+					for i in range(3):	
+						min = - config.MEAN_PIXEL[i]
+						max = 255.0 - config.MEAN_PIXEL[i]
+						im_rgb[:,:,i] = ((im_rgb[:,:,i] - min)/(max - min)) * 255.0
+
+					cv2.imshow("test", im_rgb.astype('uint8'))
+					cv2.imshow("mask", mask.astype('uint8')*255)
+
+				#if "e" is pressed
+				elif p_key == ord('e'):
+					# swipe mask
+					mask_idx += 1
+					mask = train_data[0][6][0, :, :, mask_idx]
+					cv2.imshow("mask", mask.astype('uint8')*255)
+
+
 		except Exception as e:
 			
 			print(e)
 
-			#closing all open windows 
-			cv2.destroyAllWindows() 
-
-			#visualize.display_images(train_data[0][0], cols=1)
-			#for train_data in train_generator:
+		
+		#closing all open windows 
+		cv2.destroyAllWindows() 
 			
