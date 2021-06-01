@@ -222,35 +222,6 @@ if __name__ == "__main__":
     TENSORBOARD_DIR = read_env_var("tensorboard", user_defined_env_vars["tensorboard"])
 
     hyperparameters = json.loads(read_env_var('SM_HPS', {}))
-    
-    """    
-    OLD FASHION
-    
-    # TODO se cambi dataset sta cosa non funziona piu'!
-    images_path = os.path.sep.join([dataset_path, "ISIC2018_Task1-2_Training_Input"])
-    masks_path = os.path.sep.join([dataset_path, "ISIC2018_Task1_Training_GroundTruth"])
-
-    # initialize the amount of data to use for training
-    TRAINING_SPLIT = hyperparameters['TRAINING_SPLIT']
-
-    # grab all image paths, then randomly select indexes for both training
-    # and validation
-    image_paths = sorted(list(paths.list_images(images_path)))
-
-    # TODO solo per test!!
-    # image_paths = image_paths[:50]
-
-    idxs = list(range(0, len(image_paths)))
-    random.seed(42)
-    random.shuffle(idxs)
-    i = int(len(idxs) * TRAINING_SPLIT)
-
-    print("training samples:" + str(i))
-    print("validations samples:" + str(len(idxs) - i))
-
-    trainIdxs = idxs[:i]
-    valIdxs = idxs[i:]
-    """
 
     # TRAIN DATASET DEFINITIONS -------------------------------------------------------------
     train_images_path = os.path.sep.join([dataset_path, "training", "img"])
@@ -314,9 +285,7 @@ if __name__ == "__main__":
 
     # initialize the model and load the COCO weights so we can
     # perform fine-tuning
-    model = modellib.MaskRCNN(mode="training", config=config,
-                              checkpoints_dir=CHECKPOINTS_DIR,
-                              tensorboard_dir=TENSORBOARD_DIR)
+    model = modellib.MaskRCNN(mode="training", config=config, checkpoints_dir=CHECKPOINTS_DIR, tensorboard_dir=TENSORBOARD_DIR)
     
     # check if there is any checkpoint in the checkpoint folder
     # if there are, load the last checkpoint
