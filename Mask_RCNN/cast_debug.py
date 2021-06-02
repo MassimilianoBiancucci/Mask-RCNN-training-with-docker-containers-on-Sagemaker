@@ -197,6 +197,7 @@ class castDatasetBox(utils.Dataset):
 			# NOTE: it's realy important at this point the use of cv2.INTER_NEAREST interpolation,
 			masks[:, :, i] = imutils.resize(mask_swap, width=self.width, inter=cv2.INTER_NEAREST)
 			
+			
 		return (masks.astype('bool'), class_idxs)
 
 
