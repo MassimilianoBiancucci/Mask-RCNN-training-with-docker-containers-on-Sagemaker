@@ -20,6 +20,7 @@ from mrcnn import visualize
 from mrcnn import model as modellib
 from mrcnn.sagemaker_utils import *
 from mrcnn.config import Config
+from mrcnn.augmentation_config import aug_presets
 from imgaug import augmenters as iaa
 from imgaug import parameters as iap
 from PIL import Image
@@ -44,6 +45,12 @@ class castConfig(Config):
 	"""
 
 	MEAN_PIXEL = np.array([143.75, 143.75, 143.75])
+
+	# Augmenters that are safe to apply to masks
+	# Some, such as Affine, have settings that make them unsafe, so always
+	# test your augmentation on masks
+	MASK_AUGMENTERS = ["Sequential", "SomeOf", "OneOf", "Sometimes", "Fliplr", "Flipud", "CropAndPad",
+					   "Affine", "PiecewiseAffine", ]
 
 	def __init__(self, **kwargs):
 		"""
@@ -302,7 +309,7 @@ if __name__ == "__main__":
 			#STEPS_PER_EPOCH=STEPS_PER_EPOCH,
 			#VALIDATION_STEPS=VALIDATION_STEPS,
 			NUM_CLASSES=5,
-			**hyperparameters,
+			**hyperparameters
 		)
 
 		"""
@@ -334,7 +341,7 @@ if __name__ == "__main__":
 								"x": (-25, 25) # interval in degrees along x axis
 							},
 							mode="edge" # filler type (new pixels are generated based on edge pixels)
-						),
+						)
 					],
 					random_order=True
 				),
@@ -348,9 +355,11 @@ if __name__ == "__main__":
 		)
 
 		train_generator = modellib.data_generator(trainDataset, config, shuffle=True,
-                                         augmentation=aug,
+                                         augmentation=aug_presets.psychedelic,
                                          batch_size=config.BATCH_SIZE)
 		
+		print(f'batch size: {config.BATCH_SIZE}')
+
 		cv2.namedWindow("test",cv2.WINDOW_NORMAL)
 		cv2.resizeWindow("test", 600,600)
 
@@ -384,7 +393,7 @@ if __name__ == "__main__":
 				print(train_data[0]) # 7
 				#print(train_data[1]) # 7
 				#print(train_data[0][5][0])
-				#print(train_data[0][0].shape)
+				print(train_data[0][0].shape)
 				#print(train_data[0][6].shape)
 
 				# Using cv2.imshow() method 
