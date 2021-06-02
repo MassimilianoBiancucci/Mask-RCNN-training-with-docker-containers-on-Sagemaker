@@ -11,5 +11,5 @@
         "plaintext",
         "python"
     ],
-    "python.pythonPath": "/usr/local/bin/python"
+    "python.pythonPath": "/home/massi/.virtualenvs/tf_1.14.0/bin/python"
 }
