@@ -17,6 +17,7 @@ services:
       - ~/.Xauthority:/root/.Xauthority  # necessario per l'X11 forwarding
       - ./../.git:/opt/ml/.git # to have git lens and codeStream, never commit from inside the container
       - ./../.gitignore:/opt/ml/.gitignore
+      - ./../:/root/
     stdin_open: true # docker run -i
     tty: true        # docker run -t
     runtime: nvidia  # abilita l'utilizzo delle gpu del sistema

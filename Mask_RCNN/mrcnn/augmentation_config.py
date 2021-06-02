@@ -10,32 +10,38 @@ class aug_presets():
     #   AUGMENTATIONS PRESETS  ###########################################################################
     ######################################################################################################
 
-    psychedelic = iaa.Sequential([
-            iaa.SomeOf((0,1),[
-                    iaa.BlendAlphaFrequencyNoise(
-                        foreground=iaa.EdgeDetect(1.0),
-                        per_channel=True
-                    ),
-                    iaa.ElasticTransformation(alpha=50, sigma=5),  # apply water effect (affects segmaps)
-                    
-                    iaa.ReplaceElementwise(
-                        iap.FromLowerResolution(
-                            iap.Binomial(0.1), size_px=8
+    def psychedelic(self):
+        """[summary]
+
+        Returns:
+            [type]: [description]
+        """        
+        psychedelic_ = iaa.Sequential([
+                iaa.SomeOf((0,1),[
+                        iaa.BlendAlphaFrequencyNoise(
+                            foreground=iaa.EdgeDetect(1.0),
+                            per_channel=True
                         ),
-                        iap.Normal(128, 0.4*128),
-                        per_channel=0.5
-                    )
-                ]
-            ),
-            iaa.PiecewiseAffine(scale=iap.Absolute(iap.Normal(0, 0.1))),
-            iaa.Sharpen((0.0, 1.0)),       # sharpen the image
-            iaa.Affine(
-                rotate=(-45, 45),
-                mode="edge"
-            )  # rotate by -45 to 45 degrees (affects segmaps)
+                        iaa.ElasticTransformation(alpha=50, sigma=5),  # apply water effect (affects segmaps)
+                        
+                        iaa.ReplaceElementwise(
+                            iap.FromLowerResolution(
+                                iap.Binomial(0.1), size_px=8
+                            ),
+                            iap.Normal(128, 0.4*128),
+                            per_channel=0.5
+                        )
+                    ]
+                ),
+                iaa.PiecewiseAffine(scale=iap.Absolute(iap.Normal(0, 0.1))),
+                iaa.Sharpen((0.0, 1.0)),       # sharpen the image
+                iaa.Affine(
+                    rotate=(-45, 45),
+                    mode="edge"
+                )  # rotate by -45 to 45 degrees (affects segmaps)
 
-        ], random_order=True)
-
+            ], random_order=True)
+        return psychedelic_
 
 
     ######################################################################################################
@@ -122,8 +128,3 @@ class aug_presets():
     ######################################################################################
     #   ???
     ######################################################################################
-
-    def __init__():
-        """
-        
-        """

@@ -241,10 +241,13 @@ An Amazon SageMaker notebook instance is a machine learning (ML) compute instanc
 The main advantage of using the notebook on Sagemaker is the preconfigured AWS cli, you can easily access resouces on S3 or download from internet at high speed.
 
 [#TODO run the notebook in local]
+<https://aws.amazon.com/blogs/machine-learning/use-the-amazon-sagemaker-local-mode-to-train-on-your-notebook-instance/>
+
+- inoltre devi creare il role e passarglielo
 
 ### Start a docker image from sagemaker notebook
 
-[#TODO dummy example 1, come si pusha su ECR etc]
+[#TODO dummy example 1, come si pusha su Testo completamente nuovo e mai utilizzato.ECR etc]
 
 
 
