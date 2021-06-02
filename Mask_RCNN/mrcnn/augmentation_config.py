@@ -71,39 +71,45 @@ class aug_presets():
     )
 
     # GEOMETRIC ##########################################################################
-    # docs: https://imgaug.readthedocs.io/en/latest/source/overview/geometric.html
-
+    # overview: https://imgaug.readthedocs.io/en/latest/source/overview/geometric.html
+    # docs: 
 
 
     # CONTRAST ###########################################################################
-    # docs: https://imgaug.readthedocs.io/en/latest/source/overview/contrast.html
-
+    # overview: https://imgaug.readthedocs.io/en/latest/source/overview/contrast.html
+    # docs: 
     
 
     # COLOR ##############################################################################
-    # docs: https://imgaug.readthedocs.io/en/latest/source/overview/color.html
-
+    # overview: https://imgaug.readthedocs.io/en/latest/source/overview/color.html
+    # docs: 
 
 
     # BLEND ##############################################################################
-    # docs: https://imgaug.readthedocs.io/en/latest/source/overview/blend.html
-
+    # overview: https://imgaug.readthedocs.io/en/latest/source/overview/blend.html
+    # docs: 
 
 
     # BLUR ###############################################################################
-    # docs: https://imgaug.readthedocs.io/en/latest/source/overview/blur.html
-
+    # overview: https://imgaug.readthedocs.io/en/latest/source/overview/blur.html
+    # docs: 
 
 
     # CONVOLUTIONAL ######################################################################
-    # docs: https://imgaug.readthedocs.io/en/latest/source/overview/convolutional.html
-
+    # overview: https://imgaug.readthedocs.io/en/latest/source/overview/convolutional.html
+    # docs: 
 
 
     # POOLING ############################################################################
-    # docs: https://imgaug.readthedocs.io/en/latest/source/overview/pooling.html
+    # overview: https://imgaug.readthedocs.io/en/latest/source/overview/pooling.html
+    # docs: 
 
 
+    # ARITMETIC ##########################################################################
+    # overview: https://imgaug.readthedocs.io/en/latest/source/overview/arithmetic.html
+    # docs: https://imgaug.readthedocs.io/en/latest/source/api_augmenters_arithmetic.html
+
+    
 
     ######################################################################################
     #   ???
