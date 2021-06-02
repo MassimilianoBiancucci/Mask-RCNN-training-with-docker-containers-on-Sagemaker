@@ -197,6 +197,13 @@ class castDatasetBox(utils.Dataset):
 			# NOTE: it's realy important at this point the use of cv2.INTER_NEAREST interpolation,
 			masks[:, :, i] = imutils.resize(mask_swap, width=self.width, inter=cv2.INTER_NEAREST)
 			
+			# overwrite 1px border with zeros (needed for optimal augmentation!!)
+			tick = 5 
+			masks[0:tick, 0:self.width, i] = 0
+			masks[0:self.width, 0:tick, i] = 0
+			masks[self.width-tick:self.width, 0:self.width, i] = 0
+			masks[0:self.width, self.width-tick:self.width, i] = 0
+
 		return (masks.astype('bool'), class_idxs)
 
 
@@ -308,8 +315,7 @@ if __name__ == "__main__":
 		])
 		"""
 
-		aug = iaa.Sequential([
-				iaa.SomeOf((0, 5), [
+		geometric_aug = iaa.SomeOf((4, 5), [
 						iaa.Fliplr(0.5), # horizontaly flip with probability
 						iaa.Flipud(0.5), # vertical flip with probability
 						iaa.Affine(	# geometric modification
@@ -330,7 +336,10 @@ if __name__ == "__main__":
 						),
 					],
 					random_order=True
-				),
+				)
+
+		aug = iaa.Sequential([
+				geometric_aug,
 				iaa.SomeOf((0, 1), [
 						iaa.Affine( # geometric modification
 							scale=(1.0, 1.3) # scale immage from 100% to 130% 
@@ -350,14 +359,15 @@ if __name__ == "__main__":
 		cv2.namedWindow("mask",cv2.WINDOW_NORMAL)
 		cv2.resizeWindow("mask", 600,600)
 
-		mask_idx = 0
-
+		start = True
+		p_key = 0
 		#try:
 			
 		while(True):
 		
 			#(this is necessary to avoid Python kernel form crashing)
-			p_key = cv2.waitKey(0)
+			if not start:
+				p_key = cv2.waitKey(0)
 
 			# if "q" is pressed
 			if p_key == ord('q'):
@@ -365,16 +375,17 @@ if __name__ == "__main__":
 				raise "Quit"
 			
 			# if "w" is pressed
-			elif p_key == ord('w'):
+			elif p_key == ord('w') or start:
 				# swipe image
 
+				start = False
 				mask_idx = 0
 
 				train_data = next(train_generator)
 		
-				#print(train_data[0]) # 7
+				print(train_data[0]) # 7
 				#print(train_data[1]) # 7
-				print(train_data[0][5][0])
+				#print(train_data[0][5][0])
 				#print(train_data[0][0].shape)
 				#print(train_data[0][6].shape)
 
@@ -389,22 +400,17 @@ if __name__ == "__main__":
 				for i in range(3):	
 					im_rgb[:,:,i] = im_rgb[:,:,i] + config.MEAN_PIXEL[i]
 
-				# Mask reconstruction
 				r_mask = np.zeros((im_rgb.shape[0], im_rgb.shape[1]), dtype='uint8')
-
 				#print(f'r_mask shape: {r_mask.shape}')
 
-				bbox_w = bboxs[3] - bboxs[1]
-				bbox_h = bboxs[2] - bboxs[0]
-
-				#print(f'bbox_w: {bbox_w}')
-				#print(f'bbox_h: {bbox_h}')
-				r_bitmap = cv2.resize(bitmap.astype('uint8'), (bbox_w, bbox_h), interpolation=cv2.INTER_NEAREST)
-
-				#print(f'bitmap out size: {r_bitmap.shape}')
-
-				#print(f'[{bboxs[0]}:{bboxs[2]},{bboxs[1]}:{bboxs[3]}]')
-				r_mask[bboxs[0]:bboxs[2], bboxs[1]:bboxs[3]] = r_bitmap*255.0
+				if any(bbox != 0 for bbox in bboxs):
+					# Mask reconstruction
+					bbox_w = bboxs[3] - bboxs[1]
+					bbox_h = bboxs[2] - bboxs[0]
+					#print(f'bbox_w: {bbox_w}')
+					#print(f'bbox_h: {bbox_h}')
+					r_bitmap = cv2.resize(bitmap.astype('uint8'), (bbox_w, bbox_h), interpolation=cv2.INTER_NEAREST)
+					r_mask[bboxs[0]:bboxs[2], bboxs[1]:bboxs[3]] = r_bitmap*255.0
 
 				cv2.imshow("test", im_rgb.astype('uint8'))
 				cv2.imshow("mask", r_mask)
@@ -413,6 +419,30 @@ if __name__ == "__main__":
 			elif p_key == ord('e'):
 				# swipe mask
 				mask_idx += 1
+
+				bitmap = train_data[0][6][0, :, :, mask_idx]
+				bboxs = train_data[0][5][0][mask_idx]
+
+				if any(bbox != 0 for bbox in bboxs):
+
+					# Mask reconstruction
+					r_mask = np.zeros((im_rgb.shape[0], im_rgb.shape[1]), dtype='uint8')
+
+					bbox_w = bboxs[3] - bboxs[1]
+					bbox_h = bboxs[2] - bboxs[0]
+					r_bitmap = cv2.resize(bitmap.astype('uint8'), (bbox_w, bbox_h), interpolation=cv2.INTER_NEAREST)
+					r_mask[bboxs[0]:bboxs[2], bboxs[1]:bboxs[3]] = r_bitmap*255.0
+
+					cv2.imshow("mask", r_mask)
+				else:
+					mask_idx -= 1
+
+			#if "r" is pressed
+			elif p_key == ord('r'):
+				# swipe mask
+
+				if mask_idx > 0:
+					mask_idx -= 1
 
 				bitmap = train_data[0][6][0, :, :, mask_idx]
 				bboxs = train_data[0][5][0][mask_idx]
@@ -425,7 +455,6 @@ if __name__ == "__main__":
 				r_mask[bboxs[0]:bboxs[2], bboxs[1]:bboxs[3]] = r_bitmap*255.0
 
 				cv2.imshow("mask", r_mask)
-
 
 		#except Exception as e:
 			

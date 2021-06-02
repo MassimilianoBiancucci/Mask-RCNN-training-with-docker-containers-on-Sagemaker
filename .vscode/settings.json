@@ -11,5 +11,6 @@
         "plaintext",
         "python"
     ],
-    "python.pythonPath": "/home/massi/.virtualenvs/tf_1.14.0/bin/python"
+    "python.pythonPath": "/home/massi/.virtualenvs/tf_1.14.0/bin/python",
+    "python.analysis.extraPaths": ["./Mask_RCNN"]
 }
