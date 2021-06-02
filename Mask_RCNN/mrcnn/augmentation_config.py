@@ -109,7 +109,15 @@ class aug_presets():
     # overview: https://imgaug.readthedocs.io/en/latest/source/overview/arithmetic.html
     # docs: https://imgaug.readthedocs.io/en/latest/source/api_augmenters_arithmetic.html
 
-    
+    # Add
+
+    # AddElementWise
+
+    # 
+
+    # 
+
+    # 
 
     ######################################################################################
     #   ???
