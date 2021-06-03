@@ -10,7 +10,9 @@ class aug_presets():
     #   AUGMENTATIONS PRESETS  ###########################################################################
     ######################################################################################################
 
-    psychedelic = iaa.Sequential([
+    def psichedelic(self):
+
+        return iaa.Sequential([
             iaa.SomeOf((0,1),[
                     iaa.BlendAlphaFrequencyNoise(
                         foreground=iaa.EdgeDetect(1.0),
@@ -33,7 +35,6 @@ class aug_presets():
                 rotate=(-45, 45),
                 mode="edge"
             )  # rotate by -45 to 45 degrees (affects segmaps)
-
         ], random_order=True)
 
 
@@ -72,37 +73,37 @@ class aug_presets():
 
     # GEOMETRIC ##########################################################################
     # overview: https://imgaug.readthedocs.io/en/latest/source/overview/geometric.html
-    # docs: 
+    # docs: https://imgaug.readthedocs.io/en/latest/source/api_augmenters_geometric.html
 
 
     # CONTRAST ###########################################################################
     # overview: https://imgaug.readthedocs.io/en/latest/source/overview/contrast.html
-    # docs: 
+    # docs: https://imgaug.readthedocs.io/en/latest/source/api_augmenters_contrast.html
     
 
     # COLOR ##############################################################################
     # overview: https://imgaug.readthedocs.io/en/latest/source/overview/color.html
-    # docs: 
+    # docs: https://imgaug.readthedocs.io/en/latest/source/api_augmenters_color.html
 
 
     # BLEND ##############################################################################
     # overview: https://imgaug.readthedocs.io/en/latest/source/overview/blend.html
-    # docs: 
+    # docs: https://imgaug.readthedocs.io/en/latest/source/api_augmenters_blend.html
 
 
     # BLUR ###############################################################################
     # overview: https://imgaug.readthedocs.io/en/latest/source/overview/blur.html
-    # docs: 
+    # docs: https://imgaug.readthedocs.io/en/latest/source/api_augmenters_blur.html
 
 
     # CONVOLUTIONAL ######################################################################
     # overview: https://imgaug.readthedocs.io/en/latest/source/overview/convolutional.html
-    # docs: 
+    # docs: https://imgaug.readthedocs.io/en/latest/source/api_augmenters_convolutional.html
 
 
     # POOLING ############################################################################
     # overview: https://imgaug.readthedocs.io/en/latest/source/overview/pooling.html
-    # docs: 
+    # docs: https://imgaug.readthedocs.io/en/latest/source/api_augmenters_pooling.html
 
 
     # ARITMETIC ##########################################################################
