@@ -265,7 +265,7 @@ If the push was successful it should appear on the ECR web page like this:
 
 ![ecr_example](assets/ECR_example.png)
 
-Now we can launch a sagemaker notebook and start the docker we just pushed to ECR, 
+Now we can launch a sagemaker notebook and start the docker we just pushed to ECR, we can either use the notebook on the AWS page or the local one.
 
 
 ### Passing data to the container [#TODO da spostare piu' in basso]

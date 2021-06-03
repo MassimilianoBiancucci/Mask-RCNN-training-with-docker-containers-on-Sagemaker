@@ -11,6 +11,6 @@
         "plaintext",
         "python"
     ],
-    "python.pythonPath": "/usr/bin/python3",
+    "python.pythonPath": "/usr/sbin/python",
     "python.analysis.extraPaths": ["./Mask_RCNN"]
 }
