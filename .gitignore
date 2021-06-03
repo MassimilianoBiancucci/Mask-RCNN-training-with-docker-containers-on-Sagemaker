@@ -163,4 +163,6 @@ dmypy.json
 
 .vscode/*
 
+.vscode/settings.json
+
 .bash_history
