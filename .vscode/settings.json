@@ -8,7 +8,6 @@
     "spellright.documentTypes": [
         "markdown",
         "latex",
-        "plaintext",
         "python"
     ],
     "python.pythonPath": "/usr/sbin/python",

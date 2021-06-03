@@ -365,7 +365,7 @@ if __name__ == "__main__":
 
 		cv2.namedWindow("mask",cv2.WINDOW_NORMAL)
 		cv2.resizeWindow("mask", 600,600)
-
+		
 		start = True
 		p_key = 0
 		#try:
@@ -433,7 +433,7 @@ if __name__ == "__main__":
 				bboxs = train_data[0][5][0][mask_idx]
 
 				if any(bbox != 0 for bbox in bboxs):
-					
+
 					# Mask reconstruction
 					r_mask = np.zeros((im_rgb.shape[0], im_rgb.shape[1]), dtype='uint8')
 
