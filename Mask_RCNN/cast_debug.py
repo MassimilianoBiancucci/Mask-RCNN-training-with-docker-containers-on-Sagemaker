@@ -322,7 +322,8 @@ if __name__ == "__main__":
 		])
 		"""
 
-		geometric_aug = iaa.SomeOf((4, 5), [
+		aug = iaa.Sequential([
+				iaa.SomeOf((0, 5), [
 						iaa.Fliplr(0.5), # horizontaly flip with probability
 						iaa.Flipud(0.5), # vertical flip with probability
 						iaa.Affine(	# geometric modification
@@ -343,10 +344,7 @@ if __name__ == "__main__":
 						)
 					],
 					random_order=True
-				)
-
-		aug = iaa.Sequential([
-				geometric_aug,
+				),
 				iaa.SomeOf((0, 1), [
 						iaa.Affine( # geometric modification
 							scale=(1.0, 1.3) # scale immage from 100% to 130% 
@@ -409,7 +407,9 @@ if __name__ == "__main__":
 				for i in range(3):	
 					im_rgb[:,:,i] = im_rgb[:,:,i] + config.MEAN_PIXEL[i]
 
+				
 				r_mask = np.zeros((im_rgb.shape[0], im_rgb.shape[1]), dtype='uint8')
+
 				#print(f'r_mask shape: {r_mask.shape}')
 
 				if any(bbox != 0 for bbox in bboxs):
@@ -464,6 +464,7 @@ if __name__ == "__main__":
 				r_mask[bboxs[0]:bboxs[2], bboxs[1]:bboxs[3]] = r_bitmap*255.0
 
 				cv2.imshow("mask", r_mask)
+
 
 		#except Exception as e:
 			

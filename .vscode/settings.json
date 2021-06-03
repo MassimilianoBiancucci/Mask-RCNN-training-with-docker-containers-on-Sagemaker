@@ -8,9 +8,8 @@
     "spellright.documentTypes": [
         "markdown",
         "latex",
-        "plaintext",
         "python"
     ],
-    "python.pythonPath": "/home/massi/.virtualenvs/tf_1.14.0/bin/python",
+    "python.pythonPath": "/usr/bin/python3",
     "python.analysis.extraPaths": ["./Mask_RCNN"]
 }
