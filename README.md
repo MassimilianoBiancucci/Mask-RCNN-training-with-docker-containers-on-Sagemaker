@@ -206,8 +206,6 @@ Notebook with code example: [**supervisely_json_dataset_preparetion.ipynb**](htt
 
 ### Sagemaker overview
 
-[#TODO spiegare cos'e' e che permette di fare, [copia da aws](https://docs.aws.amazon.com/sagemaker/latest/dg/how-it-works-training.html)]
-
 The following diagram shows how you train and deploy a model with Amazon SageMaker:
 
 ![sagemaker-architecture](assets/sagemaker-architecture.png)
@@ -240,15 +238,34 @@ An Amazon SageMaker notebook instance is a machine learning (ML) compute instanc
 
 The main advantage of using the notebook on Sagemaker is the preconfigured AWS cli, you can easily access resouces on S3 or download from internet at high speed.
 
-[#TODO run the notebook in local]
-<https://aws.amazon.com/blogs/machine-learning/use-the-amazon-sagemaker-local-mode-to-train-on-your-notebook-instance/>
+If you already have the AWS cli configured on yout local machine you can run a notebook locally and remotely lauch the training on an ASW machine. To install the sagemaker sdk just  run `pip install -U sagemaker`, more info [here](https://aws.amazon.com/blogs/machine-learning/use-the-amazon-sagemaker-local-mode-to-train-on-your-notebook-instance/).
 
-- inoltre devi creare il role e passarglielo
+A difference between the notebook on sagemaker and the local one is the role, if you use sagemaker from within AWS the notebook can create a role and give himself access to all s3 buckets; on the other hand if you run the notebook locally you need to create a role and assign the appropriate permissions to it.
+[#TODO @massi dagli un'occhiata]
 
 ### Start a docker image from sagemaker notebook
 
-[#TODO dummy example 1, come si pusha su Testo completamente nuovo e mai utilizzato.ECR etc]
+[#TODO dummy example 1, come si pusha su ECR etc]
 
+First let's create a simple docker image like [this](Sagemaker_dummy_example/Dockerfile), the importante step are:
+
+```Dockerfile
+[...]
+RUN pip3 install sagemaker-training
+
+[...]
+ENV SAGEMAKER_PROGRAM "train.py"
+```
+
+The `sagemaker-training` library is needed for sagemaker to interface within the docker; the `SAGEMAKER_PROGRAM` environment variable tell sagemaker wich script need to be executed for the training.
+
+Next you need to push it to an Amazon ECR repository, the docs for this step is [this](https://docs.aws.amazon.com/AmazonECR/latest/userguide/docker-push-ecr-image.html).
+
+If the push was successful it should appear on the ECR web page like this:
+
+![ecr_example](assets/ECR_example.png)
+
+Now we can launch a sagemaker notebook and start the docker we just pushed to ECR, 
 
 
 ### Passing data to the container [#TODO da spostare piu' in basso]
@@ -256,8 +273,6 @@ The main advantage of using the notebook on Sagemaker is the preconfigured AWS c
 [#TODO <https://github.com/aws/sagemaker-training-toolkit/blob/master/ENVIRONMENT_VARIABLES.md#sm_user_args> e come sono costruite sul notebook le variabili hiperparameters e environment]
 
 [#TODO dummy example 2]
-
-
 
 - - -
 
