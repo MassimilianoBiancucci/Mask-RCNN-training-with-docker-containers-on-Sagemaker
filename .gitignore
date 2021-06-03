@@ -161,6 +161,8 @@ dmypy.json
 
 .Xauthority
 
-.vscode/
+.vscode/*
+
+.vscode/settings.json
 
 .bash_history
