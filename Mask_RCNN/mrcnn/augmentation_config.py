@@ -10,8 +10,11 @@ class aug_presets():
     #   AUGMENTATIONS PRESETS  ###########################################################################
     ######################################################################################################
 
+    @staticmethod
     def psychedelic(self):
         """[summary]
+        First exagerate attempt of augmentation, it isn't reccomanded,
+        that would be good for a laugh.
 
         Returns:
             [type]: [description]
@@ -44,6 +47,24 @@ class aug_presets():
         return psychedelic_
 
 
+    def augment_various(self, severity=0.1):
+        """[summary]
+            Apply a large variety of augmentation, included the most disruptives,
+            standard augmentations is applayed in the same way but th heaviest augmentations
+            can be dimmered in frequency.
+
+            Strong augmentations are also time consuming.
+
+            Returns:
+            [type]: [description]
+        """   
+
+        various = iaa.Sequential([
+
+            ]
+        )
+
+
     ######################################################################################################
     #   AUGMENTATIONS SETS DIVIDED BY TYPE  ##############################################################
     ######################################################################################################
@@ -53,38 +74,132 @@ class aug_presets():
         remember more is heavy more is time consuming during the training.
     """
 
+    class base_aug():
+
+        aug_list = []
+        aug_lists = {}
+        n_aug = 0 # number of augmentors in the class list
+
+        def seq(self, rand = True):
+            return iaa.Sequential(self.aug_list, random_order=rand)
+
+        def some(self, n = 0, rand = True):
+
+            n = (0, self.n_aug) if n == 0 else \
+                (0, n) if isinstance(n, tuple) else \
+                n if isinstance(n, list) else (0, self.n_aug)
+
+            return iaa.SomeOf(n, self.aug_list, random_order=rand)
+
+        def one(self):
+            return iaa.OneOf(self.aug_list)
+
+        def maybe_all(self, p=0.5, rand = True):
+            return iaa.Sometimes(p, then_list= 
+                            iaa.Sequential(self.aug_list, random_order=rand))
+
+        def maybe_some(self, p=0.5, n = 0, rand = True):
+
+            n = (0, self.n_aug) if n == 0 else \
+                (0, n) if isinstance(n, tuple) else \
+                n if isinstance(n, list) else (0, self.n_aug)
+
+            return iaa.Sometimes(p, then_list= 
+                            iaa.SomeOf(n, self.aug_list, random_order=rand))
+
+        def maybe_one(self, p=0.5, rand = True):
+            return iaa.Sometimes(p, then_list= 
+                            iaa.OneOf(self.aug_list, random_order=rand))
+
+
     # ARITMETIC ##########################################################################
-    # docs: https://imgaug.readthedocs.io/en/latest/source/overview/arithmetic.html
+    # overview: https://imgaug.readthedocs.io/en/latest/source/overview/arithmetic.html
+    # docs: https://imgaug.readthedocs.io/en/latest/source/api_augmenters_arithmetic.html
 
-    aug_aritmetic_1 = iaa.SomeOf((0, 3), [
-            iaa.Fliplr(0.5), # horizontaly flip with probability
-			iaa.Flipud(0.5), # vertical flip with probability
-            iaa.Affine(	# rotation with edge filling
-                rotate=(-25, 25), # rotation between interval (degrees)
-                mode="edge" # filler type (new pixels are generated based on edge pixels)
-            )
-        ]
-    )
+    class aritmetic_aug(base_aug):
 
-    aug_aritmetic_2 = iaa.Sequential([
+        def __init__(self, severity=1.0, lists=[0, 1, 2]):
             
-        ]
-    )
+            s = severity
+            self.aug_lists = {
+                0 : [
+                    iaa.OneOf([
+                            iaa.Add((int(-10*s), int(30*s)), per_channel=True),
+                            iaa.AddElementwise((int(-10*s), int(30*s)), per_channel=True)
+                        ]
+                    )
+                ],
+                1 : [ 
+                    iaa.AdditiveGaussianNoise(scale=iap.Clip(iap.Poisson((0, int(50*s))), 0, 255), per_channel=True),
+                    iaa.OneOf([
+                            iaa.Multiply((0.9*s, 1.2*s)),
+                            iaa.Multiply((0.9*s, 1.2*s), per_channel=True)
+                        ]
+                    )
+                ],
+                2 : [
+                    iaa.ImpulseNoise(0.2*s),
+                    iaa.Dropout(p=(0, 0.6*s)),
+                    iaa.CoarseSaltAndPepper(0.2*s, size_percent=(0.01, 0.1)),
+                    iaa.CoarseSaltAndPepper(0.2*s, size_percent=(0.01, 0.1), per_channel=True)
+                ]
+            }
 
-    aug_aritmetic_3 = iaa.Sequential([
+            if not isinstance(lists, list):
+                lists = [lists]
+
+            for list_ in lists:
+                self.aug_list += self.aug_lists[list_]
             
-        ]
-    )
-
+            self.n_aug = len(self.aug_list)
+            
+        
     # GEOMETRIC ##########################################################################
     # overview: https://imgaug.readthedocs.io/en/latest/source/overview/geometric.html
     # docs: https://imgaug.readthedocs.io/en/latest/source/api_augmenters_geometric.html
+
+    class geometric_aug(base_aug):
+
+        def __init__(self, severity=1.0, lists=[0, 1, 2, 3]):
+            
+            s = severity
+            self.aug_lists = {
+                0 : [
+                    iaa.Fliplr(0.5), # horizontaly flip with probability
+                    iaa.Flipud(0.5), # vertical flip with probability
+                    iaa.Affine(	# rotation with edge filling
+                        rotate=(-25, 25), # rotation between interval (degrees)
+                        mode="constant", # filler type (new pixels are generated based on edge pixels)
+                        cval=0
+                    )
+                ],
+                1 : [ 
+                    iaa.AdditiveGaussianNoise(scale=iap.Clip(iap.Poisson((0, int(50*s))), 0, 255), per_channel=True),
+                    iaa.Multiply((0.5*s, 1.5*s)),
+                    iaa.Multiply((0.5*s, 1.5*s), per_channel=True)
+                ],
+                2 : [
+                    iaa.ImpulseNoise(0.4*s),
+                    iaa.Dropout(p=(0, 0.6*s)),
+                    iaa.CoarseSaltAndPepper(0.2*s, size_percent=(0.01, 0.1)),
+                    iaa.CoarseSaltAndPepper(0.2*s, size_percent=(0.01, 0.1), per_channel=True)
+                ]
+            }
+
+            if not isinstance(lists, list):
+                lists = [lists]
+
+            for list_ in lists:
+                self.aug_list += self.aug_lists[list_]
+
+            self.n_aug = len(self.aug_list)
 
 
     # CONTRAST ###########################################################################
     # overview: https://imgaug.readthedocs.io/en/latest/source/overview/contrast.html
     # docs: https://imgaug.readthedocs.io/en/latest/source/api_augmenters_contrast.html
     
+
 
     # COLOR ##############################################################################
     # overview: https://imgaug.readthedocs.io/en/latest/source/overview/color.html
@@ -110,20 +225,6 @@ class aug_presets():
     # overview: https://imgaug.readthedocs.io/en/latest/source/overview/pooling.html
     # docs: https://imgaug.readthedocs.io/en/latest/source/api_augmenters_pooling.html
 
-
-    # ARITMETIC ##########################################################################
-    # overview: https://imgaug.readthedocs.io/en/latest/source/overview/arithmetic.html
-    # docs: https://imgaug.readthedocs.io/en/latest/source/api_augmenters_arithmetic.html
-
-    # Add
-
-    # AddElementWise
-
-    # 
-
-    # 
-
-    # 
 
     ######################################################################################
     #   ???

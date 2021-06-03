@@ -355,7 +355,7 @@ if __name__ == "__main__":
 		)
 
 		train_generator = modellib.data_generator(trainDataset, config, shuffle=True,
-                                         augmentation=aug_presets.psychedelic,
+                                         augmentation=aug_presets.aritmetic_aug().maybe_some(0.95, 3),
                                          batch_size=config.BATCH_SIZE)
 		
 		print(f'batch size: {config.BATCH_SIZE}')
