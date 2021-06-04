@@ -134,7 +134,6 @@ class LesionBoundaryDataset(utils.Dataset):
 
 if __name__ == "__main__":
 
-    '''
     os.environ['SM_CHANNELS'] = '["dataset","model"]'
     os.environ['SM_CHANNEL_DATASET'] = '/opt/ml/input/data/dataset'
     os.environ['SM_CHANNEL_MODEL'] = '/opt/ml/input/data/model'   
@@ -144,11 +143,11 @@ if __name__ == "__main__":
                              "CLASS_NAMES": {"1": "lesion"},\
                              "TRAINING_SPLIT": 0.8,\
                              "TRAIN_SEQ":[\
-                                {"epochs": 20, "layers": "heads", "lr": 0.001},\
-                                {"epochs": 40, "layers": "all", "lr": 0.0001 }\
+                                {"epochs": 1, "layers": "heads", "lr": 0.001},\
+                                {"epochs": 1, "layers": "all", "lr": 0.0001 }\
                              ]\
                             }'
-    '''
+    
 
     # default env vars
     user_defined_env_vars = {"checkpoints": "/opt/ml/checkpoints",
@@ -176,7 +175,7 @@ if __name__ == "__main__":
     image_paths = sorted(list(paths.list_images(images_path)))
 
     # TODO solo per test!!
-    # image_paths = image_paths[:50]
+    image_paths = image_paths[:4]
 
     idxs = list(range(0, len(image_paths)))
     random.seed(42)
@@ -261,7 +260,8 @@ if __name__ == "__main__":
             continue
         
         model.train(trainDataset, valDataset, epochs=train_seq[i]['epochs'], 
-            layers=train_seq[i]['layers'], learning_rate=train_seq[i]['lr'], augmentation=aug)
+            layers=train_seq[i]['layers'], learning_rate=train_seq[i]['lr'], 
+            augmentation=aug, multitrading=False)
 
     ''' 
      OLD FASHION
