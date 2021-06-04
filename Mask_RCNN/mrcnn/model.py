@@ -1395,6 +1395,8 @@ def load_image_gt_multiproc(dataset, config, image_ids, augmentation=None, use_m
 
         # Store shapes before augmentation to compare
         images_shape = [img.shape for img in images]
+        print(f"images_shape -> {images_shape}")
+
         masks_shape = [mask.shape for mask in masks]
 
         # Make augmenters deterministic to apply similarly to images and masks
@@ -1459,7 +1461,11 @@ def load_image_gt_multiproc(dataset, config, image_ids, augmentation=None, use_m
 
 
         # TODO da errore su uno di questi array
+        print(f"i: {i}")
+
         tmp1 = original_shapes[i]
+        
+        print(f"images_shape -> {images_shape}")
         tmp2 = images_shape[i]
         tmp3 = windows[i]
         tmp4 = scales[i]

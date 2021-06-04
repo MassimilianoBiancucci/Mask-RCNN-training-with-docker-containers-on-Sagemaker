@@ -142,6 +142,8 @@ if __name__ == "__main__":
                              "IMAGES_PER_GPU": 1,\
                              "CLASS_NAMES": {"1": "lesion"},\
                              "TRAINING_SPLIT": 0.8,\
+                             "IMAGE_MIN_DIM": 128,\
+                             "IMAGE_MAX_DIM": 128,\
                              "TRAIN_SEQ":[\
                                 {"epochs": 1, "layers": "heads", "lr": 0.01},\
                                 {"epochs": 1, "layers": "all", "lr": 0.0001 }\
