@@ -1376,6 +1376,7 @@ def load_image_gt_multiproc(dataset, config, image_ids, augmentation=None, use_m
     # This requires the imgaug lib (https://github.com/aleju/imgaug)
     if augmentation:
         import imgaug
+        from imgaug.augmentables.batches import UnnormalizedBatch
 
         # Augmenters that are safe to apply to masks
         # Some, such as Affine, have settings that make them unsafe, so always
@@ -1399,9 +1400,16 @@ def load_image_gt_multiproc(dataset, config, image_ids, augmentation=None, use_m
         # Make augmenters deterministic to apply similarly to images and masks
         det = augmentation.to_deterministic()
 
-        image = det.augment_image(image)
+        batches = [UnnormalizedBatch(images=[img]) for img in images]
+        
+        with det.pool(processes=-1, maxtasksperchild=20, seed=1) as pool:
+            batches_aug = pool.map_batches(batches)
+
+        images = [b[0] for b in batches_aug]
+
         # Change mask to np.uint8 because imgaug doesn't support np.bool
-        mask = det.augment_image(mask.astype(np.uint8), hooks=imgaug.HooksImages(activator=hook))
+        masks = [det.augment_image(mask.astype(np.uint8), hooks=imgaug.HooksImages(activator=hook))
+                    for mask in masks]
 
         for image, image_shape, mask, mask_shape in zip(images, images_shape, masks, masks_shape):
             # Verify that shapes didn't change
@@ -2160,7 +2168,7 @@ def data_generator_multiproc(dataset, config, shuffle=True, augment=False, augme
             error_count += 1
             if error_count > 5:
                 raise
-
+            
 ############################################################
 #  MaskRCNN Class
 ############################################################
