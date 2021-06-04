@@ -10,6 +10,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 #     3 = INFO, WARNING, and ERROR messages are not printed
 
 import cv2
+import time
 import random
 import imutils
 import argparse
@@ -218,7 +219,7 @@ if __name__ == "__main__":
 
 	ap = argparse.ArgumentParser()
 
-	ap.add_argument("-m", "--mode", help = "debug masks or augmentation. enter \"masks\" or \"aug\"" )
+	ap.add_argument("-m", "--mode", default="aug", help = "debug masks or augmentation. enter \"masks\" or \"aug\"" )
 	
 	args = vars(ap.parse_args())
 
@@ -249,7 +250,6 @@ if __name__ == "__main__":
 
 	hyperparameters = json.loads(read_env_var('SM_HPS', {}))
 	
-
 
 	# TRAIN DATASET DEFINITIONS -------------------------------------------------------------
 	train_images_path = os.path.sep.join([dataset_path, "training", "img"])
@@ -355,7 +355,7 @@ if __name__ == "__main__":
 		)
 
 		train_generator = modellib.data_generator(trainDataset, config, shuffle=True,
-                                         augmentation=aug_presets.aritmetic_aug().maybe_some(0.95, 3),
+                                         augmentation=aug_presets.aritmetic_aug(sets=2).maybe_some(0.95, 3),
                                          batch_size=config.BATCH_SIZE)
 		
 		print(f'batch size: {config.BATCH_SIZE}')
@@ -388,12 +388,16 @@ if __name__ == "__main__":
 				start = False
 				mask_idx = 0
 
+				tic = time.perf_counter()
 				train_data = next(train_generator)
-		
-				print(train_data[0]) # 7
+				toc = time.perf_counter()
+
+				print(f"Elapsed for generate new data: {(toc - tic)*1000:0.2f} ms")
+
+				#print(train_data[0]) # 7
 				#print(train_data[1]) # 7
 				#print(train_data[0][5][0])
-				print(train_data[0][0].shape)
+				#print(train_data[0][0].shape)
 				#print(train_data[0][6].shape)
 
 				# Using cv2.imshow() method 

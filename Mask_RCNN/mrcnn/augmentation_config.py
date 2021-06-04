@@ -75,16 +75,22 @@ class aug_presets():
     """
 
     class base_aug():
-
+        
         aug_list = []
         aug_lists = {}
         n_aug = 0 # number of augmentors in the class list
 
         def seq(self, rand = True):
+            """
+            return: the sequence of selected lists
+            """
             return iaa.Sequential(self.aug_list, random_order=rand)
 
         def some(self, n = 0, rand = True):
-
+            """
+            return augmenter that apply a subset of augmentations
+            default interval of aplayed augmentations (0, max)
+            """
             n = (0, self.n_aug) if n == 0 else \
                 (0, n) if isinstance(n, tuple) else \
                 n if isinstance(n, list) else (0, self.n_aug)
@@ -92,14 +98,24 @@ class aug_presets():
             return iaa.SomeOf(n, self.aug_list, random_order=rand)
 
         def one(self):
+            """
+            return augmentor that applay one augmentations
+            each times taken from the set
+            """
             return iaa.OneOf(self.aug_list)
 
         def maybe_all(self, p=0.5, rand = True):
+            """
+            return augmentor that if applayed (with probability p) apply all the augmentations in the given set
+            """
             return iaa.Sometimes(p, then_list= 
                             iaa.Sequential(self.aug_list, random_order=rand))
 
         def maybe_some(self, p=0.5, n = 0, rand = True):
-
+            """
+            return augmentor that if applayed (with probability p) apply a subset of augmentations
+            the default interval of aplayed augmentations (0, max)
+            """
             n = (0, self.n_aug) if n == 0 else \
                 (0, n) if isinstance(n, tuple) else \
                 n if isinstance(n, list) else (0, self.n_aug)
@@ -108,9 +124,12 @@ class aug_presets():
                             iaa.SomeOf(n, self.aug_list, random_order=rand))
 
         def maybe_one(self, p=0.5, rand = True):
+            """
+            return augmentor that if applayed (with probability p) apply one augmentation in the given set
+            """
             return iaa.Sometimes(p, then_list= 
                             iaa.OneOf(self.aug_list, random_order=rand))
-
+        
 
     # ARITMETIC ##########################################################################
     # overview: https://imgaug.readthedocs.io/en/latest/source/overview/arithmetic.html
@@ -118,14 +137,14 @@ class aug_presets():
 
     class aritmetic_aug(base_aug):
 
-        def __init__(self, severity=1.0, lists=[0, 1, 2]):
+        def __init__(self, severity=1.0, sets=[0, 1, 2]):
             
             s = severity
             self.aug_lists = {
                 0 : [
                     iaa.OneOf([
-                            iaa.Add((int(-10*s), int(30*s)), per_channel=True),
-                            iaa.AddElementwise((int(-10*s), int(30*s)), per_channel=True)
+                            iaa.Add((int(-30*s), int(30*s)), per_channel=True),
+                            iaa.AddElementwise((int(-30*s), int(30*s)), per_channel=True)
                         ]
                     )
                 ],
@@ -138,17 +157,26 @@ class aug_presets():
                     )
                 ],
                 2 : [
-                    iaa.ImpulseNoise(0.2*s),
-                    iaa.Dropout(p=(0, 0.6*s)),
-                    iaa.CoarseSaltAndPepper(0.2*s, size_percent=(0.01, 0.1)),
-                    iaa.CoarseSaltAndPepper(0.2*s, size_percent=(0.01, 0.1), per_channel=True)
+                    iaa.SomeOf((0, 2), [
+                            iaa.OneOf([
+                                    iaa.ImpulseNoise(0.5*s),
+                                    iaa.Dropout(p=iap.Uniform((0.4, 0.7*s), 0.8*s))
+                                ]
+                            ),
+                            iaa.OneOf([
+                                iaa.CoarseSaltAndPepper(0.1*s, size_percent=(0.03, 0.1)),
+                                iaa.CoarseSaltAndPepper(0.1*s, size_percent=(0.03, 0.1), per_channel=True)
+                                ]
+                            )
+                        ]
+                    )
                 ]
             }
+            
+            if not isinstance(sets, list):
+                sets = [sets]
 
-            if not isinstance(lists, list):
-                lists = [lists]
-
-            for list_ in lists:
+            for list_ in sets:
                 self.aug_list += self.aug_lists[list_]
             
             self.n_aug = len(self.aug_list)
