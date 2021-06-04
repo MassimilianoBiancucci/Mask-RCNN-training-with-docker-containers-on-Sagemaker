@@ -166,3 +166,5 @@ dmypy.json
 .vscode/settings.json
 
 .bash_history
+
+.nv
