@@ -1405,6 +1405,7 @@ def load_image_gt_multiproc(dataset, config, image_ids, augmentation=None, use_m
         #with det.pool(processes=-1, maxtasksperchild=20, seed=1) as pool:
         #    batches_aug = pool.map_batches(batches)
 
+        # TODO!!! with background=True it doent f.ing work!
         batches_aug = list(det.augment_batches(batches, background=False))
 
         images = [b.images_aug[0] for b in batches_aug]
@@ -1425,7 +1426,10 @@ def load_image_gt_multiproc(dataset, config, image_ids, augmentation=None, use_m
     bboxs = []
     images_meta = []
 
-    for i in range(image_ids):
+    # TODO solo debug
+    print(f"image_ids: {image_ids.shape}")
+
+    for i, image_id in enumerate(image_ids):
         # Note that some boxes might be all zeros if the corresponding mask got cropped out.
         # and here is to filter them out
         _idx = np.sum(masks[i], axis=(0, 1)) > 0
@@ -1441,16 +1445,31 @@ def load_image_gt_multiproc(dataset, config, image_ids, augmentation=None, use_m
         # Different datasets have different classes, so track the
         # classes supported in the dataset of this image.
         active_class_ids = np.zeros([dataset.num_classes], dtype=np.int32)
-        source_class_ids = dataset.source_class_ids[dataset.image_info[image_ids[i]]["source"]]
+        source_class_ids = dataset.source_class_ids[dataset.image_info[image_id]["source"]]
         active_class_ids[source_class_ids] = 1
 
         # Resize masks to smaller size to reduce memory usage
         if use_mini_mask:
             masks[i] = utils.minimize_mask(bboxs[i], masks[i], config.MINI_MASK_SHAPE)
 
+        print(f"original_shapes: {len(original_shapes)}\n\
+                images_shape: {len(images_shape)}\n\
+                windows: {len(windows)}\n\
+                scales: {len(scales)}")
+
+
+        # TODO da errore su uno di questi array
+        tmp1 = original_shapes[i]
+        tmp2 = images_shape[i]
+        tmp3 = windows[i]
+        tmp4 = scales[i]
+
+        images_meta.append(compose_image_meta(image_id, tmp1, tmp2,
+                                            tmp3, tmp4, active_class_ids))
+
         # Image meta data
-        images_meta.append(compose_image_meta(image_ids[i], original_shapes[i], images_shape[i],
-                                        windows[i], scales[i], active_class_ids))
+        #images_meta.append(compose_image_meta(image_id, original_shapes[i], images_shape[i],
+        #                                windows[i], scales[i], active_class_ids))
 
     return images, images_meta, classes_ids, bboxs, masks
 
@@ -2093,8 +2112,8 @@ def data_generator_multiproc(dataset, config, shuffle=True, augment=False, augme
                 # RPN Targets
                 rpn_match, rpn_bbox = build_rpn_targets(image.shape, anchors,
                                                         gt_class_ids, gt_boxes, config)
-                rpn_matchs.append(rpn_matchs)
-                rpn_bboxs.append(rpn_bboxs)
+                rpn_matchs.append(rpn_match)
+                rpn_bboxs.append(rpn_bbox)
 
                 # Mask R-CNN Targets
                 if random_rois:
