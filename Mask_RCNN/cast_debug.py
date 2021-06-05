@@ -225,8 +225,8 @@ if __name__ == "__main__":
 
 	#'''
 	os.environ['SM_CHANNELS'] = '["dataset","model"]'
-	os.environ['SM_CHANNEL_DATASET'] = '/home/massi/Progetti/Sagemaker_training_maskrcnn/datasets/cast_dataset'
-	os.environ['SM_CHANNEL_MODEL'] = '/home/massi/Progetti/Sagemaker_training_maskrcnn/datasets/cast_dataset'   
+	os.environ['SM_CHANNEL_DATASET'] = 'datasets/cast_dataset'
+	os.environ['SM_CHANNEL_MODEL'] = 'datasets/cast_dataset'   
 	os.environ['SM_HPS'] = '{"NAME": "cast", \
 							 "GPU_COUNT": 1, \
 							 "IMAGES_PER_GPU": 1,\
