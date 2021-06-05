@@ -21,7 +21,7 @@ from mrcnn import visualize
 from mrcnn import model as modellib
 from mrcnn.sagemaker_utils import *
 from mrcnn.config import Config
-from mrcnn.augmentation_config import aug_presets
+from mrcnn.augmentation_presets import aug_presets
 from imgaug import augmenters as iaa
 from imgaug import parameters as iap
 from PIL import Image
@@ -50,8 +50,9 @@ class castConfig(Config):
 	# Augmenters that are safe to apply to masks
 	# Some, such as Affine, have settings that make them unsafe, so always
 	# test your augmentation on masks
-	MASK_AUGMENTERS = ["Sequential", "SomeOf", "OneOf", "Sometimes", "Fliplr", "Flipud", "CropAndPad",
-					   "Affine", "PiecewiseAffine", ]
+	MASK_AUGMENTERS = ["Sequential", "SomeOf", "OneOf", "Sometimes", 
+						"Fliplr", "Flipud", "CropAndPad", "Affine", 
+						"PiecewiseAffine" ]
 
 	def __init__(self, **kwargs):
 		"""
@@ -225,8 +226,8 @@ if __name__ == "__main__":
 
 	#'''
 	os.environ['SM_CHANNELS'] = '["dataset","model"]'
-	os.environ['SM_CHANNEL_DATASET'] = '/home/massi/Progetti/Sagemaker_training_maskrcnn/datasets/cast_dataset'
-	os.environ['SM_CHANNEL_MODEL'] = '/home/massi/Progetti/Sagemaker_training_maskrcnn/datasets/cast_dataset'   
+	os.environ['SM_CHANNEL_DATASET'] = '/home/massi/Progetti/Mask-RCNN-training-with-docker-containers-on-Sagemaker/datasets/cast_dataset'
+	os.environ['SM_CHANNEL_MODEL'] = '/home/massi/Progetti/Mask-RCNN-training-with-docker-containers-on-Sagemaker/datasets/cast_dataset'   
 	os.environ['SM_HPS'] = '{"NAME": "cast", \
 							 "GPU_COUNT": 1, \
 							 "IMAGES_PER_GPU": 1,\
@@ -369,19 +370,19 @@ if __name__ == "__main__":
 		start = True
 		p_key = 0
 		#try:
-			
-		while(True):
 		
+		while(True):
+			
 			#(this is necessary to avoid Python kernel form crashing)
 			if not start:
 				p_key = cv2.waitKey(0)
-
-			# if "q" is pressed
+			
+			# if "q" is pressed close
 			if p_key == ord('q'):
 				# QUIT
 				raise "Quit"
 			
-			# if "w" is pressed
+			# if "w" is pressed 
 			elif p_key == ord('w') or start:
 				# swipe image
 
@@ -399,7 +400,7 @@ if __name__ == "__main__":
 				#print(train_data[0][5][0])
 				#print(train_data[0][0].shape)
 				#print(train_data[0][6].shape)
-
+				
 				# Using cv2.imshow() method 
 				# Displaying the image 
 				#im_rgb = cv2.cvtColor(train_data[0][0][0, :, :, :], cv2.COLOR_BGR2RGB)
@@ -411,7 +412,6 @@ if __name__ == "__main__":
 				for i in range(3):	
 					im_rgb[:,:,i] = im_rgb[:,:,i] + config.MEAN_PIXEL[i]
 
-				
 				r_mask = np.zeros((im_rgb.shape[0], im_rgb.shape[1]), dtype='uint8')
 
 				#print(f'r_mask shape: {r_mask.shape}')
@@ -437,7 +437,7 @@ if __name__ == "__main__":
 				bboxs = train_data[0][5][0][mask_idx]
 
 				if any(bbox != 0 for bbox in bboxs):
-
+					
 					# Mask reconstruction
 					r_mask = np.zeros((im_rgb.shape[0], im_rgb.shape[1]), dtype='uint8')
 
@@ -468,7 +468,6 @@ if __name__ == "__main__":
 				r_mask[bboxs[0]:bboxs[2], bboxs[1]:bboxs[3]] = r_bitmap*255.0
 
 				cv2.imshow("mask", r_mask)
-
 
 		#except Exception as e:
 			

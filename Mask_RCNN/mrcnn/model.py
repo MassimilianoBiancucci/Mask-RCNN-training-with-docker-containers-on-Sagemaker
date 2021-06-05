@@ -2771,6 +2771,7 @@ class MaskRCNN():
             layers = layer_regex[layers]
 
         if multitrading:
+            #don't work
             train_generator = data_generator_multiproc(train_dataset, self.config, shuffle=True,
                                             augmentation=augmentation,
                                             batch_size=self.config.BATCH_SIZE,
@@ -2813,7 +2814,7 @@ class MaskRCNN():
         log("Checkpoint Path: {}".format(self.checkpoint_path))
         self.set_trainable(layers)
         self.compile(learning_rate, self.config.LEARNING_MOMENTUM)
-
+        
         # Work-around for Windows: Keras fails on Windows when using
         # multiprocessing workers. See discussion here:
         # https://github.com/matterport/Mask_RCNN/issues/13#issuecomment-353124009

@@ -184,12 +184,14 @@ if __name__ == "__main__":
 	# default env vars
 	user_defined_env_vars = {"checkpoints": "/opt/ml/checkpoints",
 							 "tensorboard": "/opt/ml/output/tensorboard"}
+							 
 	channels = read_channels()
 	dataset_path = channels['dataset']
 	MODEL_PATH = os.path.sep.join([channels['model'], "mask_rcnn_coco.h5"])
 	CHECKPOINTS_DIR = read_env_var("checkpoints", user_defined_env_vars["checkpoints"])
 	TENSORBOARD_DIR = read_env_var("tensorboard", user_defined_env_vars["tensorboard"])
 	hyperparameters = json.loads(read_env_var('SM_HPS', {}))
+	
 	# TRAIN DATASET DEFINITIONS -------------------------------------------------------------
 	train_images_path = os.path.sep.join([dataset_path, "training", "img"])
 	train_masks_path = os.path.sep.join([dataset_path, "training", "ann"])
@@ -197,6 +199,7 @@ if __name__ == "__main__":
 	#train_mask_paths = sorted(list(paths.list_images(train_masks_path)))
 	train_ds_len = len(train_image_paths)
 	# ---------------------------------------------------------------------------------------
+	
 	# VALID DATASET DEFINITIONS -------------------------------------------------------------
 	val_images_path = os.path.sep.join([dataset_path, "validation", "img"])
 	val_masks_path = os.path.sep.join([dataset_path, "validation", "ann"])
@@ -204,6 +207,7 @@ if __name__ == "__main__":
 	#val_mask_paths = sorted(list(paths.list_images(val_masks_path)))
 	val_ds_len = len(val_image_paths)
 	# ---------------------------------------------------------------------------------------
+	
 	# load the training dataset
 	trainDataset = castDatasetBox(train_image_paths, train_masks_path, CLASS_NAMES)
 	trainDataset.load_exampls()
@@ -213,13 +217,16 @@ if __name__ == "__main__":
 	valDataset = castDatasetBox(val_image_paths, val_masks_path, CLASS_NAMES)
 	valDataset.load_exampls()
 	valDataset.prepare()
+
 	# da mettere negli iperparametri
 	GPU_COUNT = hyperparameters['GPU_COUNT']
 	IMAGES_PER_GPU = hyperparameters['IMAGES_PER_GPU']
+	
 	# initialize the training configuration
 	# set the number of steps per training epoch and validation cycle
 	STEPS_PER_EPOCH = train_ds_len // (IMAGES_PER_GPU * GPU_COUNT)
 	VALIDATION_STEPS = val_ds_len // (IMAGES_PER_GPU * GPU_COUNT)
+	
 	# number of classes (+1 for the background)
 	NUM_CLASSES = len(CLASS_NAMES) + 1
 	config = castConfig(
@@ -228,8 +235,10 @@ if __name__ == "__main__":
 		NUM_CLASSES=NUM_CLASSES,
 		**hyperparameters,
 	)
+
 	#print all config varaibles
 	config.display()
+	
 	# initialize the image augmentation process
 	# fa l'argomentazione con al massimo 2 tipi di argomentazione
 	aug = iaa.SomeOf((0, 2), [
@@ -237,6 +246,7 @@ if __name__ == "__main__":
 		iaa.Flipud(0.5),
 		iaa.Affine(rotate=(-10, 10))
 	])
+
 	# initialize the model and load the COCO weights so we can
 	# perform fine-tuning
 	model = modellib.MaskRCNN(mode="training", config=config, checkpoints_dir=CHECKPOINTS_DIR, tensorboard_dir=TENSORBOARD_DIR)
@@ -248,8 +258,10 @@ if __name__ == "__main__":
 			MODEL_PATH = last_checkpoint_path(model.checkpoints_dir_unique, config.NAME)
 	except:
 		print('checkpoints folder empty...')
+	
 	# load model
 	model.load_weights(MODEL_PATH, by_name=True, exclude=["mrcnn_class_logits", "mrcnn_bbox_fc", "mrcnn_bbox", "mrcnn_mask"])
+	
 	# execute train sequence
 	train_seq = hyperparameters['TRAIN_SEQ']
 	print(train_seq)

@@ -261,7 +261,7 @@ if __name__ == "__main__":
         
         model.train(trainDataset, valDataset, epochs=train_seq[i]['epochs'], 
             layers=train_seq[i]['layers'], learning_rate=train_seq[i]['lr'], 
-            augmentation=aug, multitrading=True)
+            augmentation=aug)
 
     ''' 
      OLD FASHION
