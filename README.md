@@ -66,7 +66,7 @@ At the end of the process we need to obtain for each image a numpy array with sh
 
 Notebook with code example: [**supervisely_mask_dataset_preparetion.ipynb**](https://github.com/MassimilianoBiancucci/Mask-RCNN-training-with-docker-containers-on-Sagemaker/blob/main/dataset_preparation_notebooks/supervisely_mask_dataset_preparetion.ipynb)
 
-The first way is to use the images into datasets/defect_segmentation_../masks_machine/ folder where each image have the same name of the original, but their color are mapped in different way, in this format each pixel represent a class, the associations between colors and classes can be found into the obj_class_to_machine_color.json file, presented below in json format.
+The first way is to use the images into datasets/cast_dataset/masks_machine/ folder where each image have the same name of the original, but their color are mapped in different way, in this format each pixel represent a class, the associations between colors and classes can be found into the obj_class_to_machine_color.json file, presented below in json format.
 
 ```json
 {
