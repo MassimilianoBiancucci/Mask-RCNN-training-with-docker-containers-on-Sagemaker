@@ -10,7 +10,6 @@ aug = iaa.SomeOf((0, 2), [
         iaa.Affine(rotate=(-10, 10))
     ])
 
-
 image = ia.quokka_square(size=(256, 256))
 images = [np.copy(image) for _ in range(10)]
 

@@ -50,8 +50,9 @@ class castConfig(Config):
 	# Augmenters that are safe to apply to masks
 	# Some, such as Affine, have settings that make them unsafe, so always
 	# test your augmentation on masks
-	MASK_AUGMENTERS = ["Sequential", "SomeOf", "OneOf", "Sometimes", "Fliplr", "Flipud", "CropAndPad",
-					   "Affine", "PiecewiseAffine", ]
+	MASK_AUGMENTERS = ["Sequential", "SomeOf", "OneOf", "Sometimes", 
+						"Fliplr", "Flipud", "CropAndPad", "Affine", 
+						"PiecewiseAffine" ]
 
 	def __init__(self, **kwargs):
 		"""
@@ -369,19 +370,20 @@ if __name__ == "__main__":
 		start = True
 		p_key = 0
 		#try:
+		
 			
 		while(True):
 		
 			#(this is necessary to avoid Python kernel form crashing)
 			if not start:
 				p_key = cv2.waitKey(0)
-
-			# if "q" is pressed
+			
+			# if "q" is pressed close
 			if p_key == ord('q'):
 				# QUIT
 				raise "Quit"
 			
-			# if "w" is pressed
+			# if "w" is pressed 
 			elif p_key == ord('w') or start:
 				# swipe image
 
@@ -399,7 +401,7 @@ if __name__ == "__main__":
 				#print(train_data[0][5][0])
 				#print(train_data[0][0].shape)
 				#print(train_data[0][6].shape)
-
+				
 				# Using cv2.imshow() method 
 				# Displaying the image 
 				#im_rgb = cv2.cvtColor(train_data[0][0][0, :, :, :], cv2.COLOR_BGR2RGB)
@@ -437,7 +439,7 @@ if __name__ == "__main__":
 				bboxs = train_data[0][5][0][mask_idx]
 
 				if any(bbox != 0 for bbox in bboxs):
-
+					
 					# Mask reconstruction
 					r_mask = np.zeros((im_rgb.shape[0], im_rgb.shape[1]), dtype='uint8')
 
