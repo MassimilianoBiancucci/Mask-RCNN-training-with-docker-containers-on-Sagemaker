@@ -1,0 +1,389 @@
+{
+    "description": "",
+    "tags": [
+        {
+            "id": 107364884,
+            "tagId": 29152854,
+            "name": "reviewd",
+            "value": null,
+            "labelerLogin": "simo97",
+            "createdAt": "2021-05-14T22:19:41.348Z",
+            "updatedAt": "2021-05-14T22:19:41.348Z"
+        },
+        {
+            "id": 107364883,
+            "tagId": 29152853,
+            "name": "bad",
+            "value": null,
+            "labelerLogin": "simo97",
+            "createdAt": "2021-05-14T13:54:10.454Z",
+            "updatedAt": "2021-05-14T13:54:10.454Z"
+        }
+    ],
+    "size": {
+        "height": 512,
+        "width": 512
+    },
+    "objects": [
+        {
+            "id": 742941867,
+            "classId": 2950877,
+            "description": "",
+            "geometryType": "bitmap",
+            "labelerLogin": "simo97",
+            "createdAt": "2021-06-06T22:45:51.092Z",
+            "updatedAt": "2021-06-06T22:45:51.092Z",
+            "tags": [],
+            "classTitle": "disk",
+            "bitmap": {
+                "data": "eJwBZQWa+olQTkcNChoKAAAADUlIRFIAAAGwAAAB1QEDAAAAqrk8gAAAAAZQTFRFAAAA////pdmf3QAAAAF0Uk5TAEDm2GYAAAUNSURBVHic7d1RkuMoDAZgT/VDP3IEjsLFttZU7QH2BnsWbrIcgUc/eJ1J0u3EBgmkP2l6PBtep74yloTIOG0yDMywJ+5f+GFP5xHUzEHsjytLWjae1uE17KZUE317mE0YO48oZe87NmNMfD2TMWGZ2Zx5jAURczmLIpYrWXX+KJgo6W8YKyIiyng5RxErL3ZaoItJmCGYoLocxXyTUarNyqSJppmvtdv16lkgI3Ie/9bDaRnWmGeF+QobeRYqjFe1xUqV1joSz7j4N1glIjVWUfwaN7U58szV5siyWhgrjKv+BqtOkW9Ers6YJdC4NY5Vo38ZNDNfxDwSSG7BjS0WMZZI1lJ0mTTjT5eJaTIy302FMjLfAhZK1Srky4gla6zR60hdGZFvCSPyDbJ2bZH5ljAi3yLmMRYwFjGWCmYkrMyAk7AyA6OElRkQqeJqkuVGMElJPo+J0laGBGRGxsJzmJWxmDH3pSxlbJSxvOXJVL5yZCVZlIkw23m+jZTtE2cx5qRsn4ERY1K1T5w0/jCbMbbLt6yTXMcTmLi29lscyIycbavLylnE2La6nJxty2SUs22ZyNU2cfLaOm0zoCiSLVNke5s404Hd8227MteB3Yty1LCpK7vXskahbMHYbeWo1s2dGR1bV47DmE6hLEARWZmqJXwXM0oWgZaAs9SVTRibMbZg7AQyD6X7M3Eg0663z8RZLZswNmNs6cpOh2AB6OUPsvEXZxFZAC/GMO0e/BhT/SfgxSpM+7HkMWa6sQS1SZRN3ZnTsxljC9RdUXYCmYcZoFAWMBYxljA2IU35Ul0gAxoXzBaUAf3uPFBmQLb0ZBZkc1eGqBPSJi9sxBikDsJGjNmuzGAMiwnWJ0G2HIP13AOmrix1ZfHFXuzFXuzF/res747Tm0EfMH5v1vPhwIt9M4Me0HdmS1c2Y08M+zLwke0DzOrZjDPTlQGP1WbsK5K+bOrKUld2mG/EABa6M+CjwmEYsAmA7DDfrh+DjRhzR2AWY6YXu3RlYF+8Mn0PeoTpu8LHn48dgo1aNn8Dc78lm76BWS1LXdm1l3T7m9LrJqzvQR9M3Uz8ADWTD6Ze3j3Zfysbsav1Za4PGyC2YGx9s8Pq2Pr6idGxhLGAsc/4Kxfc7aUVHVtvTblO48p0Kydg7KZUS2DzApxTsISx+61pinL7UqaRswljccMUu8Dm1jTV5TG2UejbrfLqmjGWdmyUsoixsGNOyvwzmJWyAWLZS+hGyGaMZS/YS5dA6soixgLGPMYGiOUnU3wty49TEPYgkCWMxa4sHIH5jAk3AZANECOOnflbwIhDbv4SsPIsJCfZPVLBRK0yEkwQFYoJZhko5prMU8w2GaXajD79rdmG6CPqmquAPhCvyRLJmomLJGsmLtDMNZh/KjMNRqtW4rhTMhsZ4A4kBE9NbHwYZdlYZZFjrsoCxyzG6hngVD0DiWXVDLARqYeSvbV6KD3PTIXxqhbK6nGvIONjAh4uWz3Klr+5+qnH7CxTlTmOxSpjZxmqjC1LX2XszdUVd3OtI5YtzVKD0Us1NhRdluAp0IKDsakUtO7sMohYRgEjZukFrJylICIDUSgJY5I5FjGZ/hSpPCayKRb1JWVZKIOQZWUpVftQis/Y34dSrD5i+aZnZ/LPGhkFG8b4eU1hPWbXRNi1HckDeR9G96MK63gHfmtiuN4dcrUBZBZj7xh7k//IxHb8AH4j5DLeafYT0z7JNKgK/tQAAAAASUVORK5CYIIckIYB",
+                "origin": [
+                    50,
+                    26
+                ]
+            }
+        },
+        {
+            "id": 742941866,
+            "classId": 2950875,
+            "description": "",
+            "geometryType": "bitmap",
+            "labelerLogin": "simo97",
+            "createdAt": "2021-06-06T22:45:51.091Z",
+            "updatedAt": "2021-06-06T22:45:51.091Z",
+            "tags": [],
+            "classTitle": "deburring",
+            "bitmap": {
+                "data": "eJzrDPBz5+WS4mJgYOD19HAJAtKaQBzCyAwkVYV6VgEptgCfEFcg/f///6U3598FshhLgvyCGRye3UgDcvo8XRxDKub0XtzIy6zIwxrg57KQW3mDp0Rvz7TAPBYvriP+T95P7ul74fSZq+Vv7pzf82ZPLlbn/6TiWskZcGdm7poXTf+b1Vqyk/76zjrhFR2wi/XwBsb0Py4zOmqWLxGVvBvAp8Lt4Tj3Bu+B2YE881o6OX4qqRrGp7G97VqcvXUq+/NAq0yZ1UUT5m7dsd1wrf86O8WlPavUeVYkAV3G4Onq57LOKaEJAL+6VmQ=",
+                "origin": [
+                    433,
+                    304
+                ]
+            }
+        },
+        {
+            "id": 742941865,
+            "classId": 2950875,
+            "description": "",
+            "geometryType": "bitmap",
+            "labelerLogin": "simo97",
+            "createdAt": "2021-06-06T22:45:51.091Z",
+            "updatedAt": "2021-06-06T22:45:51.091Z",
+            "tags": [],
+            "classTitle": "deburring",
+            "bitmap": {
+                "data": "eJzrDPBz5+WS4mJgYOD19HAJAtJyQJzGyAwkn/Vv9gVSbAE+Ia5A+v///0tvzr8LZDGWBPkFMzg8u5EG5HR4ujiGVMwpvbCRl8mQhzVAfqJH8w5WgchmpolTNTQn9F008nLz8Gxk+Tkt6bV8wJ/rkdv2d5xY5853jNemmqlDoXHNlnOLQhYb9DtOO9hqaawe/TqmN+2KvU8rxw3Z+sbGmzealR+b3+u9ruEyU0JX00Rp3Yr7Z7wkVZSN45Z9jms8LXZstn/b/z2ss+fxWz9xfTtRrH4l0E0Mnq5+LuucEpoAptVUFA==",
+                "origin": [
+                    50,
+                    143
+                ]
+            }
+        },
+        {
+            "id": 742941864,
+            "classId": 2950875,
+            "description": "",
+            "geometryType": "bitmap",
+            "labelerLogin": "simo97",
+            "createdAt": "2021-06-06T22:45:51.091Z",
+            "updatedAt": "2021-06-06T22:45:51.091Z",
+            "tags": [],
+            "classTitle": "deburring",
+            "bitmap": {
+                "data": "eJzrDPBz5+WS4mJgYOD19HAJAtITgViSkRlIcn+Nuwqk2AJ8QlyB9P///5fenH8XyGIsCfILZnB4diMNyJnu6eIYUjEnd+JBwVYFHpfDBSd8vS74afTGz1oawOTOz/fTUYklRd/o/NlzbAwRcp11C0odEsqyU4RYkuZ2JRqxBm6ba1k1VYq79+LWBN1gY8NZv+SVHZbFzEwVeV1YbJRTfffsqQ2Xczvnnb8nLeJc8uZDlSbn91NhMqk6POUt/N3Mj3nzZrRys73Xe/xh+tvLp68c0DfmNhOd5vCD2cSzKlXW9qM/0IkMnq5+LuucEpoA3ORXdg==",
+                "origin": [
+                    199,
+                    24
+                ]
+            }
+        },
+        {
+            "id": 742941863,
+            "classId": 2950875,
+            "description": "",
+            "geometryType": "bitmap",
+            "labelerLogin": "simo97",
+            "createdAt": "2021-06-06T22:45:51.091Z",
+            "updatedAt": "2021-06-06T22:45:51.091Z",
+            "tags": [],
+            "classTitle": "deburring",
+            "bitmap": {
+                "data": "eJwBvgFB/olQTkcNChoKAAAADUlIRFIAAAB8AAAA0gEDAAAAssY2YwAAAAZQTFRFAAAA////pdmf3QAAAAF0Uk5TAEDm2GYAAAFmSURBVHiczdW7bQQhFIVhEAHhlEALLsAyjVmGzkwplEDowDLG2fKfkZhFfm34STuce7mAOfqrmX6p9zpB770RPiaIQyYIZ5BvwQ8ot+DOYA4SGMQTxn/eJrC9v08wygMEFPO1zAzuBDKXmWEsU2aIKGYs02bwBIdiRueR3SRCRDHm6AKZ6wIsswsYFmNSYxBmD4x6CDC7JzgWY5ndSNREiIRQGaRxXRbjmN0wqklLCHkFRwH4JbgKsAKNQQSeCU+ESPiOYhxBsps1PBAeCYGgyfhVAWmzawBps/adU6UgG/FCSBkg4x0rIDCIwMEgAp4HQE6E5YkQ2DkzChkQBQqhAi40ZA3LDq1vsxOoM1i+EUZBHg1CWkKUZ4Vw4TbfuN7vh50pY5d3QMbuAhSADiYhCFTAIdDuBr8Eff8IVmB5H1zYmI3jv7EPujH1T0A292egATYmZmOEdqD+BugJWkP5p+AywCp8As42/Vb9Ru2XAAAAAElFTkSuQmCCIVWwGA==",
+                "origin": [
+                    358,
+                    52
+                ]
+            }
+        },
+        {
+            "id": 742941862,
+            "classId": 2950875,
+            "description": "",
+            "geometryType": "bitmap",
+            "labelerLogin": "simo97",
+            "createdAt": "2021-06-06T22:45:51.091Z",
+            "updatedAt": "2021-06-06T22:45:51.091Z",
+            "tags": [],
+            "classTitle": "deburring",
+            "bitmap": {
+                "data": "eJwBcAGP/olQTkcNChoKAAAADUlIRFIAAADcAAAAVgEDAAAAnr9qfAAAAAZQTFRFAAAA////pdmf3QAAAAF0Uk5TAEDm2GYAAAEYSURBVHicpdVBEsIgDEBRGBYsOQJHyc2EozHjRXqELl04jdjasVD5i8pCR58kkEA1ZjjsNDbjCP0MGAgjhRXCVAjBjILZBdA9AD0h16AACmHKhGC8TcQn4B81mAgLoGRCMHMDs7QTvAuh0HoyIB7ayz3BQ3u9J1Q8Q1EtoaeUPgMGQjwG+DggDIQCDbMKDfMKDQs6Q0qdIKVmSAnriZCyRh1PdFrGGOg8U+0M126GiVAB10zsznZqNpKmo3UVaBcX2496jKPdPkT3JdSQ2nUy6ifNal3NQ/1m2X/VV2ebUBPL9tYO2fS+vuYOox5Gj+Zg5265L/7olhCunZABbiMRvpc9Rq9wuxyhJawLnsfo4V7WuGWMpz/4F69/1JQqT8lqAAAAAElFTkSuQmCCz6qUYg==",
+                "origin": [
+                    202,
+                    411
+                ]
+            }
+        },
+        {
+            "id": 742941861,
+            "classId": 2950875,
+            "description": "",
+            "geometryType": "bitmap",
+            "labelerLogin": "simo97",
+            "createdAt": "2021-06-06T22:45:51.091Z",
+            "updatedAt": "2021-06-06T22:45:51.091Z",
+            "tags": [],
+            "classTitle": "deburring",
+            "bitmap": {
+                "data": "eJzrDPBz5+WS4mJgYOD19HAJAtJaQKzEyAwkheNulgIptgCfEFcg/f///6U3598FshhLgvyCGRye3UgDchI8XRxDKuaE9m0UbVDgYX28ecERXonWs1cuyrQKamh+6jgU2SKy89H9+s4T5u1ndsrxz+ZQkA6Ur97sF8I26e45g6MrmK3dDnRIZE5T1Q4sDX+kn6TCyru/adMeLTn1DO4VnP+4VTm1q4y8yvOBdjF4uvq5rHNKaAIAP7g9RA==",
+                "origin": [
+                    117,
+                    59
+                ]
+            }
+        },
+        {
+            "id": 742941860,
+            "classId": 2950875,
+            "description": "",
+            "geometryType": "bitmap",
+            "labelerLogin": "simo97",
+            "createdAt": "2021-06-06T22:45:51.091Z",
+            "updatedAt": "2021-06-06T22:45:51.091Z",
+            "tags": [],
+            "classTitle": "deburring",
+            "bitmap": {
+                "data": "eJzrDPBz5+WS4mJgYOD19HAJAtJCQKzAyAwkVTft2gSk2AJ8QlyB9P///5fenH8XyGIsCfILZnB4diMNyPH0dHEMqZije2Yjb4OCBOtDY5EpOQtmv9DiS+pYbNilHBAl8Oj3Y+19n/qEOWL1Vm+6rRW9Y6kjZ7/GiYd/lxokGC4LtbbRkkr1lLpo926zyOdg8TwjBpCprn4u65wSmgD6djYX",
+                "origin": [
+                    60,
+                    326
+                ]
+            }
+        },
+        {
+            "id": 742941859,
+            "classId": 2950875,
+            "description": "",
+            "geometryType": "bitmap",
+            "labelerLogin": "simo97",
+            "createdAt": "2021-06-06T22:45:51.091Z",
+            "updatedAt": "2021-06-06T22:45:51.091Z",
+            "tags": [],
+            "classTitle": "deburring",
+            "bitmap": {
+                "data": "eJzrDPBz5+WS4mJgYOD19HAJAtKcQMzHyAwkj0cteQ2k2AJ8QlyB9P///5fenH8XyGIsCfILZnB4diMNyNHydHEMqZiTbHHgAIMLv4SEXcNFfrY2KTY2aYNJyQkPkhMS0hMS0hISchgYDjuyPVkud6MZqIvB09XPZZ1TQhMAcpYlUQ==",
+                "origin": [
+                    82,
+                    370
+                ]
+            }
+        },
+        {
+            "id": 742941858,
+            "classId": 2950875,
+            "description": "",
+            "geometryType": "bitmap",
+            "labelerLogin": "simo97",
+            "createdAt": "2021-06-06T22:45:51.091Z",
+            "updatedAt": "2021-06-06T22:45:51.091Z",
+            "tags": [],
+            "classTitle": "deburring",
+            "bitmap": {
+                "data": "eJzrDPBz5+WS4mJgYOD19HAJAtJSQKzKyAwk01ZkfwVSbAE+Ia5A+v///0tvzr8LZDGWBPkFMzg8u5EG5MR7ujiGVMzJPbORt8GAhzXQXaRkA6NOE8diA44goyi3RBYvriPHpyuJas5L+S1y+8x9TvE7BQeYtM8YON1/sUlYq3Xnn5rgSulFYgs5niYK9Mot8DQRdJlxpM9ZpfPI5Xc8afJzJVVfb7YvcgNaxeDp6ueyzimhCQBhmj1C",
+                "origin": [
+                    94,
+                    392
+                ]
+            }
+        },
+        {
+            "id": 742941857,
+            "classId": 2950875,
+            "description": "",
+            "geometryType": "bitmap",
+            "labelerLogin": "simo97",
+            "createdAt": "2021-06-06T22:45:51.090Z",
+            "updatedAt": "2021-06-06T22:45:51.090Z",
+            "tags": [],
+            "classTitle": "deburring",
+            "bitmap": {
+                "data": "eJzrDPBz5+WS4mJgYOD19HAJAtIcQCzOyAwkeRzntAEptgCfEFcg/f///6U3598FshhLgvyCGRye3UgDcuQ8XRxDKuYkP0h+wO5cKZLB31bq8IOf4z/DQ36FPwwMxQs5Fy0R/JULVMng6ernss4poQkAnR8huA==",
+                "origin": [
+                    471,
+                    271
+                ]
+            }
+        },
+        {
+            "id": 742941856,
+            "classId": 2950875,
+            "description": "",
+            "geometryType": "bitmap",
+            "labelerLogin": "simo97",
+            "createdAt": "2021-06-06T22:45:51.090Z",
+            "updatedAt": "2021-06-06T22:45:51.090Z",
+            "tags": [],
+            "classTitle": "deburring",
+            "bitmap": {
+                "data": "eJzrDPBz5+WS4mJgYOD19HAJAtL8QCzAyAwkP8/Y7g6k2AJ8QlyB9P///5fenH8XyGIsCfILZnB4diMNyDHwdHEMqZiTnDAhOWFFcsKP4wc+tDf+ZObYaJ/wID9hQnrCBqB4YsIKhsX8PDycCiwMH2dy5hw982cCUC+Dp6ufyzqnhCYAXy0syQ==",
+                "origin": [
+                    91,
+                    110
+                ]
+            }
+        },
+        {
+            "id": 742941855,
+            "classId": 2950874,
+            "description": "",
+            "geometryType": "bitmap",
+            "labelerLogin": "simo97",
+            "createdAt": "2021-06-06T22:45:51.090Z",
+            "updatedAt": "2021-06-06T22:45:51.090Z",
+            "tags": [],
+            "classTitle": "chipping",
+            "bitmap": {
+                "data": "eJzrDPBz5+WS4mJgYOD19HAJAtJiIDYjM5Ccns2jAKTYAnxCXIH0////l96cfxfIYiwJ8gtmcHh2Iw3IMfZ0cQypmJP84/CBAx/2NzYu/McgsL/+QMJ/+RZ7ho/ybJUKaexJbgppG/4fOHDgf0Nj419GBsda0TXFV1iXAbUzeLr6uaxzSmgCAMHsLvI=",
+                "origin": [
+                    91,
+                    363
+                ]
+            }
+        },
+        {
+            "id": 742941854,
+            "classId": 2950874,
+            "description": "",
+            "geometryType": "bitmap",
+            "labelerLogin": "simo97",
+            "createdAt": "2021-06-06T22:45:51.090Z",
+            "updatedAt": "2021-06-06T22:45:51.090Z",
+            "tags": [],
+            "classTitle": "chipping",
+            "bitmap": {
+                "data": "eJzrDPBz5+WS4mJgYOD19HAJAtJSQKzAyAwkzVJ/uQEptgCfEFcg/f///6U3598FshhLgvyCGRye3UgDcqI9XRxDKubYnt3I22DA43LRWURzM6Pk0cWtF424lAOCFkjUe2j8WaKRPn/KrCUlLD953jRJ/1Kxnth/zFgjwX5q/Pvmo4/vcSUnpifOW53fw7X8zEpV7U2bTqw6ktFdyeCupfs3Xe9tCNAaBk9XP5d1TglNABJmP1Y=",
+                "origin": [
+                    63,
+                    281
+                ]
+            }
+        },
+        {
+            "id": 742941853,
+            "classId": 2950874,
+            "description": "",
+            "geometryType": "bitmap",
+            "labelerLogin": "simo97",
+            "createdAt": "2021-06-06T22:45:51.090Z",
+            "updatedAt": "2021-06-06T22:45:51.090Z",
+            "tags": [],
+            "classTitle": "chipping",
+            "bitmap": {
+                "data": "eJzrDPBz5+WS4mJgYOD19HAJAtFArMzIDCRLm4UqgRRbgE+IK5D+////0pvz7wJZjCVBfsEMDs9upAE5+p4ujiEVc5IT7A4cqGto/M/Y/Ief7bc8z1eBL4wt/+wbFjK3CPik2rJNyk94kM6gxNC1w/BXZ7PMO6BWBk9XP5d1TglNAJQ8Klg=",
+                "origin": [
+                    122,
+                    248
+                ]
+            }
+        },
+        {
+            "id": 742941852,
+            "classId": 2950874,
+            "description": "",
+            "geometryType": "bitmap",
+            "labelerLogin": "simo97",
+            "createdAt": "2021-06-06T22:45:51.090Z",
+            "updatedAt": "2021-06-06T22:45:51.090Z",
+            "tags": [],
+            "classTitle": "chipping",
+            "bitmap": {
+                "data": "eJzrDPBz5+WS4mJgYOD19HAJAtJ8QMzFyAwk94n/bQFSbAE+Ia5A+v///0tvzr8LZDGWBPkFMzg8u5EG5Eh4ujiGVMxJnlB/gMHlm7zEv/+OCgriOnwMV7j53BVkRT8D1TB4uvq5rHNKaAIA+tUeeQ==",
+                "origin": [
+                    204,
+                    234
+                ]
+            }
+        },
+        {
+            "id": 742941851,
+            "classId": 2950874,
+            "description": "",
+            "geometryType": "bitmap",
+            "labelerLogin": "simo97",
+            "createdAt": "2021-06-06T22:45:51.090Z",
+            "updatedAt": "2021-06-06T22:45:51.090Z",
+            "tags": [],
+            "classTitle": "chipping",
+            "bitmap": {
+                "data": "eJzrDPBz5+WS4mJgYOD19HAJAtJ8QCzAyAwkZaLuVAIptgCfEFcg/f///6U3598FshhLgvyCGRye3UgDcnQ8XRxDKuYkJ9QcYHA5Iy/x43/DhD/ybL/teb46fGl++J/doIrB6RsvzyceBxaGQ1+F1jLNbVwF1Mfg6ernss4poQkAPKcp4Q==",
+                "origin": [
+                    327,
+                    136
+                ]
+            }
+        },
+        {
+            "id": 742941850,
+            "classId": 2950874,
+            "description": "",
+            "geometryType": "bitmap",
+            "labelerLogin": "simo97",
+            "createdAt": "2021-06-06T22:45:51.090Z",
+            "updatedAt": "2021-06-06T22:45:51.090Z",
+            "tags": [],
+            "classTitle": "chipping",
+            "bitmap": {
+                "data": "eJzrDPBz5+WS4mJgYOD19HAJAtLcQCzGyAwkdbS+KAAptgCfEFcg/f///6U3598FshhLgvyCGRye3UgDcpQ8XRxDKuYkT0hOYFCqZmv7zx5wkVljlbtTgeMCpgVilRPiGJatldEwUnsUC1TN4Onq57LOKaEJAP1zIbc=",
+                "origin": [
+                    446,
+                    275
+                ]
+            }
+        },
+        {
+            "id": 742941849,
+            "classId": 2950874,
+            "description": "",
+            "geometryType": "bitmap",
+            "labelerLogin": "simo97",
+            "createdAt": "2021-06-06T22:45:51.090Z",
+            "updatedAt": "2021-06-06T22:45:51.090Z",
+            "tags": [],
+            "classTitle": "chipping",
+            "bitmap": {
+                "data": "eJzrDPBz5+WS4mJgYOD19HAJAtIgNhcjM5Dc/if2H5BiC/AJcQXS////X3pz/l0gi7EkyC+YweHZjTQgR9LTxTGkYk7yhOQEBqVqtrb/7AIn5HQ0jjMwVLiyf9Z+GzUBqIjB09XPZZ1TQhMASGEf8g==",
+                "origin": [
+                    337,
+                    356
+                ]
+            }
+        },
+        {
+            "id": 742941848,
+            "classId": 2950874,
+            "description": "",
+            "geometryType": "bitmap",
+            "labelerLogin": "simo97",
+            "createdAt": "2021-06-06T22:45:51.089Z",
+            "updatedAt": "2021-06-06T22:45:51.089Z",
+            "tags": [],
+            "classTitle": "chipping",
+            "bitmap": {
+                "data": "eJzrDPBz5+WS4mJgYOD19HAJAtJiQMzPyAwkby1eqw2k2AJ8QlyB9P///5fenH8XyGIsCfILZnB4diMNyDHxdHEMqZiTnJBQd+DAAb4j3+QlJF79Nzjxvz2hWuHf///sAvYNj5gdeEK+tTc6/mNnbpZhZmYQC5Q6mJ6+sR2on8HT1c9lnVNCEwASPy2b",
+                "origin": [
+                    356,
+                    310
+                ]
+            }
+        }
+    ]
+}

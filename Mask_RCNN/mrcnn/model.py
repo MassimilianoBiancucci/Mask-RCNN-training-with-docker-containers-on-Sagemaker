@@ -1395,6 +1395,8 @@ def load_image_gt_multiproc(dataset, config, image_ids, augmentation=None, use_m
 
         # Store shapes before augmentation to compare
         images_shape = [img.shape for img in images]
+        print(f"images_shape -> {images_shape}")
+
         masks_shape = [mask.shape for mask in masks]
 
         # Make augmenters deterministic to apply similarly to images and masks
@@ -1459,7 +1461,11 @@ def load_image_gt_multiproc(dataset, config, image_ids, augmentation=None, use_m
 
 
         # TODO da errore su uno di questi array
+        print(f"i: {i}")
+
         tmp1 = original_shapes[i]
+        
+        print(f"images_shape -> {images_shape}")
         tmp2 = images_shape[i]
         tmp3 = windows[i]
         tmp4 = scales[i]
@@ -2233,7 +2239,7 @@ class MaskRCNN():
         tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
         assert mode in ['training', 'inference']
-
+        
         #'''
         from keras.backend.tensorflow_backend import set_session
         tf_config = tf.ConfigProto()
@@ -2802,6 +2808,7 @@ class MaskRCNN():
         callbacks = [
             #keras.callbacks.TensorBoard(log_dir=self.tensorboard_dir_unique, histogram_freq=1, write_graph=True, write_images=False, update_freq='epoch'),
             keras.callbacks.TensorBoard(log_dir=self.tensorboard_dir_unique, histogram_freq=0, write_graph=True, write_grads=True, write_images=False),
+            # TODO vedere save_weights_only cazzo significa
             keras.callbacks.ModelCheckpoint(self.checkpoint_path, verbose=0, save_weights_only=True),
         ]
 

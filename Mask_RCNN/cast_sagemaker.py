@@ -19,38 +19,86 @@ from mrcnn import visualize
 from mrcnn import model as modellib
 from mrcnn.sagemaker_utils import *
 from mrcnn.config import Config
-from imgaug import augmenters as iaa
+from mrcnn.augmentation_presets import aug_presets
 from PIL import Image
 import base64
 import zlib
 import json
+import sys
 import io
+
 # NOTE: used in the load_mask function
-# don't move this declaration.
+# don't move this declaration. 
 CLASS_NAMES = {
 	1 : "chipping",
 	2 : "deburring",
 	3 : "holes",
 	4 : "disk"
 }
+
 class castConfig(Config):
 	"""
 	Extension of Config class of the framework maskrcnn (mrcnn/config.py),
 	"""
+
+	# mean of all pixel of all images in the datatset
+	MEAN_PIXEL = np.array([143.75, 143.75, 143.75])
+
+	# NOTE: this parameter must be true due to a bug in mask application
+	USE_MINI_MASK = True
+
+	# this is the size in whitch the masks will be resized when loaded 
+	# from the dataset to the ram. a low value reduce the memory usage but 
+	# if the mask is small it can lead to a blank mask. this happen because 
+	# the mask is scaled to MINI_MASK_SHAPE and than rescaled to it's actual 
+	# size, if the original size of the mask was small enough it could be 
+	# scaled to a size less than one pixel, so when rescaled back the mask 
+	# will be empty.
+	MINI_MASK_SHAPE = (512, 512)
+
+
+	# Augmenters that are safe to apply to masks
+	# Some, such as Affine, have settings that make them unsafe, so always
+	# test your augmentation on masks
+	MASK_AUGMENTERS = ["Sequential", "SomeOf", "OneOf", "Sometimes", 
+						"Fliplr", "Flipud", "CropAndPad", "Affine", 
+						"PiecewiseAffine", "ScaleX", "ScaleY", 
+						"TranslateX", "TranslateY", "Rotate", 
+						"ShearX", "ShearY", "PiecewiseAffine",
+						"WithPolarWarping", "PerspectiveTransform"]
+
+
+	# SMALL MASKS DILATION PARAMETERS
+	# in this dataset we have quite a lot of small masks, to help the NN
+	# see those small masks we dilate them with differed dilation grades
+	# based on the size of the mask
+	DILATE_MASKS = True # enable small mask dilation
+	DILATE_THERS_2 = 15000 # area in pixel, if the mask instance is smaller than that, trigger the dilation 2
+	DILATE_THERS_1 = 500 # area in pixel, if the mask instance is smaller than that, trigger the dilation 1
+	DILATE_ITERATIONS_2 = 10 # itaration of dilation 2
+	DILATE_ITERATIONS_1 = 10 # iteration of dilation 1
+	DILATE_KERNEL = np.ones((2, 2), 'uint8') # kernel of both dilation
+	# NOTE if one mask is smaller than thers_1 dilation 1 and 2 are triggered
+	# the dilation procedure is placed in the load_mask function
+
+
 	def __init__(self, **kwargs):
 		"""
 		Overriding of same config variables
 		and addition of others.
 		"""
+		# this is equivalent to setting every keyword in kwargs to the 
+		# self corresponding, es: self.STEPS_PER_EPOCH=kwargs['STEPS_PER_EPOCH']
 		self.__dict__.update(kwargs)
 		super().__init__()
+
 class castDatasetBox(utils.Dataset):
 	"""
 	Extension of dataset utils.Dataset
 	that override the import functions for the images
 	and the preparation function for the annotation mask from json files.
 	"""
-	def __init__(self, imagePaths, masks_path, classNames, width=1024):
+	def __init__(self, imagePaths, masks_path, classNames, config, width=1024):
 		# call the parent constructor
 		super().__init__(self)
 		# store the image paths and class names along with the width
@@ -59,6 +107,8 @@ class castDatasetBox(utils.Dataset):
 		self.masks_path = masks_path
 		self.classNames = classNames
 		self.width = width
+		self.config = config
+
 	def load_exampls(self):
 		"""
 		load the dataset from the disk into the dataset class
@@ -75,6 +125,7 @@ class castDatasetBox(utils.Dataset):
 			
 			# add the image to the dataset
 			self.add_image("cast", image_id=filename, path=imagePath)
+
 	# defining supervisely functions
 	def base64_2_mask(self, s):
 		"""
@@ -87,6 +138,7 @@ class castDatasetBox(utils.Dataset):
 		#n = np.fromstring(z, np.uint8) #depecated
 		mask = cv2.imdecode(n, cv2.IMREAD_UNCHANGED)[:, :, 3].astype(bool)
 		return mask
+
 	def mask_2_base64(self, mask):
 		"""
 		Fuction for compression and serializzation of a bool matrix
@@ -98,6 +150,7 @@ class castDatasetBox(utils.Dataset):
 		img_pil.save(bytes_io, format='PNG', transparency=0, optimize=0)
 		bytes = bytes_io.getvalue()
 		return base64.b64encode(zlib.compress(bytes)).decode('utf-8')
+
 	# override
 	def load_image(self, imageID):
 		# grab the image path, load it, and convert it from BGR to
@@ -158,38 +211,54 @@ class castDatasetBox(utils.Dataset):
 			# NOTE: it's realy important at this point the use of cv2.INTER_NEAREST interpolation,
 			masks[:, :, i] = imutils.resize(mask_swap, width=self.width, inter=cv2.INTER_NEAREST)
 			
-			# overwrite 1px border with zeros (needed for optimal augmentation!!)
-			tick = 5 
-			masks[0:tick, 0:self.width, i] = 0
-			masks[0:self.width, 0:tick, i] = 0
-			masks[self.width-tick:self.width, 0:self.width, i] = 0
-			masks[0:self.width, self.width-tick:self.width, i] = 0
+			# if DILATE_MASKS it's true, too small object will be enlarged
+			if self.config.DILATE_MASKS:
+				if masks[:, :, i].sum() < self.config.DILATE_THERS_1:
+					masks[:, :, i] = cv2.dilate(masks[:, :, i], self.config.DILATE_KERNEL, iterations = self.config.DILATE_ITERATIONS_1)
+				elif masks[:, :, i].sum() < self.config.DILATE_THERS_2:
+					masks[:, :, i] = cv2.dilate(masks[:, :, i], self.config.DILATE_KERNEL, iterations = self.config.DILATE_ITERATIONS_2)
+
+			# overwrite 1px border with zeros (needed for augmentations with edge mode)
+			#tick = 5 
+			#masks[0:tick, 0:self.width, i] = 0
+			#masks[0:self.width, 0:tick, i] = 0
+			#masks[self.width-tick:self.width, 0:self.width, i] = 0
+			#masks[0:self.width, self.width-tick:self.width, i] = 0
 			
 		return (masks.astype('bool'), class_idxs)
 
 if __name__ == "__main__":
-	#'''
+	# if you need to debug this script simulating the behavior of sagemaker
+	# you can set the environemnt variables yourself and let the script read 
+	# them later in the code. this need to be commented out when running 
+	# in sagemaker so that the environemnt variables are the one declared 
+	# when starting the training job from the sagemaker api.
+	"""
 	os.environ['SM_CHANNELS'] = '["dataset","model"]'
 	os.environ['SM_CHANNEL_DATASET'] = '/opt/ml/input/data/dataset'
 	os.environ['SM_CHANNEL_MODEL'] = '/opt/ml/input/data/model'   
-	os.environ['SM_HPS'] = '{"NAME": "cast", \
+	os.environ['SM_HPS'] = '''{"NAME": "cast", \
 							 "GPU_COUNT": 1, \
 							 "IMAGES_PER_GPU": 1,\
+							 "AUG_PREST": 1,
 							 "TRAIN_SEQ":[\
-								{"epochs": 20, "layers": "heads", "lr": 0.001},\
-								{"epochs": 40, "layers": "all", "lr": 0.0001 }\
+								{"epochs": 150, "layers": "all", "lr": 0.005 }\
 							 ]\
-							}'
-	#'''
+							}'''
+	"""
+	
 	# default env vars
 	user_defined_env_vars = {"checkpoints": "/opt/ml/checkpoints",
 							 "tensorboard": "/opt/ml/output/tensorboard"}
-							 
+			 
 	channels = read_channels()
 	dataset_path = channels['dataset']
 	MODEL_PATH = os.path.sep.join([channels['model'], "mask_rcnn_coco.h5"])
 	CHECKPOINTS_DIR = read_env_var("checkpoints", user_defined_env_vars["checkpoints"])
 	TENSORBOARD_DIR = read_env_var("tensorboard", user_defined_env_vars["tensorboard"])
+
+	# to load the hyperparameters as dict we need to pass the string ftom the env 
+	# var to json.loads(...)
 	hyperparameters = json.loads(read_env_var('SM_HPS', {}))
 	
 	# TRAIN DATASET DEFINITIONS -------------------------------------------------------------
@@ -208,17 +277,6 @@ if __name__ == "__main__":
 	val_ds_len = len(val_image_paths)
 	# ---------------------------------------------------------------------------------------
 	
-	# load the training dataset
-	trainDataset = castDatasetBox(train_image_paths, train_masks_path, CLASS_NAMES)
-	trainDataset.load_exampls()
-	trainDataset.prepare()
-	
-	# load the validation dataset
-	valDataset = castDatasetBox(val_image_paths, val_masks_path, CLASS_NAMES)
-	valDataset.load_exampls()
-	valDataset.prepare()
-
-	# da mettere negli iperparametri
 	GPU_COUNT = hyperparameters['GPU_COUNT']
 	IMAGES_PER_GPU = hyperparameters['IMAGES_PER_GPU']
 	
@@ -229,6 +287,7 @@ if __name__ == "__main__":
 	
 	# number of classes (+1 for the background)
 	NUM_CLASSES = len(CLASS_NAMES) + 1
+	
 	config = castConfig(
 		STEPS_PER_EPOCH=STEPS_PER_EPOCH,
 		VALIDATION_STEPS=VALIDATION_STEPS,
@@ -236,58 +295,61 @@ if __name__ == "__main__":
 		**hyperparameters,
 	)
 
-	#print all config varaibles
-	config.display()
+	# load the training dataset
+	trainDataset = castDatasetBox(train_image_paths, train_masks_path, CLASS_NAMES, config)
+	trainDataset.load_exampls()
+	trainDataset.prepare()
 	
-	# initialize the image augmentation process
-	# fa l'argomentazione con al massimo 2 tipi di argomentazione
-	aug = iaa.SomeOf((0, 2), [
-		iaa.Fliplr(0.5),
-		iaa.Flipud(0.5),
-		iaa.Affine(rotate=(-10, 10))
-	])
+	# load the validation dataset
+	valDataset = castDatasetBox(val_image_paths, val_masks_path, CLASS_NAMES, config)
+	valDataset.load_exampls()
+	valDataset.prepare()
+
+	# print all config varaibles
+	config.display()
+
+	# get the augmentation from the selected preset
+	aug = aug_presets().presets_list[hyperparameters['AUG_PREST']]
 
 	# initialize the model and load the COCO weights so we can
 	# perform fine-tuning
-	model = modellib.MaskRCNN(mode="training", config=config, checkpoints_dir=CHECKPOINTS_DIR, tensorboard_dir=TENSORBOARD_DIR)
-	
+	model = modellib.MaskRCNN(mode="training",
+                           config=config,
+                           checkpoints_dir=CHECKPOINTS_DIR,
+                           tensorboard_dir=TENSORBOARD_DIR)
+
+	####################################################################################
+	# comment this section if you want to try to restore the training whene restarted
+	# after aws interruption
+	if os.path.isdir(model.checkpoints_dir_unique):
+		if os.listdir(model.checkpoints_dir_unique):
+			# the framework seems to have some bug in restoring training from checkpoint
+			# so if this happens the training status is compromised with higher losses,
+			# for this reason if the checkpoints folder is not empty we just exit
+			sys.exit(1)
+	####################################################################################
+
 	# check if there is any checkpoint in the checkpoint folder
 	# if there are, load the last checkpoint
 	try:
+		# if there are some checkpoints
 		if os.listdir(model.checkpoints_dir_unique):
+			# set the MODEL_PATH to point to the last checkpoint
 			MODEL_PATH = last_checkpoint_path(model.checkpoints_dir_unique, config.NAME)
+
+			# and load it
+			model.load_weights(MODEL_PATH, by_name=True)
 	except:
+		# if there wasn't any checkpoint than start from scratch and load the COCO model
 		print('checkpoints folder empty...')
+		model.load_weights(MODEL_PATH, by_name=True, exclude=[
+		                   "mrcnn_class_logits", "mrcnn_bbox_fc", "mrcnn_bbox", "mrcnn_mask"])
 	
-	# load model
-	model.load_weights(MODEL_PATH, by_name=True, exclude=["mrcnn_class_logits", "mrcnn_bbox_fc", "mrcnn_bbox", "mrcnn_mask"])
-	
-	# execute train sequence
-	train_seq = hyperparameters['TRAIN_SEQ']
-	print(train_seq)
-	print(type(train_seq))
-	for i in range(len(train_seq)):
-		if model.epoch >= train_seq[i]['epochs']:
-			continue
-		
-		model.train(trainDataset, valDataset, epochs=train_seq[i]['epochs'], 
-			layers=train_seq[i]['layers'], learning_rate=train_seq[i]['lr'], augmentation=aug)
-	''' 
-	 OLD FASHION
-	# train *just* the layer heads
-	model.train(trainDataset, valDataset, epochs=hyperparameters['HEAD_TRAIN_EPOCHS'],
-				layers="heads", learning_rate=config.LEARNING_RATE,
-				augmentation=aug)
-	# unfreeze the body of the network and train *all* layers
-	model.train(trainDataset, valDataset, epochs=hyperparameters['ALL_TRAIN_EPOCHS'],
-				layers="all", learning_rate=config.LEARNING_RATE / 10,
-				augmentation=aug)
 	'''
-'''
-TRAIN_SEQ hyperparameter sample
+	TRAIN_SEQ hyperparameter sample
 	In this notation the epochs specify a number of epoch absolute, the first object specify
 	that from the epoch 0 to epoch 20 there are certain parameters, the second object specify that there is
-	
+
 	'TRAIN_SEQ':[
 		{
 			'epochs': 20,
@@ -300,67 +362,20 @@ TRAIN_SEQ hyperparameter sample
 			'lr': 0.0001,
 		}
 	]
-- - - - - - - - 
-sample output:
-1/2075 [..............................] - ETA: 21:39:54 - loss: 3.1190 - rpn_class_loss: 0.0191 - rpn_bbox_loss: 0.1407 - mrcnn_class_loss: 0.6572 - mrcnn_bbox_loss: 0.9571 -    
-2/2075 [..............................] - ETA: 11:12:53 - loss: 2.8820 - rpn_class_loss: 0.0191 - rpn_bbox_loss: 0.1359 - mrcnn_class_loss: 0.5046 - mrcnn_bbox_loss: 0.9102 -    
-- - - - - - - -
-sample validation output:
-1037/1037 [==============================] - 426s 411ms/step - loss: 0.5844 - rpn_class_loss: 0.0030 - rpn_bbox_loss: 0.1779 - mrcnn_class_loss: 0.0398 - mrcnn_bbox_loss: 0.1325 - mrcnn_mask_loss: 0.2311 - val_loss: 1.1369 - val_rpn_class_loss: 0.0047 - val_rpn_bbox_loss: 0.5298 - val_mrcnn_class_loss: 0.0449 - val_mrcnn_bbox_loss: 0.2616 - val_mrcnn_mask_loss: 0.2958
-'''
-r'''
-metric_definitions=[
-						{
-							"Name": "loss",
-							"Regex": "\sloss:\s(\d+.?\d*)\s-",
-						},
-						{
-							"Name": "rpn_class_loss",
-							"Regex": "\srpn_class_loss:\s(\d+.?\d*)\s-",
-						},
-						{
-							"Name": "rpn_bbox_loss",
-							"Regex": "\srpn_bbox_loss:\s(\d+.?\d*)\s-",
-						},
-						{
-							"Name": "mrcnn_class_loss",
-							"Regex": "\smrcnn_class_loss:\s(\d+.?\d*)\s-",
-						},
-						{
-							"Name": "mrcnn_mask_loss",
-							"Regex": "\smrcnn_mask_loss:\s(\d+.?\d*)\s-",
-						},
-						{
-							"Name": "val_loss",
-							"Regex": "\smrcnn_bbox_loss:\s(\d+.?\d*)\s-",
-						},
-						{
-							"Name": "mrcnn_bbox_loss",
-							"Regex": "\sval_loss:\s(\d+.?\d*)\s-",
-						},
-						{
-							"Name": "val_rpn_class_loss",
-							"Regex": "\sval_rpn_class_loss:\s(\d+.?\d*)\s-",
-						},
-						{
-							"Name": "val_rpn_bbox_loss",
-							"Regex": "\sval_rpn_bbox_loss:\s(\d+.?\d*)\s-",
-						},
-						{
-							"Name": "val_mrcnn_class_loss",
-							"Regex": "\sval_mrcnn_class_loss:\s(\d+.?\d*)\s-",
-						},
-						{
-							"Name": "val_mrcnn_bbox_loss",
-							"Regex": "\sval_mrcnn_bbox_loss:\s(\d+.?\d*)\s-",
-						},
-						{
-							"Name": "val_mrcnn_mask_loss",
-							"Regex": "\sval_mrcnn_mask_loss:\s(\d+.?\d*)",
-						},
-						{
-							"Name": "ms/step",
-							"Regex": "\s(\d+)ms\/step",
-						},
-					]
-'''
+	'''
+	train_seq = hyperparameters['TRAIN_SEQ']
+	print(train_seq)
+
+	# execute train sequence
+	for i in range(len(train_seq)):
+		if model.epoch >= train_seq[i]['epochs']:
+			continue
+
+		model.train(trainDataset,
+                    valDataset,
+                    epochs=train_seq[i]['epochs'],
+                    layers=train_seq[i]['layers'],
+                    learning_rate=train_seq[i]['lr'],
+                    augmentation=aug)
+
+		

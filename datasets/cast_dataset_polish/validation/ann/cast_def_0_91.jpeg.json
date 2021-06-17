@@ -1,0 +1,74 @@
+{
+    "description": "",
+    "tags": [
+        {
+            "id": 107364945,
+            "tagId": 29152853,
+            "name": "bad",
+            "value": null,
+            "labelerLogin": "simo97",
+            "createdAt": "2021-05-12T08:50:31.082Z",
+            "updatedAt": "2021-05-12T08:50:31.082Z"
+        }
+    ],
+    "size": {
+        "height": 512,
+        "width": 512
+    },
+    "objects": [
+        {
+            "id": 742942236,
+            "classId": 2950876,
+            "description": "",
+            "geometryType": "bitmap",
+            "labelerLogin": "simo97",
+            "createdAt": "2021-06-06T22:45:51.538Z",
+            "updatedAt": "2021-06-06T22:45:51.538Z",
+            "tags": [],
+            "classTitle": "holes",
+            "bitmap": {
+                "data": "eJzrDPBz5+WS4mJgYOD19HAJAtI8QMzNyAwkC/f9kwFSbAE+Ia5A+v///0tvzr8LZDGWBPkFMzg8u5EG5Eh5ujiGVMxJnpCfsKH+QMD/hof/2UVC+N0+8TOwtwosu8RuIw1UxeDp6ueyzimhCQB0sSEZ",
+                "origin": [
+                    323,
+                    56
+                ]
+            }
+        },
+        {
+            "id": 742942235,
+            "classId": 2950874,
+            "description": "",
+            "geometryType": "bitmap",
+            "labelerLogin": "simo97",
+            "createdAt": "2021-06-06T22:45:51.538Z",
+            "updatedAt": "2021-06-06T22:45:51.538Z",
+            "tags": [],
+            "classTitle": "chipping",
+            "bitmap": {
+                "data": "eJzrDPBz5+WS4mJgYOD19HAJAtKcQMzOyAwkH4R+VQZSbAE+Ia5A+v///0tvzr8LZDGWBPkFMzg8u5EG5Ih7ujiGVMxJTkhP2MC+iK3tv8CRAwnHGRj0l7E6Sn7WWQJUwuDp6ueyzimhCQDwIx+c",
+                "origin": [
+                    208,
+                    279
+                ]
+            }
+        },
+        {
+            "id": 742942234,
+            "classId": 2950877,
+            "description": "",
+            "geometryType": "bitmap",
+            "labelerLogin": "simo97",
+            "createdAt": "2021-06-06T22:45:51.537Z",
+            "updatedAt": "2021-06-06T22:45:51.537Z",
+            "tags": [],
+            "classTitle": "disk",
+            "bitmap": {
+                "data": "eJwBbQWS+olQTkcNChoKAAAADUlIRFIAAAG2AAABwgEDAAAAuXR+5AAAAAZQTFRFAAAA////pdmf3QAAAAF0Uk5TAEDm2GYAAAUVSURBVHic7dxLbuM4EAbgDLLIkkfgUXg06mg6io5AzMoLw+r2S5bIevxVCphRxtoGHyTWX6SBbqk+PvgrX4Q/sleY/16jVX3O96sYXX642ca+5tkFX2w+GVhcuXly3c5yw83tDGFsGXzDr8rNA+ZS7QrE/qnZfIZcaBxWmdw65EE/WwY9KPGYUEWbal6vSXcUA6JvQr9d+okRSacvMNNOW2DbLNgCqfSQBQbGaQtMnFMWyJRFWyC3PK1F2eUp5yi7PGUPssuTC8OlrhWGL4ucvFAWMfkoOaEwWXJCYSQmHGpSWaTC0GfEcvnKIhQ0yW50lYUvjNRl14vrNKUs7BYMiuOCiIrjCpo1N7rKyRVUKydXGLk7rxddmKA6ukMBRxY06Y4saNbdRDmdkUHoMdCdrcdAB6HtBs4FwFFBRKdLiCOCyE6HMCIIJD5qJyHxUUEg8c3ETgqYa4KImBtd8RFBZMwVp6sDxOJrA8Tiax0YXxN8AF0dfETd4HRV8Al1VfAZdVXwKKuCR2OvA0Rjrx0aex18gN3sdZvgI+42wSfcbYLPToezTcPgsW8bxuvwdtk2DN4uWxcM7uJ060aLFrdqtOR02eLG/c7CVg1qaZd1g/Zxrwa1tOfaWdpz3aA292rQ4HTR5ObebmnsZHNLg2abWxrUxtzu2aC29vS7Z4Pa2vrlbO35amyvC0Z32emi0c07XbK6YZ/LVje62trvpl3Ouh2eG8nrrNvI7067nHX7PTeg14Vu7rLLxW5u9m3b/m5wHRP93eg6Jvq7yXW87HP2Y+J+MPV29uPlfqD1dqGjOx/IRYe7/IBLHd38Ay73dIPfediBnOe4vv6wHMV5jvnrD9JRnOfn4fe70t2Fru50GBff7ltdertDu9zVnd/u7f7TzsXe7u1+pev9+/B2/09Xurt0CDcdxsW3I66xuwtd3fDLne+/O369uxzHuf4d0+vOfuf69+TTQVzx/bfvYdz0Ay53dOMPuORww0Gc8/WX3u7iey3I7c4HcSffa11udz2WPD8svd31ePH8QHjd7XUixwHqdbfXrBwHmtfdmOOAcbrH+7uxswtWd+7sHu9tmzeu15W7M29Ar5vuzrwBve6+/ewb0OuGh8ud3INZN+DyPUns45bvZYLTGRv75HTl6YyNvThjg05PZ2y0cbfLJjcsLpncwowN43Sr7/+Cxa2+NzQ1zMqZGua035karTjdqz1tjTauXHa6ZHDDykWDWzFTwzjd5jtoQ6Ntvrs2NMzm+3BD8OU7nKFhpo3LsBs3LsFu+BYXYbdheMNU8xLghqnmM8ANUzk4+Hr+BOqK002Vy6AbK5dAN1Qugu7D55r5KGDwzTwW0DXzX8Dg6/hQV8eHBl/HhwZfx4cG3zAsQGLOUEAcMZgKCpCYowTt+DYGLEDCQQG2MWABEgwJkJzzFXVHDlwLuiuUA4KgyokEMVIOCIJkQBC0Sxpj5tAFzTFz79QdUWinBkGXUw9ioJ0aBMO0grJzEqPs2ImcSkEL55SCTpxTCjOyLotuYF0UHcvkDhXmeIqFEeaGip028U4sjMCkThMH1AbX8sTCFMkJHTOKji+M7CLrRMZvJWXeL5t8kR27QHl5/AIVxi1QHUjNLFCfD00vsKguucrCLVBl9AKRyefUg+qPSe9BgFEPis09bx+0QK6t6AC55kHROfLRdbvmhlhVrte2MiPsPn23267QwNYrnCzuleFgYs8nLUb1cavNv8Kf/wAgLjFKAnj9tQAAAABJRU5ErkJgguwEwoM=",
+                "origin": [
+                    32,
+                    28
+                ]
+            }
+        }
+    ]
+}

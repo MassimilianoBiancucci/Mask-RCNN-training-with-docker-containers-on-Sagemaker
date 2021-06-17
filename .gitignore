@@ -1,12 +1,12 @@
 # backup folder
 backup/
-Model/
+#Model/
 checkpoints/
 Outputs/
 
 # Data files and directories common in repo root
 logs/
-*.h5
+#*.h5
 results/
 temp/
 test/

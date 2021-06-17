@@ -272,6 +272,8 @@ def draw_box(image, box, color):
     """Draw 3-pixel width bounding boxes on the given image array.
     color: list of 3 int values for RGB.
     """
+    (red, green, blue) = color
+    color = (red*255, green*255, blue*255)
     y1, x1, y2, x2 = box
     image[y1:y1 + 2, x1:x2] = color
     image[y2:y2 + 2, x1:x2] = color

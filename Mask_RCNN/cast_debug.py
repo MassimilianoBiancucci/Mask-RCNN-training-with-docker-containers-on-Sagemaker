@@ -29,7 +29,7 @@ import base64
 import zlib
 import json
 import io
-
+import imageio
 
 # NOTE: used in the load_mask function
 # don't move this declaration.
@@ -47,13 +47,27 @@ class castConfig(Config):
 
 	MEAN_PIXEL = np.array([143.75, 143.75, 143.75])
 
+	USE_MINI_MASK = True
+	MINI_MASK_SHAPE = (512, 512)
+
 	# Augmenters that are safe to apply to masks
 	# Some, such as Affine, have settings that make them unsafe, so always
 	# test your augmentation on masks
 	MASK_AUGMENTERS = ["Sequential", "SomeOf", "OneOf", "Sometimes", 
 						"Fliplr", "Flipud", "CropAndPad", "Affine", 
-						"PiecewiseAffine" ]
+						"PiecewiseAffine", "ScaleX", "ScaleY", 
+						"TranslateX", "TranslateY", "Rotate", 
+						"ShearX", "ShearY", "PiecewiseAffine",
+						"WithPolarWarping", "PerspectiveTransform" ]
 
+	# SMALL MASKS DILATION PARAMETERS
+	DILATE_MASKS = True
+	DILATE_THERS_2 = 15000
+	DILATE_THERS_1 = 500
+	DILATE_ITERATIONS_2 = 10
+	DILATE_ITERATIONS_1 = 10
+	DILATE_KERNEL = np.ones((2, 2), 'uint8')
+	
 	def __init__(self, **kwargs):
 		"""
 		Overriding of same config variables
@@ -72,7 +86,7 @@ class castDatasetBox(utils.Dataset):
 	and the preparation function for the annotation mask from json files.
 	"""
 
-	def __init__(self, imagePaths, masks_path, classNames, width=1024):
+	def __init__(self, imagePaths, masks_path, classNames, config, width=1024):
 
 		# call the parent constructor
 		super().__init__(self)
@@ -83,6 +97,7 @@ class castDatasetBox(utils.Dataset):
 		self.masks_path = masks_path
 		self.classNames = classNames
 		self.width = width
+		self.config = config
 
 	def load_exampls(self):
 		"""
@@ -206,12 +221,20 @@ class castDatasetBox(utils.Dataset):
 			# NOTE: it's realy important at this point the use of cv2.INTER_NEAREST interpolation,
 			masks[:, :, i] = imutils.resize(mask_swap, width=self.width, inter=cv2.INTER_NEAREST)
 			
-			# overwrite 1px border with zeros (needed for optimal augmentation!!)
-			tick = 5 
-			masks[0:tick, 0:self.width, i] = 0
-			masks[0:self.width, 0:tick, i] = 0
-			masks[self.width-tick:self.width, 0:self.width, i] = 0
-			masks[0:self.width, self.width-tick:self.width, i] = 0
+			# if DILATE_MASKS it's true, too small object will be enlarged
+			if self.config.DILATE_MASKS:
+				if masks[:, :, i].sum() < self.config.DILATE_THERS_1:
+					masks[:, :, i] = cv2.dilate(masks[:, :, i], self.config.DILATE_KERNEL, iterations = self.config.DILATE_ITERATIONS_1)
+				elif masks[:, :, i].sum() < self.config.DILATE_THERS_2:
+					masks[:, :, i] = cv2.dilate(masks[:, :, i], self.config.DILATE_KERNEL, iterations = self.config.DILATE_ITERATIONS_2)
+
+
+			# overwrite 1px border with zeros (needed for augmentations with edge mode)
+			#tick = 5 
+			#masks[0:tick, 0:self.width, i] = 0
+			#masks[0:self.width, 0:tick, i] = 0
+			#masks[self.width-tick:self.width, 0:self.width, i] = 0
+			#masks[0:self.width, self.width-tick:self.width, i] = 0
 
 		return (masks.astype('bool'), class_idxs)
 
@@ -226,8 +249,8 @@ if __name__ == "__main__":
 
 	#'''
 	os.environ['SM_CHANNELS'] = '["dataset","model"]'
-	os.environ['SM_CHANNEL_DATASET'] = '/home/massi/Progetti/Mask-RCNN-training-with-docker-containers-on-Sagemaker/datasets/cast_dataset'
-	os.environ['SM_CHANNEL_MODEL'] = '/home/massi/Progetti/Mask-RCNN-training-with-docker-containers-on-Sagemaker/datasets/cast_dataset'   
+	#os.environ['SM_CHANNEL_DATASET'] = 'datasets/cast_dataset'
+	#os.environ['SM_CHANNEL_MODEL'] = 'datasets/cast_dataset'   
 	os.environ['SM_HPS'] = '{"NAME": "cast", \
 							 "GPU_COUNT": 1, \
 							 "IMAGES_PER_GPU": 1,\
@@ -237,6 +260,9 @@ if __name__ == "__main__":
 							 ]\
 							}'
 	#'''
+
+	os.environ['SM_CHANNEL_DATASET'] = '/home/massi/Progetti/repository_simone/Mask-RCNN-training-with-docker-containers-on-Sagemaker/datasets/cast_dataset_polish'
+	os.environ['SM_CHANNEL_MODEL'] = '/home/massi/Progetti/repository_simone/Mask-RCNN-training-with-docker-containers-on-Sagemaker/datasets/cast_dataset_polish' 
 
 	# default env vars
 	user_defined_env_vars = {"checkpoints": "/opt/ml/checkpoints",
@@ -251,6 +277,7 @@ if __name__ == "__main__":
 
 	hyperparameters = json.loads(read_env_var('SM_HPS', {}))
 	
+	#prova
 
 	# TRAIN DATASET DEFINITIONS -------------------------------------------------------------
 	train_images_path = os.path.sep.join([dataset_path, "training", "img"])
@@ -272,8 +299,15 @@ if __name__ == "__main__":
 	val_ds_len = len(val_image_paths)
 	# ---------------------------------------------------------------------------------------
 
+	config = castConfig(
+		#STEPS_PER_EPOCH=STEPS_PER_EPOCH,
+		#VALIDATION_STEPS=VALIDATION_STEPS,
+		NUM_CLASSES=5,
+		**hyperparameters
+	)
+
 	# load the training dataset
-	trainDataset = castDatasetBox(train_image_paths, train_masks_path, CLASS_NAMES)
+	trainDataset = castDatasetBox(train_image_paths, train_masks_path, CLASS_NAMES, config)
 	trainDataset.load_exampls()
 	trainDataset.prepare()
 	
@@ -306,58 +340,16 @@ if __name__ == "__main__":
 	
 	elif args["mode"] == "aug":
 		
-		config = castConfig(
-			#STEPS_PER_EPOCH=STEPS_PER_EPOCH,
-			#VALIDATION_STEPS=VALIDATION_STEPS,
-			NUM_CLASSES=5,
-			**hyperparameters
-		)
-
-		"""
-		# initialize the image augmentation process
-		# fa l'argomentazione con al massimo 2 tipi di argomentazione
-		aug = iaa.SomeOf((0, 2), [
-			iaa.Fliplr(0.5),
-			iaa.Flipud(0.5),
-			iaa.Affine(rotate=(-25, 25)),
-		])
-		"""
-
-		aug = iaa.Sequential([
-				iaa.SomeOf((0, 5), [
-						iaa.Fliplr(0.5), # horizontaly flip with probability
-						iaa.Flipud(0.5), # vertical flip with probability
-						iaa.Affine(	# geometric modification
-							rotate=(-25, 25), # rotation between interval (degrees)
-							mode="edge" # filler type (new pixels are generated based on edge pixels)
-						),
-						iaa.Affine(	# geometric modification
-							shear={ # simulate angled view 
-								"y": (-25, 25) # interval in degrees along y axis
-							},
-							mode="edge" # filler type (new pixels are generated based on edge pixels)
-						),
-						iaa.Affine(	# geometric modification
-							shear={ # simulate angled view of given interval in degrees
-								"x": (-25, 25) # interval in degrees along x axis
-							},
-							mode="edge" # filler type (new pixels are generated based on edge pixels)
-						)
-					],
-					random_order=True
-				),
-				iaa.SomeOf((0, 1), [
-						iaa.Affine( # geometric modification
-							scale=(1.0, 1.3) # scale immage from 100% to 130% 
-						)
-					]
-				)
-			]
-		)
+		# aug = aug_presets.blend_aug().one()
+		# aug = aug_presets.aritmetic_aug(sets=[0, 1, 2]).maybe_some(p=0.95, n=(1, 3))
+		# aug = aug_presets.geometric_aug(sets=3).seq()
+		# aug = aug_presets.color_aug().seq()
+		# aug = aug_presets.preset_1()
+		aug = aug_presets.preset_1()
 
 		train_generator = modellib.data_generator(trainDataset, config, shuffle=True,
-                                         augmentation=aug_presets.aritmetic_aug(sets=2).maybe_some(0.95, 3),
-                                         batch_size=config.BATCH_SIZE)
+										 augmentation=aug,
+										 batch_size=config.BATCH_SIZE)
 		
 		print(f'batch size: {config.BATCH_SIZE}')
 
@@ -369,110 +361,204 @@ if __name__ == "__main__":
 		
 		start = True
 		p_key = 0
-		#try:
-		
-		while(True):
+
+		applay_mask = False
+		applay_bbox = False
+		update_img = False
+
+		im_rgb = np.zeros((512, 512), dtype='uint8')
+		im_rgb_masked = np.zeros((512, 512), dtype='uint8')
+		r_mask = np.zeros((512, 512), dtype='uint8')
+
+		try:	
+			while(True):
 			
-			#(this is necessary to avoid Python kernel form crashing)
-			if not start:
-				p_key = cv2.waitKey(0)
-			
-			# if "q" is pressed close
-			if p_key == ord('q'):
-				# QUIT
-				raise "Quit"
-			
-			# if "w" is pressed 
-			elif p_key == ord('w') or start:
-				# swipe image
-
-				start = False
-				mask_idx = 0
-
-				tic = time.perf_counter()
-				train_data = next(train_generator)
-				toc = time.perf_counter()
-
-				print(f"Elapsed for generate new data: {(toc - tic)*1000:0.2f} ms")
-
-				#print(train_data[0]) # 7
-				#print(train_data[1]) # 7
-				#print(train_data[0][5][0])
-				#print(train_data[0][0].shape)
-				#print(train_data[0][6].shape)
+				#(this is necessary to avoid Python kernel form crashing)
+				if not start and not update_img:
+					p_key = cv2.waitKey(0)
 				
-				# Using cv2.imshow() method 
-				# Displaying the image 
-				#im_rgb = cv2.cvtColor(train_data[0][0][0, :, :, :], cv2.COLOR_BGR2RGB)
-				im_rgb = train_data[0][0][0, :, :, :]
-				bitmap = train_data[0][6][0, :, :, mask_idx]
-				bboxs = train_data[0][5][0][mask_idx]
+				# if "q" is pressed close
+				if p_key == ord('q'):
+					# QUIT
+					raise "Quit"
+				
+				# if "w" is pressed 
+				elif p_key == ord('w') or start or update_img:
+					# swipe image
 
-				# DEBUG reconversion to original image from normalized 
-				for i in range(3):	
-					im_rgb[:,:,i] = im_rgb[:,:,i] + config.MEAN_PIXEL[i]
+					start = False
+					mask_idx = 0
 
-				r_mask = np.zeros((im_rgb.shape[0], im_rgb.shape[1]), dtype='uint8')
+					if not update_img:
+						
+						tic = time.perf_counter()
+						train_data = next(train_generator)
+						toc = time.perf_counter()
 
-				#print(f'r_mask shape: {r_mask.shape}')
+						print(f"Elapsed for generate new data: {(toc - tic)*1000:0.2f} ms")
 
-				if any(bbox != 0 for bbox in bboxs):
-					# Mask reconstruction
-					bbox_w = bboxs[3] - bboxs[1]
-					bbox_h = bboxs[2] - bboxs[0]
-					#print(f'bbox_w: {bbox_w}')
-					#print(f'bbox_h: {bbox_h}')
-					r_bitmap = cv2.resize(bitmap.astype('uint8'), (bbox_w, bbox_h), interpolation=cv2.INTER_NEAREST)
-					r_mask[bboxs[0]:bboxs[2], bboxs[1]:bboxs[3]] = r_bitmap*255.0
+						#print(train_data[0]) # 7
+						#print(train_data[1]) # 7
+						#print(train_data[0][5][0])
+						#print(train_data[0][0].shape)
+						#print(train_data[0][6].shape)
+						
+						# Using cv2.imshow() method 
+						# Displaying the image 
+						#im_rgb = cv2.cvtColor(train_data[0][0][0, :, :, :], cv2.COLOR_BGR2RGB)
+						im_rgb = train_data[0][0][0, :, :, :]
+						bitmap = train_data[0][6][0, :, :, mask_idx]
+						bboxs = train_data[0][5][0][mask_idx]
 
-				cv2.imshow("test", im_rgb.astype('uint8'))
-				cv2.imshow("mask", r_mask)
+						# DEBUG reconversion to original image from normalized 
+						for i in range(3):	
+							im_rgb[:,:,i] = im_rgb[:,:,i] + config.MEAN_PIXEL[i]
 
-			#if "e" is pressed
-			elif p_key == ord('e'):
-				# swipe mask
-				mask_idx += 1
+						im_rgb = im_rgb.astype('uint8')
+						r_mask = np.zeros((im_rgb.shape[0], im_rgb.shape[1]), dtype='uint8')
 
-				bitmap = train_data[0][6][0, :, :, mask_idx]
-				bboxs = train_data[0][5][0][mask_idx]
+						#print(f'r_mask shape: {r_mask.shape}')
 
-				if any(bbox != 0 for bbox in bboxs):
+						if any(bbox != 0 for bbox in bboxs):
+							# Mask reconstruction
+							bbox_w = bboxs[3] - bboxs[1]
+							bbox_h = bboxs[2] - bboxs[0]
+							#print(f'bbox_w: {bbox_w}')
+							#print(f'bbox_h: {bbox_h}')
+							r_bitmap = cv2.resize(bitmap.astype('uint8'), (bbox_w, bbox_h), interpolation=cv2.INTER_NEAREST)
+							r_mask[bboxs[0]:bboxs[2], bboxs[1]:bboxs[3]] = r_bitmap*255.0
+
+					update_img = False
+					
+					cv2.imshow("mask", r_mask)
+
+					if applay_mask or applay_bbox:
+						im_rgb_masked = im_rgb.copy()
+						if applay_mask:
+							im_rgb_masked = visualize.apply_mask(im_rgb_masked, r_mask/255, (1.0, 0.0, 0.0), alpha=0.5)
+						if  applay_bbox:
+							im_rgb_masked = visualize.draw_box(im_rgb_masked, bboxs, (1.0, 0.0, 0.0))
+						cv2.imshow("test", im_rgb_masked)
+					else:
+						cv2.imshow("test", im_rgb)
+					
+					
+
+				#if "e" is pressed
+				elif p_key == ord('e'):
+					# swipe mask
+					mask_idx += 1
+
+					bitmap = train_data[0][6][0, :, :, mask_idx]
+					bboxs = train_data[0][5][0][mask_idx]
+
+					if any(bbox != 0 for bbox in bboxs):
+						
+						# Mask reconstruction
+						r_mask = np.zeros((im_rgb.shape[0], im_rgb.shape[1]), dtype='uint8')
+
+						bbox_w = bboxs[3] - bboxs[1]
+						bbox_h = bboxs[2] - bboxs[0]
+						r_bitmap = cv2.resize(bitmap.astype('uint8'), (bbox_w, bbox_h), interpolation=cv2.INTER_NEAREST)
+						r_mask[bboxs[0]:bboxs[2], bboxs[1]:bboxs[3]] = r_bitmap*255.0
+
+						cv2.imshow("mask", r_mask)
+
+						if applay_mask or applay_bbox:
+							im_rgb_masked = im_rgb.copy()
+							if applay_mask:
+								im_rgb_masked = visualize.apply_mask(im_rgb_masked, r_mask/255, (1.0, 0.0, 0.0), alpha=0.5)
+							if  applay_bbox:
+								im_rgb_masked = visualize.draw_box(im_rgb_masked, bboxs, (1.0, 0.0, 0.0))
+							cv2.imshow("test", im_rgb_masked)
+
+					else:
+						mask_idx -= 1
+
+				#if "r" is pressed
+				elif p_key == ord('r'):
+					# swipe mask
+
+					if mask_idx > 0:
+						mask_idx -= 1
+
+					bitmap = train_data[0][6][0, :, :, mask_idx]
+					bboxs = train_data[0][5][0][mask_idx]
 					
 					# Mask reconstruction
 					r_mask = np.zeros((im_rgb.shape[0], im_rgb.shape[1]), dtype='uint8')
-
 					bbox_w = bboxs[3] - bboxs[1]
 					bbox_h = bboxs[2] - bboxs[0]
 					r_bitmap = cv2.resize(bitmap.astype('uint8'), (bbox_w, bbox_h), interpolation=cv2.INTER_NEAREST)
 					r_mask[bboxs[0]:bboxs[2], bboxs[1]:bboxs[3]] = r_bitmap*255.0
 
 					cv2.imshow("mask", r_mask)
-				else:
-					mask_idx -= 1
 
-			#if "r" is pressed
-			elif p_key == ord('r'):
-				# swipe mask
+					if applay_mask or applay_bbox:
+						im_rgb_masked = im_rgb.copy()
+						if applay_mask:
+							im_rgb_masked = visualize.apply_mask(im_rgb_masked, r_mask/255, (1.0, 0.0, 0.0), alpha=0.5)
+						if  applay_bbox:
+							im_rgb_masked = visualize.draw_box(im_rgb_masked, bboxs, (1.0, 0.0, 0.0))
+						cv2.imshow("test", im_rgb_masked)
 
-				if mask_idx > 0:
-					mask_idx -= 1
-
-				bitmap = train_data[0][6][0, :, :, mask_idx]
-				bboxs = train_data[0][5][0][mask_idx]
+				#if "m" pressed applay mask on original img
+				elif p_key == ord("m"):
+					update_img = True
+					applay_mask = not applay_mask
 				
-				# Mask reconstruction
-				r_mask = np.zeros((im_rgb.shape[0], im_rgb.shape[1]), dtype='uint8')
-				bbox_w = bboxs[3] - bboxs[1]
-				bbox_h = bboxs[2] - bboxs[0]
-				r_bitmap = cv2.resize(bitmap.astype('uint8'), (bbox_w, bbox_h), interpolation=cv2.INTER_NEAREST)
-				r_mask[bboxs[0]:bboxs[2], bboxs[1]:bboxs[3]] = r_bitmap*255.0
+				#if "m" pressed applay mask on original img
+				elif p_key == ord("b"):
+					update_img = True
+					applay_bbox = not applay_bbox
 
-				cv2.imshow("mask", r_mask)
-
-		#except Exception as e:
+		except Exception as e:
 			
-		#	print(e)
+			print(e)
 		
 		#closing all open windows 
 		cv2.destroyAllWindows() 
+	
+	elif args["mode"] == "demo":
+		
+		config = castConfig(
+			#STEPS_PER_EPOCH=STEPS_PER_EPOCH,
+			#VALIDATION_STEPS=VALIDATION_STEPS,
+			NUM_CLASSES=5,
+			**hyperparameters
+		)
+
+		# aug = aug_presets.blend_aug().one()
+		# aug = aug_presets.aritmetic_aug(sets=[0, 1, 2]).maybe_some(p=0.95, n=(1, 3))
+		# aug = aug_presets.geometric_aug(sets=3).seq()
+		aug = aug_presets.preset_1()
+
+		train_generator = modellib.data_generator(trainDataset, config, shuffle=True,
+										 augmentation=aug,
+										 batch_size=config.BATCH_SIZE)
+
+		import imgaug as ia
+
+		cols = 15
+		rows = 15
+		img_size = 256
+		images_aug = []
+
+		img_rgb_resize = np.zeros((img_size, img_size, 3), dtype='uint8')
+
+		for i in range(cols*rows):
 			
+			train_data = next(train_generator)
+
+			im_rgb = train_data[0][0][0, :, :, :]
+
+			for i in range(3):	
+					im_rgb[:,:,i] = im_rgb[:,:,i] + config.MEAN_PIXEL[i]
+
+			img_rgb_resize = imutils.resize(im_rgb, width=img_size)
+
+			images_aug.append(img_rgb_resize)
+
+		# Convert cells to a grid image and save.
+		result_grid_image = ia.draw_grid(images_aug, cols=cols)
+		imageio.imwrite("test_img.jpg", result_grid_image)

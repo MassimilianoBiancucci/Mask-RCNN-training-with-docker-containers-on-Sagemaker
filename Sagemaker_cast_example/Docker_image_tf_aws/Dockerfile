@@ -40,6 +40,6 @@ WORKDIR /opt/ml/code
 COPY Mask_RCNN .
 
 # Defines train.py as script entrypoint
-ENV SAGEMAKER_PROGRAM 'lesions_sagemaker.py'
+ENV SAGEMAKER_PROGRAM 'cast_sagemaker.py'
 
 
